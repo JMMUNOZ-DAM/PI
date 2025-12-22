@@ -20,6 +20,8 @@ public class mainFrame extends javax.swing.JFrame {
     private EstadisPanel estadisPanel;
     private IncidPanel incidenciasPanel;
     private AparatosPanel aparatosPanel;
+    private UsuariosPanel usuariosPanel;
+    private AdminPanel adminPanel;
 
     /**
      * Creates new form mainFrame
@@ -33,11 +35,15 @@ public class mainFrame extends javax.swing.JFrame {
         estadisPanel = new EstadisPanel();
         incidenciasPanel = new IncidPanel();
         aparatosPanel = new AparatosPanel();
+        adminPanel = new AdminPanel();
+        usuariosPanel = new UsuariosPanel();
+        cardLayout.show(contentPanel, "estadisticas");
         contentPanel.add(estadisPanel, "estadisticas");
         contentPanel.add(incidenciasPanel, "incidencias");
         contentPanel.add(aparatosPanel, "aparatos");
+        contentPanel.add(usuariosPanel, "usuarios");
+        contentPanel.add(adminPanel, "admin");
 
-        cardLayout.show(contentPanel, "estadisticas");
     }
 
     /**
@@ -54,6 +60,8 @@ public class mainFrame extends javax.swing.JFrame {
         estaButon = new javax.swing.JButton();
         inciButton = new javax.swing.JButton();
         aparaButton = new javax.swing.JButton();
+        usuButton = new javax.swing.JButton();
+        adminButton = new javax.swing.JButton();
         contentPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -87,6 +95,22 @@ public class mainFrame extends javax.swing.JFrame {
             }
         });
 
+        usuButton.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        usuButton.setText("Usuarios");
+        usuButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                usuButtonActionPerformed(evt);
+            }
+        });
+
+        adminButton.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        adminButton.setText("Administrar");
+        adminButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                adminButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelLateralLayout = new javax.swing.GroupLayout(panelLateral);
         panelLateral.setLayout(panelLateralLayout);
         panelLateralLayout.setHorizontalGroup(
@@ -94,6 +118,8 @@ public class mainFrame extends javax.swing.JFrame {
             .addComponent(estaButon, javax.swing.GroupLayout.DEFAULT_SIZE, 241, Short.MAX_VALUE)
             .addComponent(inciButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(aparaButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(usuButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(adminButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         panelLateralLayout.setVerticalGroup(
             panelLateralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -103,7 +129,11 @@ public class mainFrame extends javax.swing.JFrame {
                 .addComponent(inciButton, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(aparaButton, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 812, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(usuButton, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(adminButton, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 698, Short.MAX_VALUE))
         );
 
         contentPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -127,7 +157,7 @@ public class mainFrame extends javax.swing.JFrame {
                 .addComponent(panelLateral, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(contentPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(86, Short.MAX_VALUE))
         );
         fondoPanelLayout.setVerticalGroup(
             fondoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -162,6 +192,14 @@ public class mainFrame extends javax.swing.JFrame {
         cardLayout.show(contentPanel, "aparatos");
     }//GEN-LAST:event_aparaButtonActionPerformed
 
+    private void usuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_usuButtonActionPerformed
+        cardLayout.show(contentPanel, "usuarios");
+    }//GEN-LAST:event_usuButtonActionPerformed
+
+    private void adminButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_adminButtonActionPerformed
+        cardLayout.show(contentPanel, "admin");
+    }//GEN-LAST:event_adminButtonActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -186,11 +224,13 @@ public class mainFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton adminButton;
     private javax.swing.JButton aparaButton;
     private javax.swing.JPanel contentPanel;
     private javax.swing.JButton estaButon;
     private javax.swing.JPanel fondoPanel;
     private javax.swing.JButton inciButton;
     private javax.swing.JPanel panelLateral;
+    private javax.swing.JButton usuButton;
     // End of variables declaration//GEN-END:variables
 }
