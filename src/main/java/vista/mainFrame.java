@@ -5,9 +5,11 @@
 package vista;
 
 import com.formdev.flatlaf.FlatLightLaf;
+import com.jmmunoz.netfix.Usuario;
+import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
-import vista.EstadisPanel;
 
 /**
  *
@@ -16,19 +18,25 @@ import vista.EstadisPanel;
 public class mainFrame extends javax.swing.JFrame {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(mainFrame.class.getName());
-    private CardLayout cardLayout;
-    private EstadisPanel estadisPanel;
-    private IncidPanel incidenciasPanel;
-    private AparatosPanel aparatosPanel;
-    private UsuariosPanel usuariosPanel;
-    private AdminPanel adminPanel;
+    private final CardLayout cardLayout;
+    private final EstadisPanel estadisPanel;
+    private final IncidPanel incidenciasPanel;
+    private final AparatosPanel aparatosPanel;
+    private final SupervisorPanel supervisorPanel;
+    private final AdminPanel adminPanel;
+    private final UsuariosPanel usuariosPanel;
+    private Usuario usuario;
 
     /**
      * Creates new form mainFrame
      */
-    public mainFrame() {
+    public mainFrame(Usuario usuario) {
         initComponents();
-        this.setLocationRelativeTo(this);
+        this.usuario = usuario;
+        cargarDatosUsuario();
+        aplicarPermisosPorRol();
+        setLocationRelativeTo(null);
+
         cardLayout = new CardLayout();
         contentPanel.setLayout(cardLayout);
 
@@ -36,14 +44,54 @@ public class mainFrame extends javax.swing.JFrame {
         incidenciasPanel = new IncidPanel();
         aparatosPanel = new AparatosPanel();
         adminPanel = new AdminPanel();
-        usuariosPanel = new UsuariosPanel();
-        cardLayout.show(contentPanel, "estadisticas");
+        supervisorPanel = new SupervisorPanel();
+        usuariosPanel = new UsuariosPanel(usuario);
         contentPanel.add(estadisPanel, "estadisticas");
         contentPanel.add(incidenciasPanel, "incidencias");
         contentPanel.add(aparatosPanel, "aparatos");
+        contentPanel.add(supervisorPanel, "supervisores");
         contentPanel.add(usuariosPanel, "usuarios");
         contentPanel.add(adminPanel, "admin");
+        cardLayout.show(contentPanel, "estadisticas");
+        contentPanel.revalidate();
+        contentPanel.repaint();
+    }
 
+    private void cargarDatosUsuario() {
+        logName.setText(usuario.getNombre());
+        logRol.setText(usuario.getRol());
+    }
+
+    private void aplicarPermisosPorRol() {
+
+        String rol = usuario.getRol().toLowerCase();
+
+        switch (rol) {
+
+            case "sistemas":
+                // Acceso total
+                adminButton.setEnabled(true);
+                break;
+
+            case "supervisor":
+                // Puede ver admin pero no tocar todo (ejemplo)
+                adminButton.setEnabled(false);
+                // Si quieres limitar algo más, aquí
+                break;
+
+            case "tecnico":
+                // Sin acceso a administración
+                adminButton.setEnabled(false);
+                usuButton.setText("Usuario");
+                // Opcional: ocultar
+                // adminButton.setVisible(false);
+                break;
+
+            default:
+                // Rol desconocido = acceso mínimo
+                adminButton.setEnabled(false);
+                break;
+        }
     }
 
     /**
@@ -62,6 +110,9 @@ public class mainFrame extends javax.swing.JFrame {
         aparaButton = new javax.swing.JButton();
         usuButton = new javax.swing.JButton();
         adminButton = new javax.swing.JButton();
+        logName = new javax.swing.JLabel();
+        logRol = new javax.swing.JLabel();
+        salirButton = new javax.swing.JButton();
         contentPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -73,6 +124,7 @@ public class mainFrame extends javax.swing.JFrame {
 
         estaButon.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         estaButon.setText("Estadísticas");
+        estaButon.setBorder(null);
         estaButon.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 estaButonActionPerformed(evt);
@@ -81,6 +133,7 @@ public class mainFrame extends javax.swing.JFrame {
 
         inciButton.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         inciButton.setText("Incidencias");
+        inciButton.setBorder(null);
         inciButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 inciButtonActionPerformed(evt);
@@ -89,6 +142,7 @@ public class mainFrame extends javax.swing.JFrame {
 
         aparaButton.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         aparaButton.setText("Aparatos");
+        aparaButton.setBorder(null);
         aparaButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 aparaButtonActionPerformed(evt);
@@ -97,6 +151,7 @@ public class mainFrame extends javax.swing.JFrame {
 
         usuButton.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         usuButton.setText("Usuarios");
+        usuButton.setBorder(null);
         usuButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 usuButtonActionPerformed(evt);
@@ -105,9 +160,22 @@ public class mainFrame extends javax.swing.JFrame {
 
         adminButton.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         adminButton.setText("Administrar");
+        adminButton.setBorder(null);
         adminButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 adminButtonActionPerformed(evt);
+            }
+        });
+
+        logName.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+
+        logRol.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+
+        salirButton.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        salirButton.setText("Salir");
+        salirButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                salirButtonActionPerformed(evt);
             }
         });
 
@@ -115,11 +183,22 @@ public class mainFrame extends javax.swing.JFrame {
         panelLateral.setLayout(panelLateralLayout);
         panelLateralLayout.setHorizontalGroup(
             panelLateralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(estaButon, javax.swing.GroupLayout.DEFAULT_SIZE, 241, Short.MAX_VALUE)
+            .addComponent(estaButon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(inciButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(aparaButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(usuButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(adminButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(panelLateralLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelLateralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelLateralLayout.createSequentialGroup()
+                        .addComponent(logName, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(panelLateralLayout.createSequentialGroup()
+                        .addComponent(logRol, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
+                        .addComponent(salirButton)))
+                .addContainerGap())
         );
         panelLateralLayout.setVerticalGroup(
             panelLateralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -133,21 +212,17 @@ public class mainFrame extends javax.swing.JFrame {
                 .addComponent(usuButton, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(adminButton, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 698, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 621, Short.MAX_VALUE)
+                .addComponent(logName, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panelLateralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(logRol, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(salirButton))
+                .addGap(7, 7, 7))
         );
 
         contentPanel.setBackground(new java.awt.Color(255, 255, 255));
-
-        javax.swing.GroupLayout contentPanelLayout = new javax.swing.GroupLayout(contentPanel);
-        contentPanel.setLayout(contentPanelLayout);
-        contentPanelLayout.setHorizontalGroup(
-            contentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1567, Short.MAX_VALUE)
-        );
-        contentPanelLayout.setVerticalGroup(
-            contentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
+        contentPanel.setLayout(new java.awt.BorderLayout());
 
         javax.swing.GroupLayout fondoPanelLayout = new javax.swing.GroupLayout(fondoPanel);
         fondoPanel.setLayout(fondoPanelLayout);
@@ -156,8 +231,8 @@ public class mainFrame extends javax.swing.JFrame {
             .addGroup(fondoPanelLayout.createSequentialGroup()
                 .addComponent(panelLateral, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(contentPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(86, Short.MAX_VALUE))
+                .addComponent(contentPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 1654, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         fondoPanelLayout.setVerticalGroup(
             fondoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -169,7 +244,7 @@ public class mainFrame extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(fondoPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(fondoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -181,10 +256,12 @@ public class mainFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void estaButonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_estaButonActionPerformed
+        estadisPanel.cargarDatos();
         cardLayout.show(contentPanel, "estadisticas");
     }//GEN-LAST:event_estaButonActionPerformed
 
     private void inciButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inciButtonActionPerformed
+        incidenciasPanel.cargarDatos();
         cardLayout.show(contentPanel, "incidencias");
     }//GEN-LAST:event_inciButtonActionPerformed
 
@@ -193,35 +270,78 @@ public class mainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_aparaButtonActionPerformed
 
     private void usuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_usuButtonActionPerformed
-        cardLayout.show(contentPanel, "usuarios");
+
+        String rol = usuario.getRol().toLowerCase();
+
+        switch (rol) {
+
+            case "sistemas":
+                // Acceso total
+                cardLayout.show(contentPanel, "supervisores");
+                break;
+
+            case "supervisor":
+                // Puede ver admin pero no tocar todo (ejemplo)
+                cardLayout.show(contentPanel, "supervisores");
+                // Si quieres limitar algo más, aquí
+                break;
+
+            case "tecnico":
+                // Sin acceso a administración
+                cardLayout.show(contentPanel, "usuarios");
+                // Opcional: ocultar
+                // adminButton.setVisible(false);
+                break;
+
+            default:
+                // Rol desconocido = acceso mínimo
+                cardLayout.show(contentPanel, "usuarios");
+                break;
+        }
+
+
     }//GEN-LAST:event_usuButtonActionPerformed
 
     private void adminButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_adminButtonActionPerformed
         cardLayout.show(contentPanel, "admin");
     }//GEN-LAST:event_adminButtonActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
+    private void salirButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salirButtonActionPerformed
+        int opcion = JOptionPane.showConfirmDialog(
+                this,
+                "¿Deseas cerrar la sesión?",
+                "Cerrar sesión",
+                JOptionPane.YES_NO_OPTION
+        );
 
-        /* Set FlatLaf (Material / Google style) look and feel */
-        try {
-            FlatLightLaf.setup();
-
-            // Opcional: ajustes estilo Material
-            UIManager.put("Button.arc", 999);
-            UIManager.put("Component.arc", 12);
-            UIManager.put("TextComponent.arc", 10);
-            UIManager.put("ScrollBar.width", 12);
-
-        } catch (Exception ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
+        if (opcion == JOptionPane.YES_OPTION) {
+            new login().setVisible(true);
+            this.dispose();
         }
+    }//GEN-LAST:event_salirButtonActionPerformed
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new mainFrame().setVisible(true));
-    }
+//    /**
+//     * @param args the command line arguments
+//     */
+//    public static void main(String args[]) {
+//
+//        /* Set FlatLaf (Material / Google style) look and feel */
+//        try {
+//            FlatLightLaf.setup();
+//
+//            // Opcional: ajustes estilo Material
+//            UIManager.put("Button.arc", 999);
+//            UIManager.put("Component.arc", 12);
+//            UIManager.put("TextComponent.arc", 10);
+//            UIManager.put("ScrollBar.width", 12);
+//
+//        } catch (Exception ex) {
+//            logger.log(java.util.logging.Level.SEVERE, null, ex);
+//        }
+//
+//        /* Create and display the form */
+//      //  java.awt.EventQueue.invokeLater(() -> new mainFrame().setVisible(true));
+//    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton adminButton;
@@ -230,7 +350,10 @@ public class mainFrame extends javax.swing.JFrame {
     private javax.swing.JButton estaButon;
     private javax.swing.JPanel fondoPanel;
     private javax.swing.JButton inciButton;
+    private javax.swing.JLabel logName;
+    private javax.swing.JLabel logRol;
     private javax.swing.JPanel panelLateral;
+    private javax.swing.JButton salirButton;
     private javax.swing.JButton usuButton;
     // End of variables declaration//GEN-END:variables
 }

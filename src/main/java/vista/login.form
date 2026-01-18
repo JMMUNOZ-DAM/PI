@@ -29,7 +29,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="password" alignment="0" min="-2" pref="594" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Component id="user" alignment="1" max="32767" attributes="0"/>
+                      <Component id="mailUser" alignment="1" max="32767" attributes="0"/>
                       <Component id="iniciarText" alignment="1" max="32767" attributes="0"/>
                   </Group>
               </Group>
@@ -48,7 +48,7 @@
               <EmptySpace min="-2" pref="60" max="-2" attributes="0"/>
               <Component id="iniciarText" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-              <Component id="user" min="-2" max="-2" attributes="0"/>
+              <Component id="mailUser" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="46" max="-2" attributes="0"/>
               <Component id="password" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="41" max="-2" attributes="0"/>
@@ -67,7 +67,7 @@
         <Property name="toolTipText" type="java.lang.String" value="Ingrese su contrase&#xf1;a"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="user">
+    <Component class="javax.swing.JTextField" name="mailUser">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Segoe UI" size="36" style="0"/>
@@ -83,6 +83,9 @@
         <Property name="text" type="java.lang.String" value="Acceder"/>
         <Property name="toolTipText" type="java.lang.String" value="Clic para acceder"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="loginButtonActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="iniciarText">
       <Properties>

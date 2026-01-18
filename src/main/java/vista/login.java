@@ -5,6 +5,10 @@
 package vista;
 
 import com.formdev.flatlaf.FlatLightLaf;
+import com.jmmunoz.netfix.Usuario;
+import com.jmmunoz.netfix.utilities;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.swing.UIManager;
 
 /**
@@ -12,14 +16,16 @@ import javax.swing.UIManager;
  * @author juanm
  */
 public class login extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(login.class.getName());
+    utilities ut;
 
     /**
      * Creates new form login
      */
     public login() {
         initComponents();
+        ut = new utilities();
     }
 
     /**
@@ -32,7 +38,7 @@ public class login extends javax.swing.JFrame {
     private void initComponents() {
 
         password = new javax.swing.JPasswordField();
-        user = new javax.swing.JTextField();
+        mailUser = new javax.swing.JTextField();
         loginButton = new javax.swing.JButton();
         iniciarText = new javax.swing.JLabel();
 
@@ -42,12 +48,17 @@ public class login extends javax.swing.JFrame {
         password.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
         password.setToolTipText("Ingrese su contraseña");
 
-        user.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
-        user.setToolTipText("Ingrese su usuario");
+        mailUser.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
+        mailUser.setToolTipText("Ingrese su usuario");
 
         loginButton.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         loginButton.setText("Acceder");
         loginButton.setToolTipText("Clic para acceder");
+        loginButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loginButtonActionPerformed(evt);
+            }
+        });
 
         iniciarText.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
         iniciarText.setText("Bienvenido al sistema Netfix");
@@ -61,7 +72,7 @@ public class login extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(password, javax.swing.GroupLayout.PREFERRED_SIZE, 594, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(user, javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(mailUser, javax.swing.GroupLayout.Alignment.TRAILING)
                         .addComponent(iniciarText, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap(130, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -75,7 +86,7 @@ public class login extends javax.swing.JFrame {
                 .addGap(60, 60, 60)
                 .addComponent(iniciarText)
                 .addGap(10, 10, 10)
-                .addComponent(user, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(mailUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(46, 46, 46)
                 .addComponent(password, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(41, 41, 41)
@@ -87,33 +98,74 @@ public class login extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
+        boolean acceso = ut.loggin(
+                mailUser.getText(),
+                new String(password.getPassword()).trim()
+        );
+
+        if (acceso) {
+
+            try {
+                ResultSet rs = ut.ejecutarConsulta(
+                        utilities.TipoConsulta.USUARIO,
+                        mailUser.getText()
+                );
+
+                if (rs.next()) {
+
+                    Usuario usuario = new Usuario(
+                            rs.getString("id_usuario"),
+                            rs.getString("nombre"),
+                            rs.getString("rol"),
+                            rs.getString("email"),
+                            rs.getString("password")
+                    );
+
+                    // Abrir ventana principal
+                    mainFrame mf = new mainFrame(usuario);
+                    mf.setVisible(true);
+
+                    // Cerrar login
+                    this.dispose();
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        } else {
+            System.out.println("ERROR EN EL ACCESO");
+        }
+    }//GEN-LAST:event_loginButtonActionPerformed
+
     /**
      * @param args the command line arguments
      */
-   public static void main(String args[]) {
+    public static void main(String args[]) {
 
-    /* Set FlatLaf (Material / Google style) look and feel */
-    try {
-        FlatLightLaf.setup();
+        /* Set FlatLaf (Material / Google style) look and feel */
+        try {
+            FlatLightLaf.setup();
 
-        // Opcional: ajustes estilo Material
-        UIManager.put("Button.arc", 999);
-        UIManager.put("Component.arc", 12);
-        UIManager.put("TextComponent.arc", 10);
-        UIManager.put("ScrollBar.width", 12);
+            // Opcional: ajustes estilo Material
+            UIManager.put("Button.arc", 999);
+            UIManager.put("Component.arc", 12);
+            UIManager.put("TextComponent.arc", 10);
+            UIManager.put("ScrollBar.width", 12);
 
-    } catch (Exception ex) {
-        logger.log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            logger.log(java.util.logging.Level.SEVERE, null, ex);
+        }
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(() -> new login().setVisible(true));
     }
-
-    /* Create and display the form */
-    java.awt.EventQueue.invokeLater(() -> new login().setVisible(true));
-}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel iniciarText;
     private javax.swing.JButton loginButton;
+    private javax.swing.JTextField mailUser;
     private javax.swing.JPasswordField password;
-    private javax.swing.JTextField user;
     // End of variables declaration//GEN-END:variables
 }

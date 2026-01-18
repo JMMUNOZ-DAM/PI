@@ -11,6 +11,13 @@ package com.jmmunoz.netfix;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Random;
+import javax.swing.DefaultListModel;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
+import javax.swing.SwingWorker;
 
 public class SimuladorDiagnostico {
 
@@ -47,6 +54,26 @@ public class SimuladorDiagnostico {
             return idAparato;
         }
 
+        public String getMarca() {
+            return marca;
+        }
+
+        public String getModelo() {
+            return modelo;
+        }
+
+        public String getNumeroSerie() {
+            return numeroSerie;
+        }
+
+        public String getMac() {
+            return mac;
+        }
+
+        public int getIdContrato() {
+            return idContrato;
+        }
+
     }
 
     // =============================================================
@@ -61,6 +88,30 @@ public class SimuladorDiagnostico {
         public double ping;
         public String observaciones;
 
+        public String getEstadoGeneral() {
+            return estadoGeneral;
+        }
+
+        public double getVelocidadInternet() {
+            return velocidadInternet;
+        }
+
+        public String getNivelesOpticos() {
+            return nivelesOpticos;
+        }
+
+        public String getCobertura() {
+            return cobertura;
+        }
+
+        public double getPing() {
+            return ping;
+        }
+
+        public String getObservaciones() {
+            return observaciones;
+        }
+
         @Override
         public String toString() {
             return "Estado: " + estadoGeneral
@@ -70,6 +121,7 @@ public class SimuladorDiagnostico {
                     + "\nPing: " + ping + " ms"
                     + "\nObs: " + observaciones;
         }
+
     }
 
     // =============================================================
@@ -88,6 +140,82 @@ public class SimuladorDiagnostico {
         }
         guardarDiagnostico(aparato, diag);
         return diag;
+    }
+
+    public void generarDiagnosticoConCarga(JFrame parent, Aparato aparato, JList<String> listaDiagnostico) {
+        // Crear diálogo de carga
+        JDialog loadingDialog = new JDialog(parent, "Generando diagnóstico", true);
+        JProgressBar progressBar = new JProgressBar();
+        progressBar.setIndeterminate(true);
+        progressBar.setStringPainted(true);
+        progressBar.setString("Cargando niveles y realizando diagnóstico...");
+        loadingDialog.add(progressBar);
+        loadingDialog.setSize(400, 100);
+        loadingDialog.setLocationRelativeTo(parent);
+        loadingDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+
+        SwingWorker<Diagnostico, String> worker = new SwingWorker<>() {
+            @Override
+            protected Diagnostico doInBackground() throws Exception {
+                // Simular pasos
+                String[] pasos = {"Velocidad internet", "Niveles ópticos", "Cobertura", "Ping"};
+                for (String paso : pasos) {
+                    Thread.sleep(1000); // simula tiempo de carga
+                    publish("Comprobando: " + paso);
+                }
+
+                // Ejecutar diagnóstico real usando tu método existente
+                return generarDiagnostico(aparato);
+            }
+
+            @Override
+            protected void process(java.util.List<String> chunks) {
+                progressBar.setString(chunks.get(chunks.size() - 1));
+            }
+
+            @Override
+            protected void done() {
+                loadingDialog.dispose();
+                try {
+                    Diagnostico d = get();
+
+                    DefaultListModel<String> model = (DefaultListModel<String>) listaDiagnostico.getModel();
+                    if (model == null) {
+                        model = new DefaultListModel<>();
+                    } else {
+                        model.clear();
+                    }
+
+                    model.addElement("---Diagnóstico actualizado---");
+                    model.addElement("Estado: " + d.getEstadoGeneral());
+                    model.addElement("Velocidad: " + String.format("%.2f", d.getVelocidadInternet()) + " Mbps");
+                    model.addElement("Niveles ópticos: " + d.getNivelesOpticos());
+                    model.addElement("Cobertura: " + d.getCobertura());
+                    model.addElement("Ping: " + String.format("%.2f", d.getPing()) + " ms");
+                    model.addElement("Observaciones: " + d.getObservaciones());
+                    listaDiagnostico.setModel(model);
+
+                    JOptionPane.showMessageDialog(
+                            parent,
+                            "Diagnóstico completado para: " + aparato.getNumeroSerie(),
+                            "Éxito",
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(
+                            parent,
+                            "Error al generar diagnóstico",
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                }
+            }
+        };
+
+        worker.execute();
+        loadingDialog.setVisible(true);
     }
 
     // =============================================================
@@ -191,7 +319,7 @@ public class SimuladorDiagnostico {
 
             System.out.println("Diagnóstico guardado en la BD.");
         } catch (SQLException ex) {
-
+            System.err.println(ex.getMessage());
         }
     }
 
@@ -207,6 +335,6 @@ public class SimuladorDiagnostico {
 //        System.out.println("==============================5G===============================");
 //        Aparato b = new Aparato("5G", "ESIM", "ESIMBLANCA", "8434000001234564", "OEOE", 8);
 //        d = s.generarDiagnostico(b);
-       // System.out.println(d);
+        // System.out.println(d);
     }
 }

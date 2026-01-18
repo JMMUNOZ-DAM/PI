@@ -4,6 +4,12 @@
  */
 package vista;
 
+import com.jmmunoz.netfix.Usuario;
+import com.jmmunoz.netfix.utilities;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author juanm
@@ -13,8 +19,31 @@ public class UsuariosPanel extends javax.swing.JPanel {
     /**
      * Creates new form incidenciasPanel
      */
-    public UsuariosPanel() {
+    utilities ut = new utilities();
+    Usuario usuario;
+
+    public UsuariosPanel(Usuario usuario) {
         initComponents();
+        this.usuario = usuario;
+        cargarDatos();
+    }
+
+    public void cargarDatos() {
+        idText.setText(usuario.getIdUsuario());
+        nameText.setText(usuario.getNombre());
+        mailText.setText(usuario.getEmail());
+
+        ResultSet rs = ut.ejecutarConsulta(utilities.TipoConsulta.ROLES, 0);
+        rolCombo.removeAllItems();
+        try {
+            while (rs.next()) {
+                rolCombo.addItem(rs.getString("descripcion"));
+            }
+        } catch (SQLException ex) {
+            System.getLogger(SupervisorPanel.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        }
+        rolCombo.setSelectedItem(usuario.getRol());
+        passText.setText(usuario.getPassword());
     }
 
     /**
@@ -28,30 +57,18 @@ public class UsuariosPanel extends javax.swing.JPanel {
 
         usersPanel = new javax.swing.JPanel();
         ususTitle = new javax.swing.JLabel();
-        searchField1 = new javax.swing.JTextField();
-        searchButton1 = new javax.swing.JButton();
         mainPanel1 = new javax.swing.JPanel();
         nameLabel1 = new javax.swing.JLabel();
         emaiLabel = new javax.swing.JLabel();
         rolLabel = new javax.swing.JLabel();
         contratoLabel1 = new javax.swing.JLabel();
-        altasTitle = new javax.swing.JLabel();
-        userLlabel = new javax.swing.JLabel();
         modButton = new javax.swing.JButton();
-        jPanel2 = new javax.swing.JPanel();
-        altaLabel = new javax.swing.JLabel();
-        nameTfield = new javax.swing.JTextField();
-        rLabel = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        maiLabel = new javax.swing.JLabel();
-        mailField = new javax.swing.JTextField();
-        passLabel = new javax.swing.JLabel();
-        passField = new javax.swing.JPasswordField();
-        confiLabel = new javax.swing.JLabel();
-        confField = new javax.swing.JPasswordField();
-        altaButton = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        usersTable = new javax.swing.JTable();
+        nameText = new javax.swing.JTextField();
+        mailText = new javax.swing.JTextField();
+        rolCombo = new javax.swing.JComboBox<>();
+        passText = new javax.swing.JPasswordField();
+        idLabel = new javax.swing.JLabel();
+        idText = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setPreferredSize(new java.awt.Dimension(1592, 946));
@@ -60,10 +77,7 @@ public class UsuariosPanel extends javax.swing.JPanel {
         usersPanel.setPreferredSize(new java.awt.Dimension(1592, 946));
 
         ususTitle.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
-        ususTitle.setText("Gestión de Usuarios");
-
-        searchButton1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        searchButton1.setText("Buscar");
+        ususTitle.setText("Gestión de Usuario");
 
         mainPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -71,7 +85,7 @@ public class UsuariosPanel extends javax.swing.JPanel {
         nameLabel1.setText("Nombre: ");
 
         emaiLabel.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        emaiLabel.setText("email:");
+        emaiLabel.setText("Email:");
 
         rolLabel.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         rolLabel.setText("ROL:");
@@ -79,119 +93,27 @@ public class UsuariosPanel extends javax.swing.JPanel {
         contratoLabel1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         contratoLabel1.setText("Contraseña:");
 
-        altasTitle.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        altasTitle.setText("Gestión de Altas:");
-        altasTitle.setToolTipText("");
-
-        userLlabel.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        userLlabel.setText("Lista de usuarios:");
-
         modButton.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         modButton.setText("Modificar");
-
-        jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        altaLabel.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        altaLabel.setText("Nombre:");
-
-        nameTfield.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-
-        rLabel.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        rLabel.setText("ROL:");
-
-        jComboBox1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        maiLabel.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        maiLabel.setText("EMAIL:");
-
-        mailField.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-
-        passLabel.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        passLabel.setText("Contraseña:");
-
-        passField.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-
-        confiLabel.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        confiLabel.setText("Confirmar:");
-
-        confField.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-
-        altaButton.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        altaButton.setText("ALTA");
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(altaLabel)
-                            .addComponent(maiLabel))
-                        .addGap(46, 46, 46)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(mailField, javax.swing.GroupLayout.PREFERRED_SIZE, 377, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(nameTfield, javax.swing.GroupLayout.PREFERRED_SIZE, 377, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(passLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(passField)))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(0, 102, Short.MAX_VALUE)
-                        .addComponent(rLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(confiLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(confField)))
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(altaButton, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(389, 389, 389))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(altaLabel)
-                    .addComponent(nameTfield, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(rLabel)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(45, 45, 45)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(maiLabel)
-                    .addComponent(mailField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(66, 66, 66)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(passLabel)
-                    .addComponent(passField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(confiLabel)
-                    .addComponent(confField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(54, 54, 54)
-                .addComponent(altaButton)
-                .addContainerGap(136, Short.MAX_VALUE))
-        );
-
-        usersTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+        modButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                modButtonActionPerformed(evt);
             }
-        ));
-        jScrollPane1.setViewportView(usersTable);
+        });
+
+        nameText.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+
+        mailText.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+
+        rolCombo.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+
+        passText.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        passText.setToolTipText("LA CONTRASEÑA SOLO SE PUEDE CAMBIAR");
+
+        idLabel.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        idLabel.setText("ID USUARIO:");
+
+        idText.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
 
         javax.swing.GroupLayout mainPanel1Layout = new javax.swing.GroupLayout(mainPanel1);
         mainPanel1.setLayout(mainPanel1Layout);
@@ -201,49 +123,56 @@ public class UsuariosPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(mainPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(mainPanel1Layout.createSequentialGroup()
-                        .addGroup(mainPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(emaiLabel)
-                            .addComponent(nameLabel1)
-                            .addComponent(contratoLabel1))
+                        .addComponent(contratoLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(passText)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(rolLabel)
-                        .addGap(382, 382, 382))
+                        .addComponent(rolCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 286, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(689, 689, 689))
+                    .addComponent(modButton)
                     .addGroup(mainPanel1Layout.createSequentialGroup()
                         .addGroup(mainPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(modButton)
-                            .addComponent(altasTitle))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGroup(mainPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(userLlabel)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 535, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(64, 64, 64))
+                            .addComponent(nameLabel1)
+                            .addComponent(emaiLabel))
+                        .addGap(31, 31, 31)
+                        .addGroup(mainPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanel1Layout.createSequentialGroup()
+                                .addComponent(nameText, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
+                                .addGap(18, 18, 18)
+                                .addComponent(rolLabel))
+                            .addComponent(mailText))
+                        .addContainerGap(1034, Short.MAX_VALUE))
+                    .addGroup(mainPanel1Layout.createSequentialGroup()
+                        .addComponent(idLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(idText, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(1301, Short.MAX_VALUE))))
         );
         mainPanel1Layout.setVerticalGroup(
             mainPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mainPanel1Layout.createSequentialGroup()
                 .addGap(10, 10, 10)
+                .addGroup(mainPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(idLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(idText, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(mainPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(mainPanel1Layout.createSequentialGroup()
-                        .addGroup(mainPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(nameLabel1)
-                            .addComponent(rolLabel))
-                        .addGap(18, 18, 18)
-                        .addComponent(emaiLabel)
-                        .addGap(18, 18, 18)
-                        .addComponent(contratoLabel1)
-                        .addGap(46, 46, 46)
-                        .addComponent(modButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(altasTitle)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(mainPanel1Layout.createSequentialGroup()
-                        .addComponent(userLlabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane1)))
-                .addContainerGap())
+                    .addComponent(rolCombo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(rolLabel, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(mainPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(nameLabel1)
+                        .addComponent(nameText, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(mainPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(emaiLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(mailText, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(mainPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(contratoLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(passText, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(modButton)
+                .addContainerGap(532, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout usersPanelLayout = new javax.swing.GroupLayout(usersPanel);
@@ -253,30 +182,21 @@ public class UsuariosPanel extends javax.swing.JPanel {
             .addGroup(usersPanelLayout.createSequentialGroup()
                 .addGroup(usersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(usersPanelLayout.createSequentialGroup()
-                        .addGap(448, 448, 448)
-                        .addGroup(usersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(usersPanelLayout.createSequentialGroup()
-                                .addComponent(searchField1, javax.swing.GroupLayout.PREFERRED_SIZE, 417, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(45, 45, 45)
-                                .addComponent(searchButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(ususTitle)))
-                    .addGroup(usersPanelLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(mainPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 1526, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(0, 18, Short.MAX_VALUE))
+                        .addComponent(mainPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(usersPanelLayout.createSequentialGroup()
+                        .addGap(543, 543, 543)
+                        .addComponent(ususTitle)
+                        .addGap(0, 680, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         usersPanelLayout.setVerticalGroup(
             usersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, usersPanelLayout.createSequentialGroup()
-                .addContainerGap()
                 .addComponent(ususTitle)
-                .addGap(31, 31, 31)
-                .addGroup(usersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(searchField1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(searchButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(25, 25, 25)
+                .addGap(94, 94, 94)
                 .addComponent(mainPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 25, Short.MAX_VALUE))
+                .addGap(0, 16, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -285,7 +205,8 @@ public class UsuariosPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(usersPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 1550, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(usersPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 1630, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -296,33 +217,75 @@ public class UsuariosPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void modButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modButtonActionPerformed
+        // Obtener valores
+        String nombre = nameText.getText().trim();
+        String email = mailText.getText().trim();
+        String password = ut.hashPass(new String(passText.getPassword()).trim());
+        String id = idText.getText().trim();
+        Object rolObj = rolCombo.getSelectedItem();
 
+        // Validaciones
+        if (nombre.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "El nombre no puede estar vacío", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (rolObj == null) {
+            JOptionPane.showMessageDialog(this, "Debes seleccionar un rol", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (email.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "El email no puede estar vacío", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "La contraseña no puede estar vacía", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (id.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "ID de usuario no válido", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Ejecutar UPDATE
+        ut.ejecutarUpdate(
+                utilities.TipoConsulta.UPDATEUSER,
+                nombre,
+                rolObj.toString(),
+                email,
+                password,
+                id
+        );
+
+        JOptionPane.showMessageDialog(this, "Usuario actualizado correctamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+        cargarDatos();
+    }//GEN-LAST:event_modButtonActionPerformed
+
+    private void limpiarCamposMod() {
+        nameText.setText("");
+        mailText.setText("");
+        passText.setText("");
+        idText.setText("");
+        rolCombo.setSelectedIndex(-1); // nada seleccionado
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton altaButton;
-    private javax.swing.JLabel altaLabel;
-    private javax.swing.JLabel altasTitle;
-    private javax.swing.JPasswordField confField;
-    private javax.swing.JLabel confiLabel;
     private javax.swing.JLabel contratoLabel1;
     private javax.swing.JLabel emaiLabel;
-    private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel maiLabel;
-    private javax.swing.JTextField mailField;
+    private javax.swing.JLabel idLabel;
+    private javax.swing.JLabel idText;
+    private javax.swing.JTextField mailText;
     private javax.swing.JPanel mainPanel1;
     private javax.swing.JButton modButton;
     private javax.swing.JLabel nameLabel1;
-    private javax.swing.JTextField nameTfield;
-    private javax.swing.JPasswordField passField;
-    private javax.swing.JLabel passLabel;
-    private javax.swing.JLabel rLabel;
+    private javax.swing.JTextField nameText;
+    private javax.swing.JPasswordField passText;
+    private javax.swing.JComboBox<String> rolCombo;
     private javax.swing.JLabel rolLabel;
-    private javax.swing.JButton searchButton1;
-    private javax.swing.JTextField searchField1;
-    private javax.swing.JLabel userLlabel;
     private javax.swing.JPanel usersPanel;
-    private javax.swing.JTable usersTable;
     private javax.swing.JLabel ususTitle;
     // End of variables declaration//GEN-END:variables
 }

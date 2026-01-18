@@ -20,7 +20,7 @@ public class UtilitiesTest {
         // ===============================
         // ✅ 1️⃣ PROBAR LOGIN CON HASH
         // ===============================
-        int idUsuario = 1;
+        String idUsuario = "ana.torres@netfix.com";
         String password = "1234"; // la que escriba el usuario
 
         boolean loginOk = util.loggin(idUsuario, password);

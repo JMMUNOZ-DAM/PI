@@ -4,6 +4,20 @@
  */
 package vista;
 
+import com.jmmunoz.netfix.SimuladorDiagnostico;
+import com.jmmunoz.netfix.SimuladorDiagnostico.Aparato;
+import com.jmmunoz.netfix.SimuladorDiagnostico.Diagnostico;
+import com.jmmunoz.netfix.utilities;
+import static com.jmmunoz.netfix.utilities.TipoConsulta.DIAGNOSTICO_APARATO;
+import javax.swing.JOptionPane;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.List;
+import javax.swing.DefaultListModel;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+
 /**
  *
  * @author juanm
@@ -13,8 +27,15 @@ public class AparatosPanel extends javax.swing.JPanel {
     /**
      * Creates new form incidenciasPanel
      */
+    utilities ut;
+    SimuladorDiagnostico sd;
+    int idAparato;
+    String searchText;
+
     public AparatosPanel() {
         initComponents();
+        ut = new utilities();
+        sd = new SimuladorDiagnostico();
     }
 
     /**
@@ -30,6 +51,9 @@ public class AparatosPanel extends javax.swing.JPanel {
         searchField = new javax.swing.JTextField();
         searchButton = new javax.swing.JButton();
         mainPanel = new javax.swing.JPanel();
+        tipLbl = new javax.swing.JLabel();
+        macL = new javax.swing.JLabel();
+        statusLabel = new javax.swing.JLabel();
         tipoLabel = new javax.swing.JLabel();
         nsLabeel = new javax.swing.JLabel();
         macLabel = new javax.swing.JLabel();
@@ -38,11 +62,14 @@ public class AparatosPanel extends javax.swing.JPanel {
         estadoLabel = new javax.swing.JLabel();
         lasDlabel = new javax.swing.JLabel();
         obserPanel = new javax.swing.JLabel();
+        feLastLabel = new javax.swing.JLabel();
+        numSLabel = new javax.swing.JLabel();
         obervaText = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        observaciones = new javax.swing.JTextArea();
         actualDlbale = new javax.swing.JLabel();
         listaDiag = new javax.swing.JScrollPane();
         actualDiag = new javax.swing.JList<>();
+        numConLabel = new javax.swing.JLabel();
         diagnoButton = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
@@ -51,10 +78,23 @@ public class AparatosPanel extends javax.swing.JPanel {
         apaTitle.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
         apaTitle.setText("Diagnóstico de aparatos");
 
+        searchField.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+
         searchButton.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         searchButton.setText("Buscar");
+        searchButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchButtonActionPerformed(evt);
+            }
+        });
 
         mainPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        tipLbl.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+
+        macL.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+
+        statusLabel.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
 
         tipoLabel.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         tipoLabel.setText("Tipo de aparato:");
@@ -80,19 +120,22 @@ public class AparatosPanel extends javax.swing.JPanel {
         obserPanel.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         obserPanel.setText("Observaciones:");
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        obervaText.setViewportView(jTextArea1);
+        feLastLabel.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+
+        numSLabel.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+
+        observaciones.setColumns(20);
+        observaciones.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        observaciones.setRows(5);
+        obervaText.setViewportView(observaciones);
 
         actualDlbale.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         actualDlbale.setText("Diagnóstico actual:");
 
-        actualDiag.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
+        actualDiag.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         listaDiag.setViewportView(actualDiag);
+
+        numConLabel.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
 
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
@@ -104,101 +147,212 @@ public class AparatosPanel extends javax.swing.JPanel {
                         .addContainerGap()
                         .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(mainPanelLayout.createSequentialGroup()
-                                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(nsLabeel)
-                                    .addComponent(tipoLabel)
-                                    .addComponent(contratoLabel))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(macLabel)
+                                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(mainPanelLayout.createSequentialGroup()
+                                        .addComponent(nsLabeel)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(numSLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addGroup(mainPanelLayout.createSequentialGroup()
+                                        .addComponent(tipoLabel)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(tipLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(mainPanelLayout.createSequentialGroup()
+                                        .addComponent(contratoLabel)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(numConLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 67, Short.MAX_VALUE)
+                                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(nombreLabel)
-                                    .addComponent(estadoLabel))
-                                .addGap(268, 268, 268))
+                                    .addGroup(mainPanelLayout.createSequentialGroup()
+                                        .addComponent(estadoLabel)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(statusLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addGroup(mainPanelLayout.createSequentialGroup()
+                                        .addComponent(macLabel)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(macL, javax.swing.GroupLayout.PREFERRED_SIZE, 277, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(122, 122, 122))
                             .addGroup(mainPanelLayout.createSequentialGroup()
                                 .addComponent(lasDlabel)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                .addGap(18, 18, 18)
+                                .addComponent(feLastLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(actualDlbale)
+                            .addComponent(listaDiag, javax.swing.GroupLayout.PREFERRED_SIZE, 688, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(mainPanelLayout.createSequentialGroup()
                         .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(obserPanel)
                             .addComponent(obervaText, javax.swing.GroupLayout.PREFERRED_SIZE, 851, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(actualDlbale)
-                    .addComponent(listaDiag, javax.swing.GroupLayout.PREFERRED_SIZE, 688, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mainPanelLayout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(mainPanelLayout.createSequentialGroup()
-                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(tipoLabel)
-                            .addComponent(nombreLabel))
+                        .addGap(10, 10, 10)
+                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(tipoLabel)
+                                .addComponent(nombreLabel))
+                            .addComponent(tipLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(nsLabeel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(macLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(macL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(numSLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(estadoLabel)
+                                .addComponent(contratoLabel)
+                                .addComponent(statusLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(numConLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(18, 18, 18)
                         .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(nsLabeel)
-                            .addComponent(macLabel))
-                        .addGap(18, 18, 18)
-                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(estadoLabel)
-                            .addComponent(contratoLabel))
-                        .addGap(18, 18, 18)
-                        .addComponent(lasDlabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lasDlabel)
+                            .addComponent(feLastLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(137, 137, 137)
                         .addComponent(obserPanel)
                         .addGap(18, 18, 18)
                         .addComponent(obervaText, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(mainPanelLayout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
                         .addComponent(actualDlbale)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(listaDiag, javax.swing.GroupLayout.PREFERRED_SIZE, 630, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(30, Short.MAX_VALUE))
+                .addContainerGap(50, Short.MAX_VALUE))
         );
 
         diagnoButton.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         diagnoButton.setText("Ejecutar diagnóstico");
+        diagnoButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                diagnoButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(448, 448, 448)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(searchField, javax.swing.GroupLayout.PREFERRED_SIZE, 417, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(45, 45, 45)
-                        .addComponent(searchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(apaTitle))
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(diagnoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(595, 595, 595))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(mainPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(37, Short.MAX_VALUE))
+                        .addGap(448, 448, 448)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(searchField, javax.swing.GroupLayout.PREFERRED_SIZE, 417, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(45, 45, 45)
+                                .addComponent(searchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(apaTitle)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(537, 537, 537)
+                        .addComponent(diagnoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(mainPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 19, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(apaTitle)
-                .addGap(31, 31, 31)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(searchField, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(searchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(25, 25, 25)
-                .addComponent(mainPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
+                .addComponent(mainPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(diagnoButton)
-                .addGap(0, 7, Short.MAX_VALUE))
+                .addGap(0, 13, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
+        if (searchField.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "El campo de búsqueda no puede estar vacío",
+                    "Aviso",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return; // Detiene la ejecución si está vacío
+        }
+        searchText = searchField.getText();
+        System.out.println("PULSADO");
+        cargarDiagnostico();
+    }//GEN-LAST:event_searchButtonActionPerformed
 
+    private void diagnoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_diagnoButtonActionPerformed
+        if (numSLabel.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Debe haber seleccionado un aparato para el diagnóstico",
+                    "Aviso",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return; // Detiene la ejecución si está vacío
+        }
+
+        // Crear objeto Aparato con los datos ya cargados
+        String[] nombreParts = nombreLabel.getText().split(" ", 2); // marca + modelo
+        String marca = nombreParts.length > 0 ? nombreParts[0] : "";
+        String modelo = nombreParts.length > 1 ? nombreParts[1] : "";
+
+        Aparato a = new Aparato(
+                tipLbl.getText(), // tipo
+                marca, // marca
+                modelo, // modelo
+                numSLabel.getText(), // número de serie
+                macL.getText(), // MAC
+                Integer.parseInt(numConLabel.getText()), 
+                idAparato 
+        );
+        JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+        // Generar diagnóstico usando tu servicio
+        sd.generarDiagnosticoConCarga(parentFrame, a, actualDiag);
+        //cargarDiagnostico();
+
+    }//GEN-LAST:event_diagnoButtonActionPerformed
+
+    public void cargarDiagnostico() {
+        try {
+            List<Object[]> resultados = utilities.buscarDiagnosticoAparato(searchText);
+
+            for (Object[] fila : resultados) {
+                for (Object valor : fila) {
+                    System.out.print(valor + " | ");
+                }
+                idAparato = Integer.parseInt(String.valueOf(fila[0]));
+                tipLbl.setText(String.valueOf(fila[1]));
+                nombreLabel.setText(String.valueOf(fila[2]));
+
+                numSLabel.setText(String.valueOf(fila[3]));
+                macL.setText(String.valueOf(fila[4]));
+
+                numConLabel.setText(String.valueOf(fila[5]));
+
+                feLastLabel.setText(String.valueOf(fila[6]));
+                statusLabel.setText(String.valueOf(fila[7]));
+                DefaultListModel<String> model = new DefaultListModel<>();
+                model.addElement("Velocidad internet: " + String.valueOf(fila[8]));
+                model.addElement("Niveles ópticos: " + String.valueOf(fila[9]));
+                model.addElement("Cobertura: " + String.valueOf(fila[10]));
+                model.addElement("Ping: " + String.valueOf(fila[11]));
+                actualDiag.setModel(model);
+                observaciones.setText(String.valueOf(fila[12]));
+                System.out.println("SE SUPONE QUE HE FINALIZADO AQUI");
+
+            }
+        } catch (SQLException ex) {
+            System.getLogger(AparatosPanel.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        }
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList<String> actualDiag;
     private javax.swing.JLabel actualDlbale;
@@ -206,17 +360,23 @@ public class AparatosPanel extends javax.swing.JPanel {
     private javax.swing.JLabel contratoLabel;
     private javax.swing.JButton diagnoButton;
     private javax.swing.JLabel estadoLabel;
-    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JLabel feLastLabel;
     private javax.swing.JLabel lasDlabel;
     private javax.swing.JScrollPane listaDiag;
+    private javax.swing.JLabel macL;
     private javax.swing.JLabel macLabel;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JLabel nombreLabel;
     private javax.swing.JLabel nsLabeel;
+    private javax.swing.JLabel numConLabel;
+    private javax.swing.JLabel numSLabel;
     private javax.swing.JScrollPane obervaText;
     private javax.swing.JLabel obserPanel;
+    private javax.swing.JTextArea observaciones;
     private javax.swing.JButton searchButton;
     private javax.swing.JTextField searchField;
+    private javax.swing.JLabel statusLabel;
+    private javax.swing.JLabel tipLbl;
     private javax.swing.JLabel tipoLabel;
     // End of variables declaration//GEN-END:variables
 }

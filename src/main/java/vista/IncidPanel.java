@@ -4,17 +4,113 @@
  */
 package vista;
 
+import com.jmmunoz.netfix.utilities;
+import java.awt.GridLayout;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import javax.swing.DefaultListModel;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.RowFilter;
+import javax.swing.SpinnerDateModel;
+import javax.swing.SwingUtilities;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
+
 /**
  *
  * @author juanm
  */
 public class IncidPanel extends javax.swing.JPanel {
 
+    private TableRowSorter<DefaultTableModel> sorter;
+    ResultSet rs;
+    ResultSet crs;
+    utilities ut = new utilities();
+    int usuario = 2;
+    String usuName = "pruebas";
+
     /**
      * Creates new form incidenciasPanel
      */
     public IncidPanel() {
         initComponents();
+        configurarBuscador();
+        cargarDatos();
+
+    }
+
+    public void cargarDatos() {
+        SwingUtilities.invokeLater(() -> {
+            try {
+                rs = ut.ejecutarConsulta(utilities.TipoConsulta.INCIDENCIAS, 0);
+                ut.cargarTabla(inciTabla, rs);
+
+                inciTabla.getSelectionModel().addListSelectionListener(e -> {
+                    if (!e.getValueIsAdjusting()) {
+                        int fila = inciTabla.getSelectedRow();
+                        if (fila != -1) {
+                            try {
+                                txtID.setText(inciTabla.getValueAt(fila, 0).toString());
+                                txtContrato.setText(inciTabla.getValueAt(fila, 1).toString());
+                                txtDescripcion.setText(inciTabla.getValueAt(fila, 2).toString());
+
+                                txtNombre.setText(
+                                        ut.obtenerTitular(Integer.parseInt(inciTabla.getValueAt(fila, 1).toString()))
+                                );
+
+                                String[] aparatos = ut.obtenerApaFTTH(Integer.parseInt(txtContrato.getText()));
+                                ut.obtenerApa5G(Integer.parseInt(inciTabla.getValueAt(fila, 1).toString()), lista5G);
+                                txtAparato.setText(aparatos[0]);
+                                txtMoFT.setText(aparatos[2]);
+                                txtMAC.setText(aparatos[1]);
+                                crs = ut.ejecutarConsulta(utilities.TipoConsulta.COMENTARIOS, Integer.valueOf(inciTabla.getValueAt(fila, 0).toString()));
+                                ut.cargarTabla(comenTable, crs);
+
+                                if ((inciTabla.getValueAt(fila,
+                                        5).toString()).equals("sin_comunicar")) {
+                                    actuButton.setText("COMUNICAR");
+                                } else {
+                                    actuButton.setText("ACTUALIZAR");
+                                }
+                            } catch (SQLException ex) {
+                                System.out.print(ex.getMessage());
+                            }
+
+                        }
+                    }
+                });
+                // Actualizamos el sorter con el nuevo modelo en caso de recarga
+                sorter.setModel((DefaultTableModel) inciTabla.getModel());
+
+            } catch (SQLException ex) {
+                System.out.println(ex.getMessage());
+            }
+        });
+
+    }
+
+    private void configurarBuscador() {
+        // Inicializamos el sorter con el modelo actual de la tabla
+        DefaultTableModel model = (DefaultTableModel) inciTabla.getModel();
+        sorter = new TableRowSorter<>(model);
+        inciTabla.setRowSorter(sorter);
+
+        // Configuramos el botón de búsqueda
+        searchButton.addActionListener(e -> {
+            String texto = searchField.getText().trim();
+
+            if (texto.isEmpty()) {
+                sorter.setRowFilter(null);
+            } else {
+                sorter.setRowFilter(RowFilter.regexFilter("(?i)" + texto));
+            }
+        });
     }
 
     /**
@@ -46,11 +142,18 @@ public class IncidPanel extends javax.swing.JPanel {
         tituLabel = new javax.swing.JLabel();
         ftthLabel = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList<>();
+        lista5G = new javax.swing.JList<>();
         movilLabel = new javax.swing.JLabel();
         soluButton = new javax.swing.JButton();
         actuButton = new javax.swing.JButton();
         enviButton = new javax.swing.JButton();
+        txtContrato = new javax.swing.JLabel();
+        txtNombre = new javax.swing.JLabel();
+        txtID = new javax.swing.JLabel();
+        txtDescripcion = new javax.swing.JLabel();
+        txtAparato = new javax.swing.JLabel();
+        txtMoFT = new javax.swing.JLabel();
+        txtMAC = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setPreferredSize(new java.awt.Dimension(1592, 946));
@@ -62,6 +165,11 @@ public class IncidPanel extends javax.swing.JPanel {
 
         searchButton.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         searchButton.setText("Buscar");
+        searchButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchButtonActionPerformed(evt);
+            }
+        });
 
         inciTabla.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -147,24 +255,49 @@ public class IncidPanel extends javax.swing.JPanel {
         ftthLabel.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         ftthLabel.setText("FTTH:");
 
-        jList1.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
-        jScrollPane2.setViewportView(jList1);
+        lista5G.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        jScrollPane2.setViewportView(lista5G);
 
         movilLabel.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         movilLabel.setText("Móvil:");
 
         soluButton.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         soluButton.setText("Solucionar");
+        soluButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                soluButtonActionPerformed(evt);
+            }
+        });
 
         actuButton.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         actuButton.setText("Actualizar");
+        actuButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                actuButtonActionPerformed(evt);
+            }
+        });
 
         enviButton.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         enviButton.setText("Enviar Técnico");
+        enviButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                enviButtonActionPerformed(evt);
+            }
+        });
+
+        txtContrato.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+
+        txtNombre.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+
+        txtID.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+
+        txtDescripcion.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+
+        txtAparato.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+
+        txtMoFT.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+
+        txtMAC.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
 
         javax.swing.GroupLayout datosPanelLayout = new javax.swing.GroupLayout(datosPanel);
         datosPanel.setLayout(datosPanelLayout);
@@ -175,59 +308,91 @@ public class IncidPanel extends javax.swing.JPanel {
             .addGroup(datosPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(datosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(datosPanelLayout.createSequentialGroup()
-                        .addComponent(gestiPanel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(numLabel)
-                        .addGap(221, 221, 221))
-                    .addGroup(datosPanelLayout.createSequentialGroup()
-                        .addComponent(comenLabel)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(sepaAparatos, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, datosPanelLayout.createSequentialGroup()
-                        .addComponent(jScrollPane1)
-                        .addContainerGap())
                     .addGroup(datosPanelLayout.createSequentialGroup()
                         .addGroup(datosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(datosPanelLayout.createSequentialGroup()
+                                .addComponent(gestiPanel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(numLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtID, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(datosPanelLayout.createSequentialGroup()
                                 .addComponent(soluButton)
                                 .addGap(217, 217, 217)
                                 .addComponent(actuButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 205, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(enviButton))
                             .addGroup(datosPanelLayout.createSequentialGroup()
                                 .addGroup(datosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(comenLabel)
                                     .addGroup(datosPanelLayout.createSequentialGroup()
                                         .addComponent(contatoLabel)
-                                        .addGap(144, 144, 144)
-                                        .addComponent(tituLabel))
-                                    .addComponent(problemaLabel)
-                                    .addComponent(ftthLabel)
-                                    .addComponent(movilLabel))
-                                .addGap(0, 0, Short.MAX_VALUE)))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(txtContrato, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(tituLabel)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 522, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(datosPanelLayout.createSequentialGroup()
+                                        .addComponent(movilLabel)
+                                        .addGap(22, 22, 22)
+                                        .addComponent(txtMAC, javax.swing.GroupLayout.PREFERRED_SIZE, 333, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(datosPanelLayout.createSequentialGroup()
+                                .addComponent(problemaLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtDescripcion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(datosPanelLayout.createSequentialGroup()
+                                .addComponent(ftthLabel)
+                                .addGap(27, 27, 27)
+                                .addComponent(txtMoFT, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(txtAparato, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(60, 60, 60)))
                         .addContainerGap())))
         );
         datosPanelLayout.setVerticalGroup(
             datosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(datosPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(datosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(gestiPanel)
-                    .addComponent(numLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(sepaDatos, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(datosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(contatoLabel)
-                    .addComponent(tituLabel))
-                .addGap(30, 30, 30)
-                .addComponent(problemaLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(sepaAparatos, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(5, 5, 5)
-                .addComponent(ftthLabel)
-                .addGap(57, 57, 57)
-                .addComponent(movilLabel)
+                .addGroup(datosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(datosPanelLayout.createSequentialGroup()
+                        .addGroup(datosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(datosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(gestiPanel)
+                                .addComponent(numLabel))
+                            .addComponent(txtID, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(sepaDatos, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(datosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(datosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(contatoLabel)
+                                .addComponent(tituLabel)
+                                .addComponent(txtContrato, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(datosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(problemaLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtDescripcion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(sepaAparatos, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(5, 5, 5)
+                        .addGroup(datosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtAparato, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(ftthLabel)))
+                    .addGroup(datosPanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(txtMoFT, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(datosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(datosPanelLayout.createSequentialGroup()
+                        .addGap(31, 31, 31)
+                        .addComponent(movilLabel))
+                    .addGroup(datosPanelLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtMAC, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -249,7 +414,7 @@ public class IncidPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(537, 537, 537)
                 .addComponent(inciGTitle)
-                .addGap(0, 584, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(datosPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -266,10 +431,184 @@ public class IncidPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(datosPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(inciPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(0, 22, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_searchButtonActionPerformed
+
+    private void actuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_actuButtonActionPerformed
+        try {
+            int filaButton = inciTabla.getSelectedRow();
+            if (filaButton == -1) {
+                System.out.println("No hay fila seleccionada");
+                return;
+            }
+
+            int idIncidencia = Integer.parseInt(
+                    inciTabla.getValueAt(filaButton, 0).toString()
+            );
+
+            String accion = actuButton.getText();
+
+            if ("COMUNICAR".equals(accion)) {
+
+                ut.ejecutarUpdate(
+                        utilities.TipoConsulta.COMUNICAR,
+                        usuario,
+                        idIncidencia
+                );
+
+                System.out.println("INCIDENCIA COMUNICADA");
+                cargarDatos();
+            } else if ("ACTUALIZAR".equals(accion)) {
+
+                String comentario = JOptionPane.showInputDialog(
+                        this,
+                        "Introduce el comentario:",
+                        "Nuevo comentario",
+                        JOptionPane.PLAIN_MESSAGE
+                );
+
+                // Si cancela o deja vacío
+                if (comentario == null || comentario.trim().isEmpty()) {
+                    return;
+                }
+
+                ut.ejecutarUpdate(
+                        utilities.TipoConsulta.INSERT_COMENTARIO,
+                        idIncidencia,
+                        usuName,
+                        comentario
+                );
+                System.out.println("COMENTARIO AÑADIDO");
+            }
+            crs = ut.ejecutarConsulta(utilities.TipoConsulta.COMENTARIOS, idIncidencia);
+            ut.cargarTabla(comenTable, crs);
+        } catch (SQLException ex) {
+            System.getLogger(IncidPanel.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        }
+    }//GEN-LAST:event_actuButtonActionPerformed
+
+    private void soluButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_soluButtonActionPerformed
+        int filaButton = inciTabla.getSelectedRow();
+        if (filaButton == -1) {
+            System.out.println("No hay fila seleccionada");
+            return;
+        }
+
+        int idIncidencia = Integer.parseInt(
+                inciTabla.getValueAt(filaButton, 0).toString()
+        );
+        String solucion = JOptionPane.showInputDialog(
+                this,
+                "Introduce la solución:",
+                "Nuevo comentario",
+                JOptionPane.PLAIN_MESSAGE
+        );
+        // Si cancela o deja vacío
+        if (solucion == null || solucion.trim().isEmpty()) {
+            return;
+        }
+        ut.ejecutarUpdate(
+                utilities.TipoConsulta.SOLUCIONAR,
+                usuario,
+                solucion,
+                idIncidencia
+        );
+        System.out.println("SOLUCIONADA");
+        limpiarCampos();
+        cargarDatos();
+
+    }//GEN-LAST:event_soluButtonActionPerformed
+
+    private void enviButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_enviButtonActionPerformed
+        int filaButton = inciTabla.getSelectedRow();
+        if (filaButton == -1) {
+            JOptionPane.showMessageDialog(this, "Selecciona una incidencia");
+            return;
+        }
+
+        int idIncidencia = Integer.parseInt(
+                inciTabla.getValueAt(filaButton, 0).toString()
+        );
+
+        // 📅 Selector de fecha
+        JSpinner fechaSpinner = new JSpinner(
+                new SpinnerDateModel()
+        );
+        JSpinner.DateEditor fechaEditor
+                = new JSpinner.DateEditor(fechaSpinner, "dd/MM/yyyy");
+        fechaSpinner.setEditor(fechaEditor);
+
+        // ⏰ Selector de hora
+        JSpinner horaSpinner = new JSpinner(
+                new SpinnerDateModel()
+        );
+        JSpinner.DateEditor horaEditor
+                = new JSpinner.DateEditor(horaSpinner, "HH:mm");
+        horaSpinner.setEditor(horaEditor);
+
+        // 👨‍🔧 Selector de técnico
+        JComboBox<String> tecnicoCombo = new JComboBox<>();
+        tecnicoCombo.addItem("Juan");
+        tecnicoCombo.addItem("María");
+        tecnicoCombo.addItem("Pedro");
+
+        // Panel contenedor
+        JPanel panel = new JPanel(new GridLayout(3, 2, 5, 5));
+        panel.add(new JLabel("Fecha:"));
+        panel.add(fechaSpinner);
+        panel.add(new JLabel("Hora:"));
+        panel.add(horaSpinner);
+        panel.add(new JLabel("Técnico:"));
+        panel.add(tecnicoCombo);
+
+        int result = JOptionPane.showConfirmDialog(
+                this,
+                panel,
+                "Enviar incidencia",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE
+        );
+
+        if (result != JOptionPane.OK_OPTION) {
+            return;
+        }
+
+        // 📌 Obtener valores
+        Date fecha = (Date) fechaSpinner.getValue();
+        Date hora = (Date) horaSpinner.getValue();
+        String tecnico = tecnicoCombo.getSelectedItem().toString();
+
+        // 📄 Formatear texto de solución
+        SimpleDateFormat sdfFecha = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat sdfHora = new SimpleDateFormat("HH:mm");
+
+        String solucion = "Fecha: " + sdfFecha.format(fecha)
+                + ", Hora: " + sdfHora.format(hora)
+                + ", Técnico: " + tecnico;
+
+        ut.ejecutarUpdate(
+                utilities.TipoConsulta.SOLUCIONAR,
+                usuario,
+                solucion,
+                idIncidencia
+        );
+        JOptionPane.showMessageDialog(this, "Técnico agendado");
+        System.out.println("ENVIADA");
+        cargarDatos();
+    }//GEN-LAST:event_enviButtonActionPerformed
+    
+     private void limpiarCampos() {
+        txtContrato.setText("");
+        txtNombre.setText("");
+        txtDescripcion.setText("");
+        txtMoFT.setText("");
+        lista5G.setModel(new DefaultListModel<>());
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton actuButton;
@@ -284,9 +623,9 @@ public class IncidPanel extends javax.swing.JPanel {
     private javax.swing.JPanel inciPanel;
     private javax.swing.JTable inciTabla;
     private javax.swing.JScrollPane incidenciasTable;
-    private javax.swing.JList<String> jList1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JList<String> lista5G;
     private javax.swing.JLabel listadoText;
     private javax.swing.JLabel movilLabel;
     private javax.swing.JLabel numLabel;
@@ -297,5 +636,12 @@ public class IncidPanel extends javax.swing.JPanel {
     private javax.swing.JSeparator sepaDatos;
     private javax.swing.JButton soluButton;
     private javax.swing.JLabel tituLabel;
+    private javax.swing.JLabel txtAparato;
+    private javax.swing.JLabel txtContrato;
+    private javax.swing.JLabel txtDescripcion;
+    private javax.swing.JLabel txtID;
+    private javax.swing.JLabel txtMAC;
+    private javax.swing.JLabel txtMoFT;
+    private javax.swing.JLabel txtNombre;
     // End of variables declaration//GEN-END:variables
 }

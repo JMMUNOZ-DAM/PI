@@ -4,6 +4,11 @@
  */
 package vista;
 
+import com.jmmunoz.netfix.utilities;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.SwingUtilities;
+
 /**
  *
  * @author juanm
@@ -14,7 +19,29 @@ public class EstadisPanel extends javax.swing.JPanel {
      * Creates new form incidenciasPanel
      */
     public EstadisPanel() {
+
         initComponents();
+        cargarDatos();
+
+    }
+
+    public void cargarDatos() {
+        SwingUtilities.invokeLater(() -> {
+            try {
+                utilities ut = new utilities();
+                ResultSet rs = ut.ejecutarConsulta(utilities.TipoConsulta.INCIDENCIAS, 0);
+                ut.cargarTabla(inciTabla, rs);
+                ut.cargarGrafico(grafiPanel);
+
+                int[] contadores = ut.obtenerContadorIncidencias();
+                //System.out.println(contadores[0] + " " + contadores[1] + " " + contadores[2]);
+                totalPendientes.setText(String.valueOf(contadores[0]));
+                totalResueltas.setText(String.valueOf(contadores[1]));
+                totalSinco.setText(String.valueOf(contadores[2]));
+            } catch (SQLException ex) {
+                System.out.println(ex.getMessage());
+            }
+        });
     }
 
     /**
@@ -31,14 +58,14 @@ public class EstadisPanel extends javax.swing.JPanel {
         inciTabla = new javax.swing.JTable();
         listadoText = new javax.swing.JLabel();
         inciTitle = new javax.swing.JLabel();
-        estaTitle = new javax.swing.JLabel();
         panelRecuento = new javax.swing.JPanel();
         totalResueltas = new javax.swing.JLabel();
         totalSinco = new javax.swing.JLabel();
-        totalPendientes2 = new javax.swing.JLabel();
+        totalPendientes = new javax.swing.JLabel();
         pendTItle = new javax.swing.JLabel();
         resTitle1 = new javax.swing.JLabel();
         sinTitle = new javax.swing.JLabel();
+        grafiPanel = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setPreferredSize(new java.awt.Dimension(1592, 946));
@@ -82,9 +109,6 @@ public class EstadisPanel extends javax.swing.JPanel {
         inciTitle.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
         inciTitle.setText("Estadísticas de incidencias");
 
-        estaTitle.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
-        estaTitle.setText("Estadísticas por día");
-
         panelRecuento.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         totalResueltas.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
@@ -93,8 +117,8 @@ public class EstadisPanel extends javax.swing.JPanel {
         totalSinco.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
         totalSinco.setText("0");
 
-        totalPendientes2.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
-        totalPendientes2.setText("0");
+        totalPendientes.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
+        totalPendientes.setText("0");
 
         pendTItle.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
         pendTItle.setText("Pendientes");
@@ -119,7 +143,7 @@ public class EstadisPanel extends javax.swing.JPanel {
                 .addGap(25, 25, 25))
             .addGroup(panelRecuentoLayout.createSequentialGroup()
                 .addGap(99, 99, 99)
-                .addComponent(totalPendientes2)
+                .addComponent(totalPendientes)
                 .addGap(330, 330, 330)
                 .addComponent(totalResueltas)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -138,8 +162,19 @@ public class EstadisPanel extends javax.swing.JPanel {
                 .addGroup(panelRecuentoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(totalResueltas)
                     .addComponent(totalSinco)
-                    .addComponent(totalPendientes2))
+                    .addComponent(totalPendientes))
                 .addContainerGap())
+        );
+
+        javax.swing.GroupLayout grafiPanelLayout = new javax.swing.GroupLayout(grafiPanel);
+        grafiPanel.setLayout(grafiPanelLayout);
+        grafiPanelLayout.setHorizontalGroup(
+            grafiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 634, Short.MAX_VALUE)
+        );
+        grafiPanelLayout.setVerticalGroup(
+            grafiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -150,8 +185,7 @@ public class EstadisPanel extends javax.swing.JPanel {
                 .addGap(4, 4, 4)
                 .addComponent(inciPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(estaTitle)
-                .addGap(0, 290, Short.MAX_VALUE))
+                .addComponent(grafiPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -168,20 +202,16 @@ public class EstadisPanel extends javax.swing.JPanel {
                 .addComponent(inciTitle)
                 .addGap(36, 36, 36)
                 .addComponent(panelRecuento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 59, Short.MAX_VALUE)
-                        .addComponent(inciPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(64, 64, 64)
-                        .addComponent(estaTitle)
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(inciPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(grafiPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel estaTitle;
+    private javax.swing.JPanel grafiPanel;
     private javax.swing.JPanel inciPanel;
     private javax.swing.JTable inciTabla;
     private javax.swing.JLabel inciTitle;
@@ -191,7 +221,7 @@ public class EstadisPanel extends javax.swing.JPanel {
     private javax.swing.JLabel pendTItle;
     private javax.swing.JLabel resTitle1;
     private javax.swing.JLabel sinTitle;
-    private javax.swing.JLabel totalPendientes2;
+    private javax.swing.JLabel totalPendientes;
     private javax.swing.JLabel totalResueltas;
     private javax.swing.JLabel totalSinco;
     // End of variables declaration//GEN-END:variables
