@@ -46,7 +46,7 @@ public class utilities {
             // 1️⃣ Obtener hash desde BD
             String hashBD = db.executePreparedString(
                     querys.login,
-                    mail     
+                    mail
             );
 
             // Usuario no existe
@@ -409,6 +409,11 @@ public class utilities {
         }
 
         return resultados;
+    }
+
+    public boolean checkEmail(String email) {
+        String regex = "^[A-Za-z0-9._%+-]+@netfix\\.(com|es)$";
+        return email.matches(regex);
     }
 
 }

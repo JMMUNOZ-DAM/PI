@@ -8,6 +8,13 @@ import com.formdev.flatlaf.FlatLightLaf;
 import com.jmmunoz.netfix.Usuario;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Image;
+import java.net.URL;
+import java.util.List;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
@@ -26,17 +33,39 @@ public class mainFrame extends javax.swing.JFrame {
     private final AdminPanel adminPanel;
     private final UsuariosPanel usuariosPanel;
     private Usuario usuario;
+    private JButton activeButton = null;
+
+    private final Color ACTIVE_BG = new Color(224, 234, 255); // azul claro NETFIX
+    private final Color HOVER_BG = new Color(230, 235, 245);
 
     /**
      * Creates new form mainFrame
      */
     public mainFrame(Usuario usuario) {
         initComponents();
+        /* =========================
+       ICONO DE VENTANA
+       ========================= */
+        URL logoIcon = getClass().getResource("/img/netfix_N.png");
+        if (logoIcon != null) {
+            Image base = new ImageIcon(logoIcon).getImage();
+
+            List<Image> icons = List.of(
+                    base.getScaledInstance(16, 16, Image.SCALE_SMOOTH),
+                    base.getScaledInstance(24, 24, Image.SCALE_SMOOTH),
+                    base.getScaledInstance(32, 32, Image.SCALE_SMOOTH),
+                    base.getScaledInstance(48, 48, Image.SCALE_SMOOTH),
+                    base.getScaledInstance(64, 64, Image.SCALE_SMOOTH),
+                    base.getScaledInstance(128, 128, Image.SCALE_SMOOTH)
+            );
+
+            setIconImages(icons);
+        }
         this.usuario = usuario;
         cargarDatosUsuario();
         aplicarPermisosPorRol();
         setLocationRelativeTo(null);
-
+        setActiveButton(estaButton);
         cardLayout = new CardLayout();
         contentPanel.setLayout(cardLayout);
 
@@ -55,6 +84,12 @@ public class mainFrame extends javax.swing.JFrame {
         cardLayout.show(contentPanel, "estadisticas");
         contentPanel.revalidate();
         contentPanel.repaint();
+
+        applyHoverEffect(estaButton);
+        applyHoverEffect(inciButton);
+        applyHoverEffect(aparaButton);
+        applyHoverEffect(usuButton);
+        applyHoverEffect(adminButton);
     }
 
     private void cargarDatosUsuario() {
@@ -105,14 +140,163 @@ public class mainFrame extends javax.swing.JFrame {
 
         fondoPanel = new javax.swing.JPanel();
         panelLateral = new javax.swing.JPanel();
-        estaButon = new javax.swing.JButton();
-        inciButton = new javax.swing.JButton();
-        aparaButton = new javax.swing.JButton();
-        usuButton = new javax.swing.JButton();
-        adminButton = new javax.swing.JButton();
+        estaButton = estaButton = new javax.swing.JButton();
+        estaButton.setLayout(new java.awt.BorderLayout());
+
+        estaButton.setText("Estadísticas");
+        estaButton.setFocusPainted(false);
+        estaButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        estaButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        estaButton.setBorderPainted(false);
+        estaButton.setContentAreaFilled(false);
+        estaButton.setMargin(new java.awt.Insets(10, 16, 10, 16));
+
+        // Cargar icono
+        java.net.URL estaUrl = getClass().getResource("/img/nav/stats.png");
+        if (estaUrl != null) {
+            javax.swing.ImageIcon icon = new javax.swing.ImageIcon(estaUrl);
+            java.awt.Image scaled = icon.getImage()
+            .getScaledInstance(18, 18, java.awt.Image.SCALE_SMOOTH);
+
+            javax.swing.JLabel iconLabel = new javax.swing.JLabel(new javax.swing.ImageIcon(scaled));
+            iconLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 6));
+            estaButton.add(iconLabel, java.awt.BorderLayout.EAST);
+        };
+        inciButton = inciButton = new javax.swing.JButton();
+        inciButton.setLayout(new java.awt.BorderLayout());
+
+        inciButton.setText("Incidencias");
+        inciButton.setFocusPainted(false);
+        inciButton.setBorderPainted(false);
+        inciButton.setContentAreaFilled(false);
+        inciButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        inciButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        inciButton.setMargin(new java.awt.Insets(10, 16, 10, 16));
+
+        java.net.URL inciUrl = getClass().getResource("/img/nav/incidencias.png");
+        if (inciUrl != null) {
+            javax.swing.ImageIcon icon = new javax.swing.ImageIcon(inciUrl);
+            java.awt.Image scaled = icon.getImage()
+            .getScaledInstance(18, 18, java.awt.Image.SCALE_SMOOTH);
+            javax.swing.JLabel iconLabel = new javax.swing.JLabel(new javax.swing.ImageIcon(scaled));
+            iconLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 6));
+            inciButton.add(iconLabel, java.awt.BorderLayout.EAST);
+        }
+        ;
+        aparaButton = aparaButton = new javax.swing.JButton();
+        aparaButton.setLayout(new java.awt.BorderLayout());
+
+        aparaButton.setText("Aparatos");
+        aparaButton.setFocusPainted(false);
+        aparaButton.setBorderPainted(false);
+        aparaButton.setContentAreaFilled(false);
+        aparaButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        aparaButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        aparaButton.setMargin(new java.awt.Insets(10, 16, 10, 16));
+
+        java.net.URL apaUrl = getClass().getResource("/img/nav/aparatos.png");
+        if (apaUrl != null) {
+            javax.swing.ImageIcon icon = new javax.swing.ImageIcon(apaUrl);
+            java.awt.Image scaled = icon.getImage()
+            .getScaledInstance(18, 18, java.awt.Image.SCALE_SMOOTH);
+            javax.swing.JLabel iconLabel = new javax.swing.JLabel(new javax.swing.ImageIcon(scaled));
+            iconLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 6));
+            aparaButton.add(iconLabel, java.awt.BorderLayout.EAST);
+        }
+        ;
+        usuButton = usuButton = new javax.swing.JButton();
+        usuButton.setLayout(new java.awt.BorderLayout());
+
+        usuButton.setText("Usuarios");
+        usuButton.setFocusPainted(false);
+        usuButton.setBorderPainted(false);
+        usuButton.setContentAreaFilled(false);
+        usuButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        usuButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        usuButton.setMargin(new java.awt.Insets(10, 16, 10, 16));
+
+        java.net.URL userUrl = getClass().getResource("/img/nav/usuarios.png");
+        if (userUrl != null) {
+            javax.swing.ImageIcon icon = new javax.swing.ImageIcon(userUrl);
+            java.awt.Image scaled = icon.getImage()
+            .getScaledInstance(18, 18, java.awt.Image.SCALE_SMOOTH);
+            javax.swing.JLabel iconLabel = new javax.swing.JLabel(new javax.swing.ImageIcon(scaled));
+            iconLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 6));
+            usuButton.add(iconLabel, java.awt.BorderLayout.EAST);
+        }
+        ;
+        adminButton = adminButton = new javax.swing.JButton();
+        adminButton.setLayout(new java.awt.BorderLayout());
+
+        adminButton.setText(" Administrar");
+        adminButton.setFocusPainted(false);
+        adminButton.setBorderPainted(false);
+        adminButton.setContentAreaFilled(false);
+        adminButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        adminButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        adminButton.setMargin(new java.awt.Insets(10, 16, 10, 16));
+
+        java.net.URL adminUrl = getClass().getResource("/img/nav/admin.png");
+        if (adminUrl != null) {
+            javax.swing.ImageIcon icon = new javax.swing.ImageIcon(adminUrl);
+            java.awt.Image scaled = icon.getImage()
+            .getScaledInstance(18, 18, java.awt.Image.SCALE_SMOOTH);
+            javax.swing.JLabel iconLabel = new javax.swing.JLabel(new javax.swing.ImageIcon(scaled));
+            iconLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 6));
+            adminButton.add(iconLabel, java.awt.BorderLayout.EAST);
+        };
         logName = new javax.swing.JLabel();
         logRol = new javax.swing.JLabel();
-        salirButton = new javax.swing.JButton();
+        salir = salir = new javax.swing.JButton();
+
+        salir.setText("");
+        salir.setFocusPainted(false);
+        salir.setBorderPainted(false);
+        salir.setContentAreaFilled(false);
+        salir.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        salir.setToolTipText("Cerrar sesión");
+
+        java.net.URL normalUrl = getClass().getResource("/img/logout.png");
+        java.net.URL hoverUrl  = getClass().getResource("/img/logout_hover.png");
+
+        javax.swing.SwingUtilities.invokeLater(() -> {
+
+            if (normalUrl != null) {
+                javax.swing.ImageIcon icon = new javax.swing.ImageIcon(normalUrl);
+                int size = Math.min(salir.getWidth(), salir.getHeight());
+                if (size > 0) {
+                    java.awt.Image scaled = icon.getImage()
+                    .getScaledInstance(size, size, java.awt.Image.SCALE_SMOOTH);
+                    salir.setIcon(new javax.swing.ImageIcon(scaled));
+                }
+            }
+        });
+
+        // Hover effect
+        salir.addMouseListener(new java.awt.event.MouseAdapter() {
+
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                if (hoverUrl != null) {
+                    javax.swing.ImageIcon icon = new javax.swing.ImageIcon(hoverUrl);
+                    int size = Math.min(salir.getWidth(), salir.getHeight());
+                    java.awt.Image scaled = icon.getImage()
+                    .getScaledInstance(size, size, java.awt.Image.SCALE_SMOOTH);
+                    salir.setIcon(new javax.swing.ImageIcon(scaled));
+                }
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                if (normalUrl != null) {
+                    javax.swing.ImageIcon icon = new javax.swing.ImageIcon(normalUrl);
+                    int size = Math.min(salir.getWidth(), salir.getHeight());
+                    java.awt.Image scaled = icon.getImage()
+                    .getScaledInstance(size, size, java.awt.Image.SCALE_SMOOTH);
+                    salir.setIcon(new javax.swing.ImageIcon(scaled));
+                }
+            }
+        });
         contentPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -122,17 +306,17 @@ public class mainFrame extends javax.swing.JFrame {
 
         panelLateral.setForeground(new java.awt.Color(153, 153, 153));
 
-        estaButon.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        estaButon.setText("Estadísticas");
-        estaButon.setBorder(null);
-        estaButon.addActionListener(new java.awt.event.ActionListener() {
+        estaButton.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        estaButton.setText(" Estadísticas");
+        estaButton.setBorder(null);
+        estaButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                estaButonActionPerformed(evt);
+                estaButtonActionPerformed(evt);
             }
         });
 
         inciButton.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        inciButton.setText("Incidencias");
+        inciButton.setText(" Incidencias");
         inciButton.setBorder(null);
         inciButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -141,7 +325,7 @@ public class mainFrame extends javax.swing.JFrame {
         });
 
         aparaButton.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        aparaButton.setText("Aparatos");
+        aparaButton.setText(" Aparatos");
         aparaButton.setBorder(null);
         aparaButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -150,7 +334,7 @@ public class mainFrame extends javax.swing.JFrame {
         });
 
         usuButton.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        usuButton.setText("Usuarios");
+        usuButton.setText(" Usuarios");
         usuButton.setBorder(null);
         usuButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -159,7 +343,7 @@ public class mainFrame extends javax.swing.JFrame {
         });
 
         adminButton.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        adminButton.setText("Administrar");
+        adminButton.setText(" Administrar");
         adminButton.setBorder(null);
         adminButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -171,11 +355,11 @@ public class mainFrame extends javax.swing.JFrame {
 
         logRol.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
 
-        salirButton.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        salirButton.setText("Salir");
-        salirButton.addActionListener(new java.awt.event.ActionListener() {
+        salir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/logout.png"))); // NOI18N
+        salir.setToolTipText("Pulse para cerrar sesión.");
+        salir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                salirButtonActionPerformed(evt);
+                salirActionPerformed(evt);
             }
         });
 
@@ -183,27 +367,24 @@ public class mainFrame extends javax.swing.JFrame {
         panelLateral.setLayout(panelLateralLayout);
         panelLateralLayout.setHorizontalGroup(
             panelLateralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(estaButon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(estaButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(inciButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(aparaButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(usuButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(adminButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(adminButton, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
             .addGroup(panelLateralLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelLateralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelLateralLayout.createSequentialGroup()
-                        .addComponent(logName, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(panelLateralLayout.createSequentialGroup()
-                        .addComponent(logRol, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
-                        .addComponent(salirButton)))
+                    .addComponent(logName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(logRol, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         panelLateralLayout.setVerticalGroup(
             panelLateralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelLateralLayout.createSequentialGroup()
-                .addComponent(estaButon, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(estaButton, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(inciButton, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -212,13 +393,15 @@ public class mainFrame extends javax.swing.JFrame {
                 .addComponent(usuButton, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(adminButton, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 621, Short.MAX_VALUE)
-                .addComponent(logName, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 597, Short.MAX_VALUE)
                 .addGroup(panelLateralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(logRol, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(salirButton))
-                .addGap(7, 7, 7))
+                    .addGroup(panelLateralLayout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(logName, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(logRol, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(23, 23, 23))
         );
 
         contentPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -231,7 +414,7 @@ public class mainFrame extends javax.swing.JFrame {
             .addGroup(fondoPanelLayout.createSequentialGroup()
                 .addComponent(panelLateral, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(contentPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 1654, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(contentPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 1797, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         fondoPanelLayout.setVerticalGroup(
@@ -255,22 +438,25 @@ public class mainFrame extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void estaButonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_estaButonActionPerformed
+    private void estaButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_estaButtonActionPerformed
+        setActiveButton(estaButton);
         estadisPanel.cargarDatos();
         cardLayout.show(contentPanel, "estadisticas");
-    }//GEN-LAST:event_estaButonActionPerformed
+    }//GEN-LAST:event_estaButtonActionPerformed
 
     private void inciButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inciButtonActionPerformed
+        setActiveButton(inciButton);
         incidenciasPanel.cargarDatos();
         cardLayout.show(contentPanel, "incidencias");
     }//GEN-LAST:event_inciButtonActionPerformed
 
     private void aparaButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aparaButtonActionPerformed
+        setActiveButton(aparaButton);
         cardLayout.show(contentPanel, "aparatos");
     }//GEN-LAST:event_aparaButtonActionPerformed
 
     private void usuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_usuButtonActionPerformed
-
+        setActiveButton(usuButton);
         String rol = usuario.getRol().toLowerCase();
 
         switch (rol) {
@@ -289,8 +475,6 @@ public class mainFrame extends javax.swing.JFrame {
             case "tecnico":
                 // Sin acceso a administración
                 cardLayout.show(contentPanel, "usuarios");
-                // Opcional: ocultar
-                // adminButton.setVisible(false);
                 break;
 
             default:
@@ -303,10 +487,12 @@ public class mainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_usuButtonActionPerformed
 
     private void adminButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_adminButtonActionPerformed
+        setActiveButton(adminButton);
         cardLayout.show(contentPanel, "admin");
     }//GEN-LAST:event_adminButtonActionPerformed
 
-    private void salirButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salirButtonActionPerformed
+    private void salirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salirActionPerformed
+
         int opcion = JOptionPane.showConfirmDialog(
                 this,
                 "¿Deseas cerrar la sesión?",
@@ -318,42 +504,82 @@ public class mainFrame extends javax.swing.JFrame {
             new login().setVisible(true);
             this.dispose();
         }
-    }//GEN-LAST:event_salirButtonActionPerformed
+    }//GEN-LAST:event_salirActionPerformed
+    private void applyHoverEffect(JButton button) {
 
-//    /**
-//     * @param args the command line arguments
-//     */
-//    public static void main(String args[]) {
-//
-//        /* Set FlatLaf (Material / Google style) look and feel */
-//        try {
-//            FlatLightLaf.setup();
-//
-//            // Opcional: ajustes estilo Material
-//            UIManager.put("Button.arc", 999);
-//            UIManager.put("Component.arc", 12);
-//            UIManager.put("TextComponent.arc", 10);
-//            UIManager.put("ScrollBar.width", 12);
-//
-//        } catch (Exception ex) {
-//            logger.log(java.util.logging.Level.SEVERE, null, ex);
-//        }
-//
-//        /* Create and display the form */
-//      //  java.awt.EventQueue.invokeLater(() -> new mainFrame().setVisible(true));
-//    }
+        Color hoverBg = new Color(230, 235, 245);
+
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                if (button != activeButton) {
+                    button.setContentAreaFilled(true); // 🔥 clave
+                    button.setOpaque(true);
+                    button.setBackground(hoverBg);
+                }
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                if (button != activeButton) {
+                    button.setBackground(null);
+                    button.setOpaque(false);
+                    button.setContentAreaFilled(false); // 🔥 volver a tu estilo plano
+                }
+            }
+        });
+
+        // 🔥 Muy importante: aplicar el mismo hover a los hijos (iconLabel)
+        for (java.awt.Component c : button.getComponents()) {
+            c.addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseEntered(java.awt.event.MouseEvent e) {
+                    if (button != activeButton) {
+                        button.setContentAreaFilled(true);
+                        button.setOpaque(true);
+                        button.setBackground(hoverBg);
+                    }
+                }
+
+                @Override
+                public void mouseExited(java.awt.event.MouseEvent e) {
+                    if (button != activeButton) {
+                        button.setBackground(null);
+                        button.setOpaque(false);
+                        button.setContentAreaFilled(false);
+                    }
+                }
+            });
+        }
+    }
+
+    private void setActiveButton(JButton button) {
+
+        // Desactivar el anterior
+        if (activeButton != null) {
+            activeButton.setBackground(null);
+            activeButton.setOpaque(false);
+            activeButton.setFont(activeButton.getFont().deriveFont(Font.PLAIN));
+        }
+
+        // Activar el nuevo
+        activeButton = button;
+        activeButton.setOpaque(true);
+        activeButton.setBackground(ACTIVE_BG);
+        activeButton.setFont(activeButton.getFont().deriveFont(Font.BOLD));
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton adminButton;
     private javax.swing.JButton aparaButton;
     private javax.swing.JPanel contentPanel;
-    private javax.swing.JButton estaButon;
+    private javax.swing.JButton estaButton;
     private javax.swing.JPanel fondoPanel;
     private javax.swing.JButton inciButton;
     private javax.swing.JLabel logName;
     private javax.swing.JLabel logRol;
     private javax.swing.JPanel panelLateral;
-    private javax.swing.JButton salirButton;
+    private javax.swing.JButton salir;
     private javax.swing.JButton usuButton;
     // End of variables declaration//GEN-END:variables
 }
