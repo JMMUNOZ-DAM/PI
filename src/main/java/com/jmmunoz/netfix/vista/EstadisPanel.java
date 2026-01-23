@@ -64,7 +64,7 @@ public class EstadisPanel extends javax.swing.JPanel {
         private void buildDashboardLayout() {
                 removeAll();
 
-                // --- 1. HEADER (Título + KPIs) ---
+                // --- 1. CABECERA (Título + KPIs) ---
                 JPanel headerPanel = new JPanel(new BorderLayout(0, 20));
                 headerPanel.setOpaque(false);
                 headerPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
@@ -75,8 +75,8 @@ public class EstadisPanel extends javax.swing.JPanel {
                 title.setForeground(TelecomTheme.ACCENT_DARK); // Azul oscuro
                 headerPanel.add(title, BorderLayout.NORTH);
 
-                // KPIs Row
-                JPanel kpiPanel = new JPanel(new GridLayout(1, 3, 20, 0)); // 3 columnas, gap 20
+                // Fila de KPIs
+                JPanel kpiPanel = new JPanel(new GridLayout(1, 3, 20, 0)); // 3 columnas, espacio 20
                 kpiPanel.setOpaque(false);
 
                 lblPendientesVal = new JLabel("0");
@@ -103,7 +103,7 @@ public class EstadisPanel extends javax.swing.JPanel {
 
                 add(headerPanel, BorderLayout.NORTH);
 
-                // --- 2. MAIN CONTENT (Split: Table | Chart) ---
+                // --- 2. CONTENIDO PRINCIPAL (División: Tabla | Gráfico) ---
                 // Usamos un JSplitPane o un GridLayout. El mockup muestra split.
                 // Haremos un Panel principal con GridBag o GridLayout para simular el split
                 // 50/50 o 40/60.
@@ -147,14 +147,14 @@ public class EstadisPanel extends javax.swing.JPanel {
                                         } else {
                                                 idInci = Integer.parseInt(val.toString());
                                         }
-                                        System.out.println("DEBUG: Doble clic en fila. ID extraído: " + idInci);
+                                        // Debug removed
 
                                         Window parentWindow = SwingUtilities.getWindowAncestor(EstadisPanel.this);
                                         IncidenciaDetalleDialog dialog;
                                         if (parentWindow instanceof Frame frame) {
                                                 dialog = new IncidenciaDetalleDialog(frame, idInci);
                                         } else {
-                                                // Fallback para cuando estemos dentro de otro diálogo
+                                                // Alternativa para cuando estemos dentro de otro diálogo
                                                 dialog = new IncidenciaDetalleDialog((Frame) null, idInci);
                                         }
                                         dialog.setVisible(true);
@@ -164,11 +164,12 @@ public class EstadisPanel extends javax.swing.JPanel {
 
                 splitPane.setLeftComponent(tableWrapper);
 
-                // -- LADO DERECHO: CHART --
+                // -- LADO DERECHO: GRÁFICO --
                 JPanel chartWrapper = new JPanel(new BorderLayout(0, 10));
                 ThemeManager.getInstance().cardify(chartWrapper);
 
-                // Toolbar de filtros (Mes/Año) en el top del chartWrapper
+                // Barra de herramientas de filtros (Mes/Año) en la parte superior del
+                // chartWrapper
                 JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
                 toolbar.setOpaque(false);
 
@@ -203,7 +204,7 @@ public class EstadisPanel extends javax.swing.JPanel {
 
                 chartWrapper.add(toolbar, BorderLayout.NORTH);
 
-                // Display del Chart
+                // Visualización del Gráfico
                 chartDisplay = new JPanel();
                 chartDisplay.setOpaque(false);
                 chartDisplay.setLayout(new BorderLayout());
@@ -211,7 +212,70 @@ public class EstadisPanel extends javax.swing.JPanel {
 
                 splitPane.setRightComponent(chartWrapper);
 
+                setupScrollListener(scrollTable);
                 add(splitPane, BorderLayout.CENTER);
+        }
+
+        private void setupScrollListener(JScrollPane scrollPane) {
+                scrollPane.addComponentListener(new java.awt.event.ComponentAdapter() {
+                        @Override
+                        public void componentResized(java.awt.event.ComponentEvent e) {
+                                resizeColumnWidths(inciTabla, scrollPane);
+                        }
+                });
+        }
+
+        /**
+         * Ajusta el ancho de las columnas (Lógica adaptativa "armónica").
+         * Copiado de AdminPanel para consistencia.
+         */
+        private void resizeColumnWidths(JTable table, JScrollPane scrollPane) {
+                if (table.getRowCount() == 0)
+                        return;
+
+                table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+                final javax.swing.table.TableColumnModel columnModel = table.getColumnModel();
+                int totalIdealWidth = 0;
+                int[] idealWidths = new int[table.getColumnCount()];
+
+                // 1. Calcular anchos ideales
+                for (int column = 0; column < table.getColumnCount(); column++) {
+                        int width = 60; // Ancho mínimo base
+
+                        // Cabecera
+                        java.awt.Component header = table.getTableHeader().getDefaultRenderer()
+                                        .getTableCellRendererComponent(table,
+                                                        columnModel.getColumn(column).getHeaderValue(), false, false,
+                                                        -1, column);
+                        width = Math.max(header.getPreferredSize().width + 20, width);
+
+                        // Contenido (Muestrear 50 filas)
+                        int limit = Math.min(table.getRowCount(), 50);
+                        for (int row = 0; row < limit; row++) {
+                                java.awt.Component renderer = table.prepareRenderer(table.getCellRenderer(row, column),
+                                                row, column);
+                                width = Math.max(renderer.getPreferredSize().width + 10, width);
+                        }
+
+                        idealWidths[column] = width;
+                        totalIdealWidth += width;
+                }
+
+                // 2. Obtener ancho disponible
+                int viewportWidth = scrollPane.getViewport().getWidth();
+                if (viewportWidth == 0)
+                        viewportWidth = table.getParent() != null ? table.getParent().getWidth() : 0;
+
+                // 3. Aplicar escala si sobra espacio
+                double scaleFactor = 1.0;
+                if (viewportWidth > totalIdealWidth && totalIdealWidth > 0) {
+                        scaleFactor = (double) viewportWidth / totalIdealWidth;
+                }
+
+                for (int column = 0; column < table.getColumnCount(); column++) {
+                        int finalWidth = (int) (idealWidths[column] * scaleFactor);
+                        columnModel.getColumn(column).setPreferredWidth(finalWidth);
+                }
         }
 
         /**
@@ -222,19 +286,20 @@ public class EstadisPanel extends javax.swing.JPanel {
                         Utilities ut = new Utilities();
                         try {
                                 // 1. Cargar Tabla (Incidencias globales o filtradas?)
-                                // El usuario pidió "filtro solo para el gráfico" en el paso anterior,
-                                // pero "Incidencias recientes" en la tabla.
-                                // Mantendremos la tabla mostrando TODAS (o las recientes) independiente del
-                                // filtro de gráfico.
                                 ResultSet rs = Utilities.ejecutarConsulta(Utilities.TipoConsulta.INCIDENCIAS, 0);
                                 ut.cargarTabla(inciTabla, rs);
 
-                                // Configurar columnas y SORTER (Preservar sorting ID: 887)
+                                // Configurar columnas y ORDENADOR (Preservar ID ordenación: 887)
                                 javax.swing.table.TableRowSorter<javax.swing.table.TableModel> sorter = new javax.swing.table.TableRowSorter<>(
                                                 inciTabla.getModel());
                                 inciTabla.setRowSorter(sorter);
 
                                 ThemeManager.getInstance().configureTableColumns(inciTabla);
+
+                                // FORZAR REDIMENSIONADO
+                                JScrollPane sp = (JScrollPane) inciTabla.getParent().getParent(); // Viewport ->
+                                                                                                  // ScrollPane
+                                resizeColumnWidths(inciTabla, sp);
 
                                 // 2. Cargar Gráfico (Con filtros)
                                 int mes = monthCombo.getSelectedIndex() + 1;

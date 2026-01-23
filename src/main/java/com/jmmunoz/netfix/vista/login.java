@@ -16,7 +16,7 @@ import java.sql.SQLException;
  * <p>
  * Gestiona la autenticación de usuarios contra la base de datos y la carga
  * del tema visual inicial. Si el acceso es correcto, lanza el
- * {@link mainFrame}.
+ * {@link MainFrame}.
  * </p>
  * 
  * @author Juanma Muñoz
@@ -195,7 +195,7 @@ public class login extends javax.swing.JFrame {
                                                 rs.getString("email"),
                                                 rs.getString("password"));
 
-                                mainFrame mf = new mainFrame(usuario);
+                                MainFrame mf = new MainFrame(usuario);
                                 mf.setVisible(true);
                                 ut.logAction("OK", "Login", "Usuario " + email + " ha iniciado sesión.");
                                 this.dispose();
@@ -210,7 +210,6 @@ public class login extends javax.swing.JFrame {
                                                         .getMessage("login.error.db.msg"),
                                         CustomNotification.Type.ERROR);
                         ut.logAction("ERROR", "Login", "Error SQL durante login: " + e.getMessage());
-                        e.printStackTrace();
                 }
         }// GEN-LAST:event_loginButtonActionPerformed
 

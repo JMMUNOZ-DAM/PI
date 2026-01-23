@@ -19,13 +19,14 @@ package com.jmmunoz.netfix.modelo;
  * 
  * @author Juanma Muñoz
  */
-public class querys {
+public class Querys {
 
         public static String incidencias = """
                         select t1.id_incidencia as Incidencia, t1.id_contrato as Contrato, t1.descripcion as Descripción, t1.fecha_reporte as Fecha, t2.nombre as Agente, t1.estado as Estado
                         from netfix.incidencias t1
                         inner join netfix.usuarios t2 on t1.id_usuario = t2.id_usuario
-                        where estado in ('abierta', 'en_proceso', 'sin_comunicar')""";
+                        where estado in ('abierta', 'en_proceso', 'sin_comunicar')
+                        order by t1.estado desc""";
 
         public static String inciXdia = "SELECT DATE(fecha_reporte) AS dia, COUNT(*) AS total "
                         + "FROM incidencias GROUP BY DATE(fecha_reporte)";

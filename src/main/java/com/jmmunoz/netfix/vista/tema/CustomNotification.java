@@ -45,8 +45,8 @@ public class CustomNotification {
     public static void show(Component parent, String title, String message, Type type) {
         String finalTitle = (title != null) ? title : type.defaultTitle;
 
-        // Mapeo simple a JOptionPane
-        JOptionPane.showMessageDialog(
+        // Mapeo simple a ModernDialog
+        com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(
                 parent,
                 message,
                 finalTitle,

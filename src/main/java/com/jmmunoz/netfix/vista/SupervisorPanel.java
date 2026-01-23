@@ -105,6 +105,9 @@ public class SupervisorPanel extends javax.swing.JPanel {
                                 }
 
                                 ut.cargarTabla(usersTable, rs);
+                                // Forzar redimensionado tras la carga
+                                setupScrollListener(jScrollPane1);
+                                resizeColumnWidths(usersTable, jScrollPane1);
 
                                 // Actualizamos el sorter con el nuevo modelo en caso de recarga
                                 sorter.setModel((DefaultTableModel) usersTable.getModel());
@@ -156,6 +159,80 @@ public class SupervisorPanel extends javax.swing.JPanel {
                         }
                 });
 
+        }
+
+        private void setupScrollListener(javax.swing.JScrollPane scrollPane) {
+                // Evitar duplicar listeners si se llama varias veces
+                for (java.awt.event.ComponentListener cl : scrollPane.getComponentListeners()) {
+                        if (cl instanceof ResizerListener)
+                                return;
+                }
+                scrollPane.addComponentListener(new ResizerListener(scrollPane));
+        }
+
+        private class ResizerListener extends java.awt.event.ComponentAdapter {
+                private final javax.swing.JScrollPane sp;
+
+                public ResizerListener(javax.swing.JScrollPane sp) {
+                        this.sp = sp;
+                }
+
+                @Override
+                public void componentResized(java.awt.event.ComponentEvent e) {
+                        resizeColumnWidths(usersTable, sp);
+                }
+        }
+
+        /**
+         * Ajusta el ancho de las columnas (Lógica Responsive "Harmonic").
+         */
+        private void resizeColumnWidths(javax.swing.JTable table, javax.swing.JScrollPane scrollPane) {
+                if (table.getRowCount() == 0)
+                        return;
+
+                table.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+                final javax.swing.table.TableColumnModel columnModel = table.getColumnModel();
+                int totalIdealWidth = 0;
+                int[] idealWidths = new int[table.getColumnCount()];
+
+                // 1. Calcular anchos ideales
+                for (int column = 0; column < table.getColumnCount(); column++) {
+                        int width = 60; // Ancho mínimo base
+
+                        // Cabecera
+                        java.awt.Component header = table.getTableHeader().getDefaultRenderer()
+                                        .getTableCellRendererComponent(table,
+                                                        columnModel.getColumn(column).getHeaderValue(), false, false,
+                                                        -1, column);
+                        width = Math.max(header.getPreferredSize().width + 20, width);
+
+                        // Contenido (Muestrear 50 filas)
+                        int limit = Math.min(table.getRowCount(), 50);
+                        for (int row = 0; row < limit; row++) {
+                                java.awt.Component renderer = table.prepareRenderer(table.getCellRenderer(row, column),
+                                                row, column);
+                                width = Math.max(renderer.getPreferredSize().width + 10, width);
+                        }
+
+                        idealWidths[column] = width;
+                        totalIdealWidth += width;
+                }
+
+                // 2. Obtener ancho disponible
+                int viewportWidth = scrollPane.getViewport().getWidth();
+                if (viewportWidth == 0)
+                        viewportWidth = table.getParent() != null ? table.getParent().getWidth() : 0;
+
+                // 3. Aplicar escala si sobra espacio
+                double scaleFactor = 1.0;
+                if (viewportWidth > totalIdealWidth && totalIdealWidth > 0) {
+                        scaleFactor = (double) viewportWidth / totalIdealWidth;
+                }
+
+                for (int column = 0; column < table.getColumnCount(); column++) {
+                        int finalWidth = (int) (idealWidths[column] * scaleFactor);
+                        columnModel.getColumn(column).setPreferredWidth(finalWidth);
+                }
         }
 
         /**
@@ -850,7 +927,7 @@ public class SupervisorPanel extends javax.swing.JPanel {
 
                 // Validaciones
                 if (nombre.isEmpty()) {
-                        JOptionPane.showMessageDialog(this,
+                        com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(this,
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                         .getMessage("supervisor.error.empty.name"),
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
@@ -860,7 +937,7 @@ public class SupervisorPanel extends javax.swing.JPanel {
                 }
 
                 if (rolObj == null) {
-                        JOptionPane.showMessageDialog(this,
+                        com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(this,
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                         .getMessage("supervisor.error.empty.role"),
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
@@ -870,7 +947,7 @@ public class SupervisorPanel extends javax.swing.JPanel {
                 }
 
                 if (email.isEmpty()) {
-                        JOptionPane.showMessageDialog(this,
+                        com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(this,
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                         .getMessage("supervisor.error.empty.email"),
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
@@ -879,8 +956,17 @@ public class SupervisorPanel extends javax.swing.JPanel {
                         return;
                 }
 
+                if (!ut.checkEmail(email)) {
+                        com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(this,
+                                        "El email debe pertenecer al dominio corporativo (@netfix.com o @netfix.es)",
+                                        com.jmmunoz.netfix.config.AppConfig.getInstance()
+                                                        .getMessage("supervisor.title.error"),
+                                        JOptionPane.ERROR_MESSAGE);
+                        return;
+                }
+
                 if (inputPass.isEmpty()) {
-                        JOptionPane.showMessageDialog(this,
+                        com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(this,
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                         .getMessage("supervisor.error.empty.pass"),
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
@@ -890,7 +976,7 @@ public class SupervisorPanel extends javax.swing.JPanel {
                 }
 
                 if (id.isEmpty()) {
-                        JOptionPane.showMessageDialog(this,
+                        com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(this,
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                         .getMessage("supervisor.error.invalid.id"),
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
@@ -903,7 +989,7 @@ public class SupervisorPanel extends javax.swing.JPanel {
                 ut.ejecutarUpdate(Utilities.TipoConsulta.UPDATEUSER, nombre, rolObj.toString(), email, passwordToSend,
                                 id);
 
-                JOptionPane.showMessageDialog(this,
+                com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(this,
                                 com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                 .getMessage("supervisor.success.update"),
                                 com.jmmunoz.netfix.config.AppConfig.getInstance()
@@ -935,7 +1021,7 @@ public class SupervisorPanel extends javax.swing.JPanel {
 
                 // Validaciones
                 if (nombre.isEmpty()) {
-                        JOptionPane.showMessageDialog(this,
+                        com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(this,
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                         .getMessage("supervisor.error.empty.name"),
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
@@ -946,7 +1032,7 @@ public class SupervisorPanel extends javax.swing.JPanel {
                 }
 
                 if (rolObj == null) {
-                        JOptionPane.showMessageDialog(this,
+                        com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(this,
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                         .getMessage("supervisor.error.empty.role"),
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
@@ -956,7 +1042,7 @@ public class SupervisorPanel extends javax.swing.JPanel {
                 }
 
                 if (email.isEmpty()) {
-                        JOptionPane.showMessageDialog(this,
+                        com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(this,
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                         .getMessage("supervisor.error.empty.email"),
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
@@ -966,8 +1052,18 @@ public class SupervisorPanel extends javax.swing.JPanel {
                         return;
                 }
 
+                if (!ut.checkEmail(email)) {
+                        com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(this,
+                                        "El email debe pertenecer al dominio corporativo (@netfix.com o @netfix.es)",
+                                        com.jmmunoz.netfix.config.AppConfig.getInstance()
+                                                        .getMessage("supervisor.title.error"),
+                                        JOptionPane.ERROR_MESSAGE);
+                        mailAlta.requestFocus();
+                        return;
+                }
+
                 if (password.isEmpty()) {
-                        JOptionPane.showMessageDialog(this,
+                        com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(this,
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                         .getMessage("supervisor.error.empty.pass"),
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
@@ -978,7 +1074,7 @@ public class SupervisorPanel extends javax.swing.JPanel {
                 }
 
                 if (confiPass.isEmpty()) {
-                        JOptionPane.showMessageDialog(this,
+                        com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(this,
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                         .getMessage("supervisor.error.confirm.pass"),
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
@@ -989,7 +1085,7 @@ public class SupervisorPanel extends javax.swing.JPanel {
                 }
 
                 if (!password.equals(confiPass)) {
-                        JOptionPane.showMessageDialog(this,
+                        com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(this,
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                         .getMessage("supervisor.error.mismatch.pass"),
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
@@ -1006,7 +1102,7 @@ public class SupervisorPanel extends javax.swing.JPanel {
                                 email,
                                 ut.hashPass(password));
 
-                JOptionPane.showMessageDialog(this,
+                com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(this,
                                 com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("supervisor.success.add"),
                                 com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                 .getMessage("supervisor.title.success"),

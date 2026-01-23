@@ -56,7 +56,7 @@ public class UsuariosPanel extends javax.swing.JPanel {
                 ususTitle.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 28));
                 ususTitle.setForeground(com.jmmunoz.netfix.vista.tema.TelecomTheme.ACCENT_DARK);
 
-                // Labels
+                // Etiquetas
                 java.awt.Color muted = com.jmmunoz.netfix.vista.tema.TelecomTheme.TEXT_MUTED;
                 java.awt.Font lblFont = new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 14);
 
@@ -71,7 +71,7 @@ public class UsuariosPanel extends javax.swing.JPanel {
                 contratoLabel1.setFont(lblFont);
                 contratoLabel1.setForeground(muted);
 
-                // Values/Inputs
+                // Valores/Entradas
                 java.awt.Font valFont = new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 14);
                 idText.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14));
                 idText.setForeground(com.jmmunoz.netfix.vista.tema.TelecomTheme.TEXT);
@@ -89,9 +89,9 @@ public class UsuariosPanel extends javax.swing.JPanel {
                 com.jmmunoz.netfix.vista.tema.ThemeManager.getInstance().cardify(mainPanel1);
 
                 // ---------------------------------------------------------
-                // LAYOUT REFACTOR - ROOT ONLY
-                // (We preserve mainPanel1's internal GroupLayout to match AparatosPanel
-                // behavior)
+                // REFACTORIZACIÓN DE DISEÑO - SOLO RAÍZ
+                // (Preservamos el GroupLayout interno de mainPanel1 para coincidir
+                // con el comportamiento de AparatosPanel)
                 // ---------------------------------------------------------
                 usersPanel.removeAll();
                 usersPanel.setLayout(new java.awt.GridBagLayout());
@@ -104,19 +104,20 @@ public class UsuariosPanel extends javax.swing.JPanel {
                 gbc.anchor = java.awt.GridBagConstraints.LINE_START;
                 gbc.fill = java.awt.GridBagConstraints.NONE;
 
-                // 1) Title
+                // 1) Título
                 usersPanel.add(ususTitle, gbc);
 
-                // 2) Form Panel
+                // 2) Panel del Formulario
                 gbc.gridy++;
                 gbc.weighty = 0.0;
-                // Match AparatosPanel: Fill HORIZONTAL so it uses available width,
-                // relying on GroupLayout to arrange internals.
+                // Coincidir con AparatosPanel: Rellenar HORIZONTAL para usar el ancho
+                // disponible,
+                // confiando en GroupLayout para organizar los internos.
                 gbc.fill = java.awt.GridBagConstraints.HORIZONTAL;
 
                 usersPanel.add(mainPanel1, gbc);
 
-                // Push top
+                // Empujar arriba
                 gbc.gridy++;
                 gbc.weighty = 1.0;
                 gbc.fill = java.awt.GridBagConstraints.BOTH;
@@ -175,12 +176,12 @@ public class UsuariosPanel extends javax.swing.JPanel {
                 idText = new javax.swing.JLabel();
 
                 setBackground(new java.awt.Color(255, 255, 255));
-                // setPreferredSize(new java.awt.Dimension(1592, 946)); // Removed fixed
-                // preference
+                // setPreferredSize(new java.awt.Dimension(1592, 946)); // Preferencia fija
+                // eliminada
 
                 usersPanel.setBackground(new java.awt.Color(255, 255, 255));
-                // usersPanel.setPreferredSize(new java.awt.Dimension(1592, 946)); // Removed
-                // fixed preference
+                // usersPanel.setPreferredSize(new java.awt.Dimension(1592, 946)); //
+                // Preferencia fija eliminada
 
                 ususTitle.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
                 ususTitle.setText(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("user.manage.title"));
@@ -395,7 +396,7 @@ public class UsuariosPanel extends javax.swing.JPanel {
                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE)
                                                                 .addGap(0, 0, 0)));
 
-                // --- LAYOUT ---
+                // --- DISEÑO ---
                 this.setLayout(new java.awt.BorderLayout());
                 this.add(usersPanel, java.awt.BorderLayout.CENTER);
         }// </editor-fold>//GEN-END:initComponents
@@ -413,7 +414,7 @@ public class UsuariosPanel extends javax.swing.JPanel {
 
                 // Validaciones
                 if (nombre.isEmpty()) {
-                        JOptionPane.showMessageDialog(this,
+                        com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(this,
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                         .getMessage("user.error.empty.name"),
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
@@ -423,7 +424,7 @@ public class UsuariosPanel extends javax.swing.JPanel {
                 }
 
                 if (rolObj == null) {
-                        JOptionPane.showMessageDialog(this,
+                        com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(this,
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                         .getMessage("user.error.empty.role"),
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
@@ -433,7 +434,7 @@ public class UsuariosPanel extends javax.swing.JPanel {
                 }
 
                 if (email.isEmpty()) {
-                        JOptionPane.showMessageDialog(this,
+                        com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(this,
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                         .getMessage("user.error.empty.email"),
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
@@ -443,7 +444,7 @@ public class UsuariosPanel extends javax.swing.JPanel {
                 }
 
                 if (inputPass.isEmpty()) {
-                        JOptionPane.showMessageDialog(this,
+                        com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(this,
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                         .getMessage("user.error.empty.password"),
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
@@ -453,7 +454,7 @@ public class UsuariosPanel extends javax.swing.JPanel {
                 }
 
                 if (id.isEmpty()) {
-                        JOptionPane.showMessageDialog(this,
+                        com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(this,
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                         .getMessage("user.error.invalid.id"),
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
@@ -472,13 +473,13 @@ public class UsuariosPanel extends javax.swing.JPanel {
                                 id);
 
                 if (result > 0) {
-                        // Update local object to reflect changes immediately
+                        // Actualizar objeto local para reflejar cambios inmediatamente
                         usuario.setNombre(nombre);
                         usuario.setEmail(email);
                         usuario.setRol(rolObj.toString());
                         usuario.setPassword(passwordToSend);
 
-                        JOptionPane.showMessageDialog(this,
+                        com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(this,
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                         .getMessage("user.success.update"),
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
@@ -486,7 +487,7 @@ public class UsuariosPanel extends javax.swing.JPanel {
                                         JOptionPane.INFORMATION_MESSAGE);
                         cargarDatos();
                 } else {
-                        JOptionPane.showMessageDialog(this,
+                        com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(this,
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                         .getMessage("user.error.update"),
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()

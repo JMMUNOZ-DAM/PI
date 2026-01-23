@@ -429,7 +429,7 @@ public class SimuladorDiagnostico {
             db = DatabaseManager.getInstance();
 
             db.executePreparedUpdate(
-                    querys.diagnostico,
+                    Querys.diagnostico,
                     aparato.getIdAparato(), // id_aparato
                     new Timestamp(System.currentTimeMillis()), // fecha_actualizacion
                     diag.estadoGeneral,

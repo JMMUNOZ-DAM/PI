@@ -2,13 +2,19 @@
 
 ## Introducción
 
-**Netfix** es una solución integral de gestión diseñada para compañías proveedoras de servicios de internet (ISP) y telecomunicaciones. Esta aplicación de escritorio, construida en Java con Swing, centraliza las operaciones críticas del negocio, facilitando la administración de contratos, parque de dispositivos (FTTH y 5G), gestión de incidencias técnicas y coordinación del personal.
+**Netfix** es una solución integral de gestión diseñada para compañías proveedoras de servicios de internet (ISP) y telecomunicaciones. Esta aplicación de escritorio, construida en Java con Swing y el look & feel **FlatLaf**, centraliza las operaciones críticas del negocio, facilitando la administración de contratos, parque de dispositivos (FTTH y 5G), gestión de incidencias técnicas y coordinación del personal.
 
-Su objetivo principal es optimizar el flujo de trabajo entre los diferentes roles de la organización (**Administradores, Supervisores y Técnicos**), proporcionando herramientas específicas para:
-- **Gestión de Incidencias:** Ciclo de vida completo desde el reporte hasta la solución.
-- **Inventario:** Control de dispositivos, asignación a contratos y gestión de números asociados.
-- **Diagnóstico Remoto:** Simulador de pruebas de red (velocidad, latencia, niveles ópticos) para depuración sin hardware real.
-- **Administración de Usuarios:** Control de acceso basado en roles (RBAC) y auditoría de acciones.
+Su objetivo principal es optimizar el flujo de trabajo entre los diferentes roles de la organización (**Sistemas, Supervisores y Técnicos**), proporcionando herramientas específicas para la toma de decisiones y la operación diaria.
+
+---
+
+## Funcionalidades Principales
+
+*   **Gestión de Incidencias:** Ciclo de vida completo desde el reporte hasta la solución, incluyendo asignación de técnicos y comentarios.
+*   **Inventario y Provisión:** Control de dispositivos, asignación a contratos y gestión de números asociados (5G).
+*   **Diagnóstico Remoto:** Simulador de pruebas de red (velocidad, latencia, niveles ópticos) para depuración técnica sin hardware real.
+*   **Administración Interactiva:** Paneles avanzados para la gestión de usuarios y supervisión de equipos de trabajo.
+*   **Interfaz Moderna:** Sistema de diseño personalizado (temas claro/oscuro) y diálogos estilizados que reemplazan los componentes nativos estándar.
 
 ---
 
@@ -20,11 +26,11 @@ El proyecto sigue una arquitectura **MVC (Modelo-Vista-Controlador)** adaptada, 
 Gestión de la configuración global y recursos.
 
 #### `AppConfig`
-Clase **Singleton** encargada de la internacionalización (i18n) y gestión de textos.
-- **Métodos:**
-  - `getInstance()`: Retorna la instancia única de la configuración.
-  - `getMessage(String key)`: Recupera una cadena de texto localizada desde `messages.properties`.
-  - `getMessage(String key, Object... args)`: Recupera y formatea un mensaje con parámetros dinámicos.
+Gestor central de la configuración de la aplicación.
+- **Funcionalidad:**
+  - Garantiza una única instancia de configuración compartida.
+  - Maneja la internacionalización (i18n) cargando textos desde archivos `.properties`.
+  - Provee métodos `getMessage()` para recuperar cadenas localizadas y formateadas dinámicamente.
 
 ---
 
@@ -32,29 +38,27 @@ Clase **Singleton** encargada de la internacionalización (i18n) y gestión de t
 Representación de datos y acceso a la base de datos.
 
 #### `DatabaseManager`
-Clase **Singleton** que gestiona la conexión JDBC con la base de datos MySQL `netfix`.
-- **Métodos:**
-  - `getConnection()`: Establece o recupera la conexión activa.
-  - `beginTransaction()`, `commit()`, `rollback()`: Control de transacciones ACID.
-  - `executeQuery(String sql)`: Ejecuta consultas de lectura (SELECT).
-  - `executeUpdate(String sql)`: Ejecuta consultas de escritura (INSERT, UPDATE, DELETE).
+Administrador de conexiones a la base de datos.
+- **Funcionalidad:**
+  - Gestiona el pool de conexiones JDBC/MySQL.
+  - Controla el ciclo de vida de las transacciones (inicio, commit, rollback).
+  - Provee métodos de bajo nivel para ejecutar sentencias SQL.
 
-#### `querys`
-Diccionario estático que almacena todas las sentencias SQL utilizadas en la aplicación. Centraliza el mantenimiento de las consultas.
-- **Contenido:** Strings estáticos con SQL para Login, Incidencias, Reportes, Gestión de Inventario, etc.
+#### `Querys`
+Repositorio centralizado de sentencias SQL.
+- **Funcionalidad:**
+  - Almacena constantes estáticas con todas las consultas del sistema.
+  - Facilita el mantenimiento y modificación de la lógica de acceso a datos sin tocar el código de los controladores.
 
-#### `Usuario`
-POJO (Plain Old Java Object) que modela a un usuario del sistema.
-- **Atributos:** ID, Nombre, Rol, Email, Password.
+#### `Usuario` / `Aparato` / `Incidencia`
+Clases POJO (Plain Old Java Objects) que modelan las entidades del negocio. Capturan la estructura de las tablas de la base de datos para su uso en la aplicación Java.
 
 #### `SimuladorDiagnostico`
-Motor de simulación para pruebas técnicas de dispositivos.
-- **Subclases:**
-  - `Aparato`: Modelo del dispositivo a testear.
-  - `Diagnostico`: Resultados del test (velocidad, ping, cobertura, etc.).
-- **Métodos:**
-  - `generarDiagnostico(Aparato)`: Crea datos aleatorios realistas basados en el tipo de equipo (FTTH vs 5G).
-  - `generarDiagnosticoConCarga(...)`: Ejecuta el diagnóstico en segundo plano (`SwingWorker`), mostrando una barra de progreso visual en la UI.
+Motor de simulación técnica.
+- **Funcionalidad:**
+  - Genera valores aleatorios realistas para pruebas de red (Ping, Jitter, BA/B, Potencia Óptica, Cobertura 4G/5G).
+  - Simula latencia de red mediante `SwingWorker` para no congelar la interfaz de usuario durante el diagnóstico.
+  - Actualiza en tiempo real los componentes visuales con los resultados obtenidos.
 
 ---
 
@@ -62,85 +66,110 @@ Motor de simulación para pruebas técnicas de dispositivos.
 Lógica de negocio y utilidades transversales.
 
 #### `Utilities`
-Clase "cerebro" que actúa como controlador principal y librería de funciones.
-- **Autenticación y Seguridad:**
-  - `loggin(mail, pass)`: Valida credenciales contra la BD.
-  - `hashPass(pass)`: Genera hashes seguros usando **BCrypt**.
-- **Gestión de Datos:**
-  - `ejecutarConsulta(TipoConsulta, params)`: Método central para obtener datos. Usa un `Switch` gigante con un Enum `TipoConsulta` para enrutar peticiones.
-  - `ejecutarUpdate(TipoConsulta, params)`: Homólogo para actualizaciones de datos.
-- **UI Helpers:**
-  - `cargarTabla(JTable, ResultSet)`: Rellena tablas Swing dinámicamente y colorea filas según el estado de la incidencia (Verde=Resuelto, Amarillo=Pendiente).
-  - `cargarGrafico(JPanel)`: Genera gráficos estadísticos (Barras) usando **JFreeChart**.
-- **Lógica de Negocio:**
-  - `logAction(estado, panel, desc)`: Registra eventos de auditoría en la tabla de logs.
-  - `seedTestTechnicians()`: Inicializa datos de prueba para técnicos.
+Clase principal de utilidades y orquestación.
+- **Autenticación:** Métodos `loggin()` y `hashPass()` (usando BCrypt) para validar credenciales de forma segura.
+- **Ejecución de Datos:** Métodos `ejecutarConsulta` y `ejecutarUpdate` que actúan como fachada simplificada para interactuar con la base de datos, manejando excepciones y cierres de recursos automáticamente.
+- **Manejo de Tablas:** Lógica para poblar `JTable` desde `ResultSet`, incluyendo reglas de negocio visuales (ej. coloreado de filas según estado de la incidencia).
+- **Auditoría (Logging):** Método `logAction` que registra todas las operaciones críticas de los usuarios en el historial del sistema.
 
 ---
 
 ### 📦 Paquete: `vista`
-Interfaz Gráfica de Usuario (GUI) construida con Swing y FlatLaf.
+Interfaz Gráfica de Usuario (GUI).
 
 #### `login`
-Punto de entrada de la aplicación (`main`).
-- Muestra el SplashScreen.
-- Gestiona el formulario de acceso y valida el usuario inicial.
+Ventana de acceso.
+- Valida credenciales.
+- Muestra feedback visual (cargando) y redirige al Dashboard principal.
 
-#### `mainFrame`
+#### `MainFrame`
 Contenedor principal (Dashboard).
-- Implementa un sistema de navegación lateral.
-- Usa `CardLayout` para alternar entre los diferentes paneles funcionales sin cerrar la ventana.
-- Gestiona los permisos: Habilita/Deshabilita botones según el rol del usuario (Admin/Técnico/Supervisor).
+- Implementa navegación lateral persistente.
+- Utiliza `CardLayout` para la transición fluida entre paneles.
+- **Control de Acceso:** Oculta o deshabilita secciones de navegación basándose dinámicamente en el rol del usuario logueado.
 
 #### `IncidPanel`
-Panel principal para la gestión diaria de incidencias.
-- **Funciones:**
-  - Listado filtrable de tickets.
-  - Visualización de detalles (Cliente, Contrato, Dispositivo).
-  - Chat de comentarios (Historial de actualizaciones).
-  - Botones de acción: "Solucionar", "Actualizar", "Enviar Técnico".
+Centro de operaciones de incidencias.
+- **Funciones:** Filtrado de tickets, asignación rápida, resolución de incidencias y chat de seguimiento.
+- Permite abrir el detalle extendido de cada ticket.
 
 #### `IncidenciaDetalleDialog`
-Ventana modal de solo lectura.
-- Muestra un resumen ejecutivo y detallado de una incidencia específica.
-- Usada para consultas rápidas o impresiones de pantalla.
+Visor detallado modal.
+- Presenta toda la información contextual de una incidencia: datos del cliente, contrato asociado, historial de comentarios y dispositivos vinculados.
 
-#### `AdminPanel`
-Panel avanzado para administradores de sistemas.
-- **Gestión de Contratos:** Vinculación de clientes con servicios.
-- **Inventario:**
-  - Asignación de Routers/ONTS a contratos.
-  - Gestión de líneas móviles (SIMs 5G).
-- **Logs:** Visor de auditoría del sistema.
-
-#### `EstadisPanel`
-Panel de inteligencia de negocio (BI).
-- Muestra gráficos de rendimiento.
-- KPIs de incidencias resueltas vs pendientes.
+#### `SupervisorPanel`
+Herramienta para coordinadores de equipo.
+- Permite visualizar la carga de trabajo de los técnicos.
+- Facilita la reasignación de tareas y supervisión del estado global del servicio.
 
 #### `AparatosPanel`
-Gestión de inventario físico.
-- CRUD de dispositivos.
-- Búsqueda por MAC o Número de Serie.
+Gestión de parque de dispositivos.
+- Búsqueda avanzada por Número de Serie, MAC o Contrato.
+- Integra el **Simulador de Diagnóstico** en la interfaz, permitiendo ejecutar pruebas y visualizar resultados técnicos en el momento.
+
+#### `AdminPanel`
+Panel de administración de sistemas.
+- Gestión de contratos y vinculación de equipos (Routers, ONTs).
+- Asignación de líneas 5G.
+- Visor de logs del sistema para auditoría y depuración.
 
 #### `UsuariosPanel`
-Gestión de recursos humanos.
-- Alta, Baja y Modificación de usuarios del sistema (Técnicos, Agentes).
+Gestión de perfil propio.
+- Permite a los usuarios actualizar sus credenciales, nombre y visualizar su información de rol.
 
-#### `SplashScreen`
-Pantalla de carga inicial para mejorar la experiencia de usuario durante la inicialización de recursos.
+#### `EstadisPanel`
+Panel de Business Intelligence.
+- Gráficos estadísticos generados dinámicamente (JFreeChart) para analizar el volumen de incidencias y rendimiento.
+
+---
+
+### 📦 Paquete: `vista.dialogos`
+Componentes de interfaz personalizados.
+
+#### `ModernDialog`
+Sistema de diálogos propio que reemplaza a `JOptionPane`.
+- **Características:**
+  - Estética unificada con el tema de la aplicación (bordes, fuentes, colores).
+  - Soporte para mensajes de confirmación, entrada de texto y alertas.
+  - Elimina la dependencia de los diálogos nativos del sistema operativo para una experiencia de usuario consistente.
 
 ---
 
 ### 📦 Paquete: `vista.tema`
-Gestión de la apariencia visual (Look & Feel).
+Gestión de la identidad visual.
 
 #### `ThemeManager`
-Singleton encargado de aplicar estilos consistentes.
-- Configura **FlatLaf** como base.
-- Define paletas de colores corporativos.
-- Estandariza fuentes, bordes y comportamientos de componentes.
+Gestor de apariencia y estilos.
+- Centraliza la configuración de **FlatLaf**.
+- Aplica personalizaciones específicas a componentes (tablas, botones, campos de texto) para asegurar coherencia visual en toda la app.
+- Define paletas de colores semánticos (Éxito, Error, Acento).
 
 #### `CustomNotification`
-Sistema de notificaciones "toast" personalizadas.
-- Muestra alertas (Éxito, Error, Info) no intrusivas sobre la UI.
+Sistema de notificaciones no intrusivas.
+- Muestra mensajes flotantes o diálogos estilizados para informar al usuario del resultado de sus acciones sin interrumpir flujos críticos innecesariamente.
+#### `TelecomTheme`
+Definición de constantes de diseño (Colores hexadecimales, tipografías base).
+
+---
+
+## Requisitos del Sistema
+
+*   **Java Development Kit (JDK):** Versión 17 o superior.
+*   **Base de Datos:** MySQL o MariaDB.
+*   **Dependencias:**
+    *   FlatLaf (Look and Feel).
+    *   MySQL Connector/J.
+    *   BCrypt (Seguridad).
+    *   JFreeChart (Gráficos).
+
+---
+
+## Instalación y Uso
+
+1.  **Base de Datos:** Importar el script SQL incluido (`netfix_db.sql`) en su servidor MySQL.
+2.  **Configuración:** Verificar las credenciales de base de datos en `DatabaseManager` o archivo de propiedades (si aplica).
+3.  **Ejecución:** Iniciar la aplicación desde `login.java`.
+4.  **Roles de Prueba:**
+    *   **Admin:** Acceso total (Sistemas).
+    *   **Supervisor:** Gestión de técnicos e incidencias.
+    *   **Técnico:** Resolución de incidencias y diagnóstico.

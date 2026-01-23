@@ -5,7 +5,7 @@
 package com.jmmunoz.netfix.controlador;
 
 import com.jmmunoz.netfix.modelo.DatabaseManager;
-import com.jmmunoz.netfix.modelo.querys;
+import com.jmmunoz.netfix.modelo.Querys;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -57,7 +57,7 @@ public class Utilities {
 
             // 1️⃣ Obtener hash desde BD
             String hashBD = db.executePreparedString(
-                    querys.login,
+                    Querys.login,
                     mail);
 
             // Usuario no existe
@@ -138,78 +138,78 @@ public class Utilities {
 
             switch (tipo) {
                 case INCIDENCIAS -> {
-                    return db.executeQuery(querys.incidencias);
+                    return db.executeQuery(Querys.incidencias);
                 }
 
                 case INCIDENCIAS_RESUELTAS_TECNICO -> {
-                    return db.executeQuery(querys.incidenciasResueltasPorTecnico);
+                    return db.executeQuery(Querys.incidenciasResueltasPorTecnico);
                 }
 
                 case CONTADOR_APARATOS -> {
-                    return db.executeQuery(querys.contadorAparatos);
+                    return db.executeQuery(Querys.contadorAparatos);
                 }
                 case DIAGNOSTICO_APARATO -> {
                     return db.executePreparedQuery(
-                            querys.diagnosticoAparato,
+                            Querys.diagnosticoAparato,
                             params);
                 }
                 case INCI_CONTRATO -> {
                     return db.executePreparedQuery(
-                            querys.inciContra,
+                            Querys.inciContra,
                             params);
                 }
                 case INCI_PORDIA -> {
-                    return db.executePreparedQuery(querys.inciXdia);
+                    return db.executePreparedQuery(Querys.inciXdia);
                 }
 
                 case INCI_CONTADOR -> {
-                    return db.executePreparedQuery(querys.contadorInci);
+                    return db.executePreparedQuery(Querys.contadorInci);
                 }
                 case APARATOSFTTH -> {
-                    return db.executePreparedQuery(querys.aparatosFTTH, params);
+                    return db.executePreparedQuery(Querys.aparatosFTTH, params);
                 }
 
                 case APARATOS5G -> {
-                    return db.executePreparedQuery(querys.aparatos5G, params);
+                    return db.executePreparedQuery(Querys.aparatos5G, params);
                 }
 
                 case TITULAR -> {
-                    return db.executePreparedQuery(querys.titular, params);
+                    return db.executePreparedQuery(Querys.titular, params);
                 }
                 case COMENTARIOS -> {
-                    return db.executePreparedQuery(querys.comentarios, params);
+                    return db.executePreparedQuery(Querys.comentarios, params);
                 }
                 case USUARIOS -> {
-                    return db.executePreparedQuery(querys.usuarios);
+                    return db.executePreparedQuery(Querys.usuarios);
                 }
                 case USUARIOS_STRICT -> {
-                    return db.executePreparedQuery(querys.usuariosStrict);
+                    return db.executePreparedQuery(Querys.usuariosStrict);
                 }
 
                 case ROLES -> {
-                    return db.executePreparedQuery(querys.roles);
+                    return db.executePreparedQuery(Querys.roles);
                 }
 
                 case USUARIO -> {
-                    return db.executePreparedQuery(querys.usuario, params);
+                    return db.executePreparedQuery(Querys.usuario, params);
                 }
                 case ALL_CONTRATOS_APARATOS -> {
-                    return db.executePreparedQuery(querys.allContratosAparatos);
+                    return db.executePreparedQuery(Querys.allContratosAparatos);
                 }
                 case FREE_APARATOS -> {
-                    return db.executePreparedQuery(querys.freeAparatos);
+                    return db.executePreparedQuery(Querys.freeAparatos);
                 }
                 case NUMEROS_APARATO -> {
-                    return db.executePreparedQuery(querys.numerosPorAparato, params);
+                    return db.executePreparedQuery(Querys.numerosPorAparato, params);
                 }
                 case GET_LOGS -> {
-                    return db.executePreparedQuery(querys.getLogs, params);
+                    return db.executePreparedQuery(Querys.getLogs, params);
                 }
                 case INCI_MES_ANIO -> {
-                    return db.executePreparedQuery(querys.inciXmesAnio, params);
+                    return db.executePreparedQuery(Querys.inciXmesAnio, params);
                 }
                 case INCI_DETALLE -> {
-                    return db.executePreparedQuery(querys.detalleIncidenciaFull, params);
+                    return db.executePreparedQuery(Querys.detalleIncidenciaFull, params);
                 }
 
                 // Caso por defecto para tipos de consulta que no retornan ResultSet (ej.
@@ -241,27 +241,27 @@ public class Utilities {
 
             return switch (tipo) {
                 case COMUNICAR ->
-                    db.executeUpdate(querys.comunicar, params);
+                    db.executeUpdate(Querys.comunicar, params);
                 case INSERT_COMENTARIO ->
-                    db.executeUpdate(querys.insertComentario, params);
+                    db.executeUpdate(Querys.insertComentario, params);
                 case SOLUCIONAR ->
-                    db.executeUpdate(querys.solucionar, params);
+                    db.executeUpdate(Querys.solucionar, params);
                 case DERIVAR ->
-                    db.executeUpdate(querys.derivar, params);
+                    db.executeUpdate(Querys.derivar, params);
                 case UPDATEUSER ->
-                    db.executeUpdate(querys.updateUser, params);
+                    db.executeUpdate(Querys.updateUser, params);
                 case ALTA ->
-                    db.executeUpdate(querys.altaUser, params);
+                    db.executeUpdate(Querys.altaUser, params);
                 case ASIGNAR_APARATO ->
-                    db.executeUpdate(querys.updateAparatoContrato, params);
+                    db.executeUpdate(Querys.updateAparatoContrato, params);
                 case LIBERAR_APARATO ->
-                    db.executeUpdate(querys.liberarAparato, params);
+                    db.executeUpdate(Querys.liberarAparato, params);
                 case ADD_NUMERO ->
-                    db.executeUpdate(querys.insertNumero, params);
+                    db.executeUpdate(Querys.insertNumero, params);
                 case DEL_NUMERO ->
-                    db.executeUpdate(querys.deleteNumero, params);
+                    db.executeUpdate(Querys.deleteNumero, params);
                 case FIX_SCHEMA -> {
-                    String[] queries = querys.fixSchema.split(";");
+                    String[] queries = Querys.fixSchema.split(";");
                     int totalUpdated = 0;
                     for (String q : queries) {
                         if (!q.trim().isEmpty()) {
@@ -271,11 +271,11 @@ public class Utilities {
                     yield totalUpdated;
                 }
                 case CREATE_LOGS_TABLE ->
-                    db.executeUpdate(querys.createTableLogs);
+                    db.executeUpdate(Querys.createTableLogs);
                 case INSERT_LOG ->
-                    db.executeUpdate(querys.insertLog, params);
+                    db.executeUpdate(Querys.insertLog, params);
                 case INSERT_INCIDENCIA_FULL ->
-                    db.executeUpdate(querys.insertIncidenciaFull, params);
+                    db.executeUpdate(Querys.insertIncidenciaFull, params);
                 default ->
                     0;
             };
@@ -479,7 +479,8 @@ public class Utilities {
         }
 
         JFreeChart chart = ChartFactory.createBarChart(
-                com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("chart.title.incidents") + mes + "/" + anio,
+                com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("chart.title.incidents") + mes + "/"
+                        + anio,
                 com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("chart.axis.day", mes),
                 com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("chart.axis.quantity"),
                 dataset,
@@ -502,13 +503,6 @@ public class Utilities {
         panelDestino.add(chartPanel, BorderLayout.CENTER);
         panelDestino.revalidate();
         panelDestino.repaint();
-    }
-
-    /**
-     * @deprecated Usar {@link #cargarGrafico(JPanel, int, int)}
-     */
-    public void cargarGrafico(JPanel panelDestino) {
-        cargarGrafico(panelDestino, -1, -1);
     }
 
     /**
@@ -662,8 +656,8 @@ public class Utilities {
                 String p1 = PasswordUtils.hashPassword("1234");
                 String p2 = PasswordUtils.hashPassword("1234");
 
-                db.executeUpdate(querys.altaUser, "Técnico Test 1", "tecnico", "tecnico1@netfix.com", p1);
-                db.executeUpdate(querys.altaUser, "Técnico Test 2", "tecnico", "tecnico2@netfix.com", p2);
+                db.executeUpdate(Querys.altaUser, "Técnico Test 1", "tecnico", "tecnico1@netfix.com", p1);
+                db.executeUpdate(Querys.altaUser, "Técnico Test 2", "tecnico", "tecnico2@netfix.com", p2);
                 System.out.println("Seeded test technicians.");
             }
         } catch (SQLException ex) {
@@ -679,13 +673,13 @@ public class Utilities {
     public void initTechnicianSchema() {
         try {
             DatabaseManager db = DatabaseManager.getInstance();
-            db.executeUpdate(querys.createTableTecnicos);
-            db.executeUpdate(querys.createTableHorarios);
-            db.executeUpdate(querys.createTableAgenda);
+            db.executeUpdate(Querys.createTableTecnicos);
+            db.executeUpdate(Querys.createTableHorarios);
+            db.executeUpdate(Querys.createTableAgenda);
 
             // Sync inicial
-            db.executeUpdate(querys.syncTecnicos);
-            db.executeUpdate(querys.initHorariosDefecto);
+            db.executeUpdate(Querys.syncTecnicos);
+            db.executeUpdate(Querys.initHorariosDefecto);
 
         } catch (SQLException ex) {
             System.err.println("Error initTechnicianSchema: " + ex.getMessage());
@@ -701,7 +695,7 @@ public class Utilities {
         List<Object[]> lista = new ArrayList<>();
         try {
             DatabaseManager db = DatabaseManager.getInstance();
-            ResultSet rs = db.executeQuery(querys.getTecnicos);
+            ResultSet rs = db.executeQuery(Querys.getTecnicos);
             while (rs.next()) {
                 lista.add(new Object[] { rs.getInt("id_tecnico"), rs.getString("nombre") });
             }
@@ -740,11 +734,11 @@ public class Utilities {
             DatabaseManager db = DatabaseManager.getInstance();
 
             // 2. Obtener TODAS las franjas horarias (mañana y tarde)
-            ResultSet rsHorario = db.executePreparedQuery(querys.getHorarioTecnico, idTecnico, diaSemana);
+            ResultSet rsHorario = db.executePreparedQuery(Querys.getHorarioTecnico, idTecnico, diaSemana);
 
             // 3. Obtener citas ocupadas
             List<String> ocupadas = new ArrayList<>();
-            ResultSet rsCitas = db.executePreparedQuery(querys.getCitasTecnico, idTecnico, sqlDate);
+            ResultSet rsCitas = db.executePreparedQuery(Querys.getCitasTecnico, idTecnico, sqlDate);
             while (rsCitas.next()) {
                 java.sql.Timestamp ts = rsCitas.getTimestamp("fecha_cita");
                 java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("HH:mm");
@@ -836,11 +830,12 @@ public class Utilities {
             db.beginTransaction();
 
             // 1. Insertar Cita
-            db.executePreparedUpdate(querys.insertCita, idTecnico, idIncidencia, ts);
+            db.executePreparedUpdate(Querys.insertCita, idTecnico, idIncidencia, ts);
 
             // 2. Actualizar Incidencia (Asignada y con solución temporal indicando la cita)
-            String msg = com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("util.msg.scheduled") + fullDateStr;
-            db.executePreparedUpdate(querys.asignarIncidencia, idTecnico, msg, idIncidencia);
+            String msg = com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("util.msg.scheduled")
+                    + fullDateStr;
+            db.executePreparedUpdate(Querys.asignarIncidencia, idTecnico, msg, idIncidencia);
 
             db.commit();
             return true;

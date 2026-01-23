@@ -22,7 +22,8 @@ public class AppConfig {
             // Carga el fichero messages.properties del classpath
             messages = ResourceBundle.getBundle("messages", Locale.getDefault());
         } catch (Exception e) {
-            System.err.println("Error cargando messages.properties: " + e.getMessage());
+            System.getLogger(AppConfig.class.getName()).log(System.Logger.Level.ERROR,
+                    "Error cargando messages.properties: " + e.getMessage());
         }
     }
 
@@ -45,7 +46,8 @@ public class AppConfig {
                 return messages.getString(key);
             }
         } catch (Exception e) {
-            System.err.println("Error recuperando clave " + key + ": " + e.getMessage());
+            System.getLogger(AppConfig.class.getName()).log(System.Logger.Level.ERROR,
+                    "Error recuperando clave " + key + ": " + e.getMessage());
         }
         return "!" + key + "!";
     }

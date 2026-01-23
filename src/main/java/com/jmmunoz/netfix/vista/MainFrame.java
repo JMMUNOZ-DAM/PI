@@ -31,7 +31,7 @@ import javax.swing.SwingUtilities;
  * 
  * @author Juanma Muñoz
  */
-public class mainFrame extends javax.swing.JFrame {
+public class MainFrame extends javax.swing.JFrame {
 
     private final CardLayout cardLayout;
     private final EstadisPanel estadisPanel;
@@ -49,7 +49,7 @@ public class mainFrame extends javax.swing.JFrame {
      * 
      * @param usuario El objeto {@link Usuario} autenticado que inicia la sesión.
      */
-    public mainFrame(Usuario usuario) {
+    public MainFrame(Usuario usuario) {
         initComponents();
         setupWindowSize();
         contentPanel.setPreferredSize(null);
@@ -155,7 +155,8 @@ public class mainFrame extends javax.swing.JFrame {
                 // Sin acceso a administración
                 adminButton.setEnabled(false);
                 usuButton.setText(
-                        com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("main.nav.users.singular"));
+                        " " + com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("main.nav.users.singular")
+                                .trim());
                 // Opcional: ocultar
                 // adminButton.setVisible(false);
                 break;
@@ -176,6 +177,7 @@ public class mainFrame extends javax.swing.JFrame {
      * @param inciButton
      */
     // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
     // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -185,7 +187,7 @@ public class mainFrame extends javax.swing.JFrame {
         estaButton.setLayout(new java.awt.BorderLayout());
 
         // Texto / comportamiento
-        estaButton.setText(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("main.nav.stats"));
+        estaButton.setText("Estadísticas");
         estaButton.setFocusPainted(false);
         estaButton.setBorderPainted(false);
         estaButton.setContentAreaFilled(false);
@@ -220,7 +222,7 @@ public class mainFrame extends javax.swing.JFrame {
         inciButton.setLayout(new java.awt.BorderLayout());
 
         // Texto / comportamiento
-        inciButton.setText(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("main.nav.incidents"));
+        inciButton.setText("Incidencias");
         inciButton.setFocusPainted(false);
         inciButton.setBorderPainted(false);
         inciButton.setContentAreaFilled(false);
@@ -255,7 +257,7 @@ public class mainFrame extends javax.swing.JFrame {
         aparaButton.setLayout(new java.awt.BorderLayout());
 
         // Texto / comportamiento
-        aparaButton.setText(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("main.nav.devices"));
+        aparaButton.setText("Aparatos");
         aparaButton.setFocusPainted(false);
         aparaButton.setBorderPainted(false);
         aparaButton.setContentAreaFilled(false);
@@ -290,7 +292,7 @@ public class mainFrame extends javax.swing.JFrame {
         usuButton.setLayout(new java.awt.BorderLayout());
 
         // Texto / comportamiento
-        usuButton.setText(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("main.nav.users"));
+        usuButton.setText("Usuarios");
         usuButton.setFocusPainted(false);
         usuButton.setBorderPainted(false);
         usuButton.setContentAreaFilled(false);
@@ -325,7 +327,7 @@ public class mainFrame extends javax.swing.JFrame {
         adminButton.setLayout(new java.awt.BorderLayout());
 
         // Texto / comportamiento
-        adminButton.setText(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("main.nav.admin"));
+        adminButton.setText("Administrar");
         adminButton.setFocusPainted(false);
         adminButton.setBorderPainted(false);
         adminButton.setContentAreaFilled(false);
@@ -366,7 +368,7 @@ public class mainFrame extends javax.swing.JFrame {
         salir.setContentAreaFilled(false);
         salir.setOpaque(false);
         salir.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        salir.setToolTipText(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("main.tooltip.logout"));
+        salir.setToolTipText("Cerrar sesión");
 
         java.net.URL normalUrl = getClass().getResource("/img/logout.png");
         java.net.URL hoverUrl = getClass().getResource("/img/logout_hover.png");
@@ -408,18 +410,16 @@ public class mainFrame extends javax.swing.JFrame {
         contentPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        // setPreferredSize(new java.awt.Dimension(1920, 1080)); // Removed fixed
-        // preference
-        setResizable(true); // Changed to true
-        // setSize(new java.awt.Dimension(1920, 1080)); // Removed fixed size
+        setResizable(false);
+        setSize(new java.awt.Dimension(1920, 1080));
 
-        fondoPanel.setBackground(TelecomTheme.APP_BG);
-        // fondoPanel.setPreferredSize(new java.awt.Dimension(1920, 1080)); // Removed
-        // fixed preference
-        fondoPanel.setLayout(new java.awt.BorderLayout()); // Changed to BorderLayout
+        fondoPanel.setBackground(new java.awt.Color(255, 255, 255));
+        fondoPanel.setLayout(new java.awt.BorderLayout());
+
+        panelLateral.setForeground(new java.awt.Color(153, 153, 153));
 
         estaButton.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        estaButton.setText(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("main.nav.stats"));
+        estaButton.setText(" Estadísticas");
         estaButton.setBorder(null);
         estaButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -428,7 +428,7 @@ public class mainFrame extends javax.swing.JFrame {
         });
 
         inciButton.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        inciButton.setText(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("main.nav.incidents"));
+        inciButton.setText(" Incidencias");
         inciButton.setBorder(null);
         inciButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -437,7 +437,7 @@ public class mainFrame extends javax.swing.JFrame {
         });
 
         aparaButton.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        aparaButton.setText(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("main.nav.devices"));
+        aparaButton.setText(" Aparatos");
         aparaButton.setBorder(null);
         aparaButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -446,7 +446,7 @@ public class mainFrame extends javax.swing.JFrame {
         });
 
         usuButton.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        usuButton.setText(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("main.nav.users"));
+        usuButton.setText(" Usuarios");
         usuButton.setBorder(null);
         usuButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -455,7 +455,7 @@ public class mainFrame extends javax.swing.JFrame {
         });
 
         adminButton.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        adminButton.setText(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("main.nav.admin"));
+        adminButton.setText(" Administrar");
         adminButton.setBorder(null);
         adminButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -468,7 +468,7 @@ public class mainFrame extends javax.swing.JFrame {
         logRol.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
 
         salir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/logout.png"))); // NOI18N
-        salir.setToolTipText(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("main.tooltip.logout.hint"));
+        salir.setToolTipText("Pulse para cerrar sesión.");
         salir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 salirActionPerformed(evt);
@@ -536,22 +536,16 @@ public class mainFrame extends javax.swing.JFrame {
         contentPanel.setBackground(new java.awt.Color(255, 255, 255));
         contentPanel.setLayout(new java.awt.BorderLayout());
 
-        // ScrollPane para el contenido principal
-        mainScrollPane = new javax.swing.JScrollPane();
-        mainScrollPane.setViewportView(contentPanel);
-        mainScrollPane.setBorder(null); // Sin borde para integración limpia
-        mainScrollPane.getVerticalScrollBar().setUnitIncrement(16); // Velocidad de scroll
-        mainScrollPane.getHorizontalScrollBar().setUnitIncrement(16);
-
+        // USAR BORDERLAYOUT EN LUGAR DE GROUPLAYOUT
         fondoPanel.add(panelLateral, java.awt.BorderLayout.WEST);
-        fondoPanel.add(mainScrollPane, java.awt.BorderLayout.CENTER);
+        fondoPanel.add(contentPanel, java.awt.BorderLayout.CENTER);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(fondoPanel, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE));
+                        .addComponent(fondoPanel, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
         layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(fondoPanel, javax.swing.GroupLayout.DEFAULT_SIZE,
@@ -642,13 +636,13 @@ public class mainFrame extends javax.swing.JFrame {
 
     private void salirActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_salirActionPerformed
 
-        int opcion = JOptionPane.showConfirmDialog(
+        int opcion = com.jmmunoz.netfix.vista.dialogos.ModernDialog.showConfirmDialog(
                 this,
                 com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("main.logout.confirm.msg"),
                 com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("main.logout.confirm.title"),
                 JOptionPane.YES_NO_OPTION);
 
-        if (opcion == JOptionPane.YES_OPTION) {
+        if (opcion == JOptionPane.OK_OPTION) {
             new com.jmmunoz.netfix.controlador.Utilities().logAction("OK", "MainFrame",
                     "Usuario " + usuario.getNombre() + " "
                             + com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("main.log.logout"));
@@ -681,7 +675,6 @@ public class mainFrame extends javax.swing.JFrame {
     private javax.swing.JButton inciButton;
     private javax.swing.JLabel logName;
     private javax.swing.JLabel logRol;
-    private javax.swing.JScrollPane mainScrollPane;
     private javax.swing.JPanel panelLateral;
     private javax.swing.JButton salir;
     private javax.swing.JButton usuButton;

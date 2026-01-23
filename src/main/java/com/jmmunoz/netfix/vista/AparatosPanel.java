@@ -81,9 +81,6 @@ public class AparatosPanel extends javax.swing.JPanel {
                 numConLabel = new javax.swing.JLabel();
                 diagnoButton = new javax.swing.JButton();
 
-                // setPreferredSize(new java.awt.Dimension(1592, 946)); // Removed fixed
-                // preference
-
                 apaTitle.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
                 apaTitle.setText(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("aparatos.title"));
 
@@ -435,7 +432,7 @@ public class AparatosPanel extends javax.swing.JPanel {
          */
         private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_searchButtonActionPerformed
                 if (searchField.getText().trim().isEmpty()) {
-                        JOptionPane.showMessageDialog(
+                        com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(
                                         this,
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                         .getMessage("aparatos.error.empty.search"),
@@ -446,7 +443,7 @@ public class AparatosPanel extends javax.swing.JPanel {
                         return; // Detiene la ejecución si está vacío
                 }
                 searchText = searchField.getText();
-                // removed debug print
+                // impresión de depuración eliminada
                 cargarDiagnostico();
         }// GEN-LAST:event_searchButtonActionPerformed
 
@@ -475,7 +472,7 @@ public class AparatosPanel extends javax.swing.JPanel {
          */
         private void diagnoButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_diagnoButtonActionPerformed
                 if (numSLabel.getText().trim().isEmpty()) {
-                        JOptionPane.showMessageDialog(
+                        com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(
                                         this,
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                         .getMessage("aparatos.error.no.selection"),
@@ -500,7 +497,7 @@ public class AparatosPanel extends javax.swing.JPanel {
                                 Integer.parseInt(numConLabel.getText()),
                                 idAparato);
                 JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
-                // Generar diagnóstico usando tu servicio
+
                 // Pasamos this::cargarDiagnostico como callback para refrescar datos al
                 // terminar
                 sd.generarDiagnosticoConCarga(parentFrame, a, actualDiag, this::cargarDiagnostico);
@@ -595,7 +592,7 @@ public class AparatosPanel extends javax.swing.JPanel {
          * Aplica el tema visual corporativo.
          * Estiliza el panel de búsqueda, el card de detalles y los botones.
          */
-        // applyTelecomStyle removed - logic moved to ThemeManager
+        // applyTelecomStyle eliminado - lógica movida a ThemeManager
 
         // Variables declaration - do not modify//GEN-BEGIN:variables
         private javax.swing.JList<String> actualDiag;

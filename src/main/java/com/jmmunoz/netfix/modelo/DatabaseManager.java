@@ -11,7 +11,7 @@ package com.jmmunoz.netfix.modelo;
 import java.sql.*;
 
 /**
- * Clase Singleton para gestionar la conexión a la base de datos MySQL.
+ * Clase para gestionar la conexión a la base de datos MySQL.
  * <p>
  * Esta clase centraliza la configuración de conexión (URL, usuario, contraseña)
  * y proporciona métodos para ejecutar consultas SQL, transacciones y gestionar
@@ -34,7 +34,7 @@ public class DatabaseManager {
     private static DatabaseManager instance;
 
     // ===============================================
-    // SINGLETON
+    // CONSTRUCTOR INTERNO
     // ===============================================
     private DatabaseManager() {
         try {
@@ -47,7 +47,7 @@ public class DatabaseManager {
     /**
      * Obtiene la instancia única de DatabaseManager.
      * <p>
-     * Implementación segura para hilos (synchronized) del patrón Singleton.
+     * Implementación segura para hilos (synchronized).
      * </p>
      * 
      * @return La instancia única de DatabaseManager.
@@ -221,44 +221,5 @@ public class DatabaseManager {
         try (PreparedStatement stmt = prepareStatement(sql, params)) {
             return stmt.executeUpdate();
         }
-    }
-
-    // ===============================================
-    // MÉTODO DE PRUEBA
-    // ===============================================
-    public static void main(String[] args) {
-        DatabaseManager db = DatabaseManager.getInstance();
-
-        try {
-            // ============================================
-            // Obtener información de columnas dinámicamente
-            // ============================================
-            try (ResultSet rs = db.executeQuery(
-                    "SELECT * FROM netfix.clientes LIMIT 1;")) {
-                printResultSet(rs);
-            }
-            try (ResultSet rs = db.executeQuery(
-                    "SELECT * FROM netfix.contratos LIMIT 1;")) {
-                printResultSet(rs);
-            }
-            try (ResultSet rs = db.executeQuery(
-                    "SELECT * FROM netfix.usuarios LIMIT 1;")) {
-                printResultSet(rs);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            db.closeConnection();
-        }
-    }
-
-    private static void printResultSet(ResultSet rs) throws SQLException {
-        ResultSetMetaData meta = rs.getMetaData();
-        int columnas = meta.getColumnCount();
-        System.out.println("===== TABLE: " + meta.getTableName(1) + " =====");
-        for (int i = 1; i <= columnas; i++) {
-            System.out.print(meta.getColumnName(i) + " (" + meta.getColumnTypeName(i) + ")\t");
-        }
-        System.out.println("\n----------------------------------------");
     }
 }

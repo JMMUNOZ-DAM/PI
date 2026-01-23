@@ -51,7 +51,7 @@ public class AdminPanel extends javax.swing.JPanel {
     private JTable contratosTable;
     private DefaultTableModel tableModel;
 
-    // Management Panel Components
+    // Componentes del Panel de Gestión
     private JPanel managementPanel;
     private JLabel selectedContractLabel;
     private JLabel deviceLabel;
@@ -59,14 +59,14 @@ public class AdminPanel extends javax.swing.JPanel {
     private JButton assignButton;
     private JButton viewLogsButton;
 
-    // 5G Number Panel
+    // Panel de Números 5G
     private JPanel numberPanel;
     private JList<String> numberList;
     private DefaultListModel<String> numberListModel;
     private JButton addNumberButton;
     private JButton delNumberButton;
 
-    // Selected Data
+    // Datos Seleccionados
     private int selectedContratoId = -1;
     private int selectedAparatoId = -1;
     private String selectedTipoAparato = "";
@@ -79,13 +79,14 @@ public class AdminPanel extends javax.swing.JPanel {
         initComponents();
         setupCustomUI();
         com.jmmunoz.netfix.vista.tema.ThemeManager.getInstance().applyAdminPanelTheme(this);
-        // Ensure DB supports NULL id_contrato
+        // Asegurar que la BD soporta id_contrato NULL
         new Utilities().ejecutarUpdate(Utilities.TipoConsulta.FIX_SCHEMA);
+        setupScrollListener();
         cargarContratos();
     }
 
     private void setupCustomUI() {
-        // Init Components
+        // Inicializar componentes
         contratosTable = new JTable();
         tableModel = new DefaultTableModel(
                 new Object[][] {},
@@ -110,15 +111,15 @@ public class AdminPanel extends javax.swing.JPanel {
             }
         });
 
-        // Sorter
+        // Ordenador
         sorter = new TableRowSorter<>(tableModel);
         contratosTable.setRowSorter(sorter);
 
-        // Styling
+        // Estilo
         scrollPane = new JScrollPane(contratosTable);
-        // Table styling handled by ThemeManager now
+        // Estilo de tabla manejado ahora por ThemeManager
 
-        // --- Management Panel ---
+        // --- Panel de Gestión ---
         managementPanel = new JPanel(new GridBagLayout());
         managementPanel.setBorder(BorderFactory.createTitledBorder(
                 com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("admin.title.management")));
@@ -134,7 +135,7 @@ public class AdminPanel extends javax.swing.JPanel {
         assignButton.addActionListener(e -> asignarAparato());
         releaseButton.addActionListener(e -> liberarAparato());
 
-        // 5G Section
+        // Sección 5G
         numberPanel = new JPanel(new BorderLayout());
         numberPanel.setOpaque(false);
         numberPanel.setBorder(BorderFactory
@@ -155,18 +156,18 @@ public class AdminPanel extends javax.swing.JPanel {
         btnPanel.add(delNumberButton);
         numberPanel.add(btnPanel, BorderLayout.SOUTH);
 
-        // --- LAYOUT ---
+        // --- DISEÑO ---
         this.setLayout(new BorderLayout());
         this.add(adminPanel, BorderLayout.CENTER);
 
         adminPanel.removeAll();
         adminPanel.setLayout(new GridBagLayout());
-        // Background handled by ThemeManager
+        // Fondo manejado por ThemeManager
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.BOTH;
 
-        // Title
+        // Título
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
@@ -175,17 +176,17 @@ public class AdminPanel extends javax.swing.JPanel {
         gbc.fill = GridBagConstraints.NONE;
         adminPanel.add(sisTitle, gbc);
 
-        // Reset fill for subsequent components
+        // Restablecer relleno para componentes siguientes
         gbc.fill = GridBagConstraints.BOTH;
 
-        // Search
+        // Búsqueda
         JPanel searchWrapper = new JPanel();
         searchWrapper.setOpaque(false);
 
-        // Fix: Make search bar wider
+        // Corrección: Hacer barra de búsqueda más ancha
         seaField.setPreferredSize(new java.awt.Dimension(300, 35));
         seaField.setFont(new java.awt.Font("Segoe UI", 0, 16));
-        // Fix: Add Enter key support
+        // Corrección: Añadir soporte tecla Enter
         seaField.addActionListener(e -> filterTable());
 
         searchWrapper.add(seaField);
@@ -197,7 +198,7 @@ public class AdminPanel extends javax.swing.JPanel {
         viewLogsButton.addActionListener(
                 e -> new LogViewerDialog((javax.swing.JFrame) javax.swing.SwingUtilities.getWindowAncestor(this))
                         .setVisible(true));
-        searchWrapper.add(Box.createHorizontalStrut(20)); // Spacer
+        searchWrapper.add(Box.createHorizontalStrut(20)); // Espaciador
         searchWrapper.add(viewLogsButton);
 
         searchButtSis.addActionListener(e -> filterTable());
@@ -205,12 +206,12 @@ public class AdminPanel extends javax.swing.JPanel {
         gbc.gridy++;
         adminPanel.add(searchWrapper, gbc);
 
-        // Table
+        // Tabla
         gbc.gridy++;
         gbc.weighty = 1.0;
         adminPanel.add(scrollPane, gbc);
 
-        // Management
+        // Gestión
         gbc.gridy++;
         gbc.weighty = 0.0;
         setupManagementLayout();
@@ -239,7 +240,7 @@ public class AdminPanel extends javax.swing.JPanel {
         gbc.gridy++;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weighty = 1.0;
-        // numberPanel visible only when 5G
+        // numberPanel visible solo cuando es 5G
         managementPanel.add(numberPanel, gbc);
         numberPanel.setVisible(false);
     }
@@ -257,7 +258,7 @@ public class AdminPanel extends javax.swing.JPanel {
         }
     }
 
-    // applyTelecomStyle removed - logic moved to ThemeManager
+    // applyTelecomStyle eliminado - lógica movida a ThemeManager
 
     /**
      * Carga la lista completa de contratos desde la base de datos.
@@ -288,6 +289,76 @@ public class AdminPanel extends javax.swing.JPanel {
                     "AdminPanel",
                     com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("admin.error.load.contracts")
                             + ex.getMessage());
+        }
+        resizeColumnWidths(contratosTable);
+    }
+
+    /**
+     * Ajusta el ancho de las columnas de la tabla al contenido y a la cabecera.
+     */
+    private void setupScrollListener() {
+        scrollPane.addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent e) {
+                resizeColumnWidths(contratosTable);
+            }
+        });
+    }
+
+    /**
+     * Ajusta el ancho de las columnas.
+     * Estrategia "Responsive":
+     * 1. Calcula el ancho ideal de cada columna (Header vs Contenido).
+     * 2. Si el ancho total ideal < ancho del viewport: ESTIRA las columnas para
+     * llenar el espacio (Armónico).
+     * 3. Si el ancho total ideal > ancho del viewport: Mantiene el ancho ideal y
+     * permite SCROLL (Legible).
+     */
+    private void resizeColumnWidths(JTable table) {
+        if (table.getRowCount() == 0)
+            return;
+
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        final javax.swing.table.TableColumnModel columnModel = table.getColumnModel();
+        int totalIdealWidth = 0;
+        int[] idealWidths = new int[table.getColumnCount()];
+
+        // 1. Calcular anchos ideales
+        for (int column = 0; column < table.getColumnCount(); column++) {
+            int width = 60; // Ancho mínimo base
+
+            // Cabecera
+            java.awt.Component header = table.getTableHeader().getDefaultRenderer()
+                    .getTableCellRendererComponent(table, columnModel.getColumn(column).getHeaderValue(), false, false,
+                            -1, column);
+            width = Math.max(header.getPreferredSize().width + 20, width);
+
+            // Contenido (Optimización: Muestrear primeras 50 filas)
+            int limit = Math.min(table.getRowCount(), 50);
+            for (int row = 0; row < limit; row++) {
+                java.awt.Component renderer = table.prepareRenderer(table.getCellRenderer(row, column), row, column);
+                width = Math.max(renderer.getPreferredSize().width + 10, width);
+            }
+
+            idealWidths[column] = width;
+            totalIdealWidth += width;
+        }
+
+        // 2. Obtener ancho disponible
+        int viewportWidth = scrollPane.getViewport().getWidth();
+        // Si no está visible aún, usar un fallback o el tamaño del padre
+        if (viewportWidth == 0)
+            viewportWidth = table.getParent().getWidth();
+
+        // 3. Aplicar factor de escala si sobra espacio
+        double scaleFactor = 1.0;
+        if (viewportWidth > totalIdealWidth && totalIdealWidth > 0) {
+            scaleFactor = (double) viewportWidth / totalIdealWidth;
+        }
+
+        for (int column = 0; column < table.getColumnCount(); column++) {
+            int finalWidth = (int) (idealWidths[column] * scaleFactor);
+            columnModel.getColumn(column).setPreferredWidth(finalWidth);
         }
     }
 
@@ -359,12 +430,12 @@ public class AdminPanel extends javax.swing.JPanel {
             return;
         }
 
-        int confirm = JOptionPane.showConfirmDialog(this,
+        int confirm = com.jmmunoz.netfix.vista.dialogos.ModernDialog.showConfirmDialog(this,
                 com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("admin.msg.release.confirm"),
                 com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("admin.title.release"),
                 JOptionPane.YES_NO_OPTION);
 
-        if (confirm == JOptionPane.YES_OPTION) {
+        if (confirm == JOptionPane.OK_OPTION) {
             Utilities ut = new Utilities();
             if (ut.ejecutarUpdate(Utilities.TipoConsulta.LIBERAR_APARATO, selectedAparatoId) > 0) {
                 com.jmmunoz.netfix.vista.tema.CustomNotification.show(
@@ -410,7 +481,7 @@ public class AdminPanel extends javax.swing.JPanel {
             return;
         }
 
-        // 1. Load Free Devices
+        // 1. Cargar dispositivos libres
         Vector<DeviceItem> freeDevs = new Vector<>();
         try {
             ResultSet rs = Utilities.ejecutarConsulta(Utilities.TipoConsulta.FREE_APARATOS);
@@ -440,8 +511,8 @@ public class AdminPanel extends javax.swing.JPanel {
             return;
         }
 
-        // 2. Select Dialog
-        DeviceItem selected = (DeviceItem) JOptionPane.showInputDialog(
+        // 2. Diálogo de selección
+        DeviceItem selected = (DeviceItem) com.jmmunoz.netfix.vista.dialogos.ModernDialog.showInputDialog(
                 this,
                 com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("admin.msg.select.device"),
                 com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("admin.title.assign"),
@@ -454,8 +525,8 @@ public class AdminPanel extends javax.swing.JPanel {
             return;
         }
 
-        // 3. VALIDATIONS
-        // Rule: FTTH only if empty
+        // 3. VALIDACIONES
+        // Regla: FTTH solo si está vacío
         if ("FTTH".equalsIgnoreCase(selected.tipo) && selectedAparatoId != -1) {
             com.jmmunoz.netfix.vista.tema.CustomNotification.show(
                     this,
@@ -465,24 +536,24 @@ public class AdminPanel extends javax.swing.JPanel {
             return;
         }
 
-        // Handle Replacement (if exists)
+        // Manejar Reemplazo (si existe)
         if (selectedAparatoId != -1) {
-            int confirm = JOptionPane.showConfirmDialog(this,
+            int confirm = com.jmmunoz.netfix.vista.dialogos.ModernDialog.showConfirmDialog(this,
                     com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("admin.msg.replace.confirm",
                             selected.modelo),
                     com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("admin.title.replace"),
                     JOptionPane.YES_NO_OPTION);
-            if (confirm != JOptionPane.YES_OPTION) {
+            if (confirm != JOptionPane.OK_OPTION) {
                 return;
             }
 
-            // Release old first
+            // Liberar antiguo primero
             new Utilities().ejecutarUpdate(Utilities.TipoConsulta.LIBERAR_APARATO, selectedAparatoId);
         }
 
-        // Rule: 5G Mandatory Number
+        // Regla: Número obligatorio para 5G
         if ("5G".equalsIgnoreCase(selected.tipo)) {
-            String num = JOptionPane.showInputDialog(this,
+            String num = com.jmmunoz.netfix.vista.dialogos.ModernDialog.showInputDialog(this,
                     com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("admin.msg.5g.number"));
 
             if (num == null || num.trim().isEmpty()) {
@@ -497,7 +568,7 @@ public class AdminPanel extends javax.swing.JPanel {
                 return;
             }
 
-            // Execute Assign + Add Number
+            // Ejecutar Asignación + Añadir Número
             Utilities ut = new Utilities();
             boolean assignOk = ut.ejecutarUpdate(Utilities.TipoConsulta.ASIGNAR_APARATO, selectedContratoId,
                     selected.id) > 0;
@@ -527,7 +598,7 @@ public class AdminPanel extends javax.swing.JPanel {
             }
 
         } else {
-            // Standard Assign
+            // Asignación Estándar
             Utilities ut = new Utilities();
             if (ut.ejecutarUpdate(Utilities.TipoConsulta.ASIGNAR_APARATO, selectedContratoId, selected.id) > 0) {
                 com.jmmunoz.netfix.vista.tema.CustomNotification.show(
@@ -578,7 +649,7 @@ public class AdminPanel extends javax.swing.JPanel {
      * Solicita y añade un nuevo número de teléfono al dispositivo 5G actual.
      */
     private void addNumber() {
-        String num = JOptionPane.showInputDialog(this,
+        String num = com.jmmunoz.netfix.vista.dialogos.ModernDialog.showInputDialog(this,
                 com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("admin.msg.add.number"));
         if (num != null && !num.trim().isEmpty()) {
             Utilities ut = new Utilities();
@@ -599,9 +670,9 @@ public class AdminPanel extends javax.swing.JPanel {
         if (num == null)
             return;
 
-        int c = JOptionPane.showConfirmDialog(this,
+        int c = com.jmmunoz.netfix.vista.dialogos.ModernDialog.showConfirmDialog(this,
                 com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("admin.msg.del.number.confirm", num));
-        if (c == JOptionPane.YES_OPTION) {
+        if (c == JOptionPane.OK_OPTION) {
             Utilities ut = new Utilities();
             if (ut.ejecutarUpdate(Utilities.TipoConsulta.DEL_NUMERO, num) > 0) {
                 ut.logAction("OK", "AdminPanel", "Eliminado número 5G: " + num);
@@ -610,7 +681,7 @@ public class AdminPanel extends javax.swing.JPanel {
         }
     }
 
-    // Helper Class for ComboBox
+    // Clase auxiliar para ComboBox
     private static class DeviceItem {
         int id;
         String serie, modelo, tipo;
@@ -648,7 +719,7 @@ public class AdminPanel extends javax.swing.JPanel {
             setLayout(new java.awt.BorderLayout(10, 10));
             com.jmmunoz.netfix.vista.tema.ThemeManager.getInstance().applyLogViewerTheme(this);
 
-            // Toolbar
+            // Barra de herramientas
             javax.swing.JPanel toolbar = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
             toolbar.setOpaque(false);
             toolbar.add(new javax.swing.JLabel(
@@ -668,7 +739,7 @@ public class AdminPanel extends javax.swing.JPanel {
 
             add(toolbar, java.awt.BorderLayout.NORTH);
 
-            // Table
+            // Tabla
             logModel = new javax.swing.table.DefaultTableModel(
                     new Object[][] {},
                     new String[] {
@@ -707,7 +778,8 @@ public class AdminPanel extends javax.swing.JPanel {
                     });
                 }
             } catch (java.sql.SQLException ex) {
-                ex.printStackTrace();
+                System.getLogger(AdminPanel.class.getName()).log(System.Logger.Level.ERROR,
+                        "Error loading logs: " + ex.getMessage());
             }
         }
     }

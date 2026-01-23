@@ -57,8 +57,9 @@ public class IncidPanel extends javax.swing.JPanel {
                 initCustomComponents();
                 configurarBuscador();
                 cargarDatos();
-                // removed debug log if any, adding explicit success log in cargarDatos if
-                // needed or here
+                // log de depuración eliminado si existe, añadiendo log de éxito explícito en
+                // cargarDatos si es necesario o aquí
+                setupSelectionListener();
         }
 
         /**
@@ -72,72 +73,28 @@ public class IncidPanel extends javax.swing.JPanel {
         public void cargarDatos() {
                 SwingUtilities.invokeLater(() -> {
                         try {
+                                // Guardar ID seleccionado actual antes de recargar
+                                int currentId = getSelectedIncidenciaId();
+
                                 rs = Utilities.ejecutarConsulta(Utilities.TipoConsulta.INCIDENCIAS);
                                 ut.cargarTabla(inciTabla, rs);
                                 com.jmmunoz.netfix.vista.tema.ThemeManager.getInstance()
                                                 .configureIncidenciasTableColumns(inciTabla);
+
+                                // FORZAR REDIMENSIONADO
+                                setupScrollListener(incidenciasTable);
+                                resizeColumnWidths(inciTabla, incidenciasTable);
+
                                 ut.logAction("OK", "IncidPanel", "Datos de incidencias cargados correctamente ("
                                                 + inciTabla.getRowCount() + " registros)");
 
-                                inciTabla.getSelectionModel().addListSelectionListener(e -> {
-                                        if (!e.getValueIsAdjusting()) {
-                                                int fila = inciTabla.getSelectedRow();
-                                                if (fila != -1) {
-                                                        try {
-                                                                txtID.setText(inciTabla.getValueAt(fila, 0).toString());
-                                                                txtContrato.setText(inciTabla.getValueAt(fila, 1)
-                                                                                .toString());
-                                                                txtDescripcion.setText(inciTabla.getValueAt(fila, 2)
-                                                                                .toString());
-
-                                                                txtNombre.setText(
-                                                                                ut.obtenerTitular(Integer.parseInt(
-                                                                                                inciTabla.getValueAt(
-                                                                                                                fila, 1)
-                                                                                                                .toString())));
-
-                                                                String[] aparatos = ut.obtenerApaFTTH(Integer
-                                                                                .parseInt(txtContrato.getText()));
-                                                                ut.obtenerApa5G(Integer.parseInt(inciTabla
-                                                                                .getValueAt(fila, 1).toString()),
-                                                                                lista5G);
-                                                                txtAparato.setText(aparatos[0]);
-                                                                txtMoFT.setText(aparatos[2]);
-                                                                txtMAC.setText(aparatos[1]);
-                                                                crs = Utilities.ejecutarConsulta(
-                                                                                Utilities.TipoConsulta.COMENTARIOS,
-                                                                                Integer.valueOf(inciTabla
-                                                                                                .getValueAt(fila, 0)
-                                                                                                .toString()));
-                                                                ut.cargarTabla(comenTable, crs);
-                                                                com.jmmunoz.netfix.vista.tema.ThemeManager.getInstance()
-                                                                                .configureComentariosTableColumns(
-                                                                                                comenTable);
-
-                                                                if ((inciTabla.getValueAt(fila,
-                                                                                5).toString())
-                                                                                .equals("sin_comunicar")) {
-                                                                        actuButton.setText(
-                                                                                        com.jmmunoz.netfix.config.AppConfig
-                                                                                                        .getInstance()
-                                                                                                        .getMessage("incid.btn.communicate"));
-                                                                } else {
-                                                                        actuButton.setText(
-                                                                                        com.jmmunoz.netfix.config.AppConfig
-                                                                                                        .getInstance()
-                                                                                                        .getMessage("incid.btn.update"));
-                                                                }
-                                                        } catch (SQLException ex) {
-                                                                ut.logAction("ERROR", "IncidPanel",
-                                                                                "Error cargando detalles incidencia: "
-                                                                                                + ex.getMessage());
-                                                        }
-
-                                                }
-                                        }
-                                });
                                 // Actualizamos el sorter con el nuevo modelo en caso de recarga
                                 sorter.setModel((DefaultTableModel) inciTabla.getModel());
+
+                                // Restaurar selección
+                                if (currentId != -1) {
+                                        restoreSelection(currentId);
+                                }
 
                         } catch (SQLException ex) {
                                 ut.logAction("ERROR", "IncidPanel", "Error cargando datos: " + ex.getMessage());
@@ -170,6 +127,80 @@ public class IncidPanel extends javax.swing.JPanel {
 
                 // Soporte para tecla Enter
                 searchField.addActionListener(e -> searchButton.doClick());
+        }
+
+        private void setupScrollListener(javax.swing.JScrollPane scrollPane) {
+                // Evitar duplicar listeners si se llama varias veces
+                for (java.awt.event.ComponentListener cl : scrollPane.getComponentListeners()) {
+                        if (cl instanceof ResizerListener)
+                                return;
+                }
+                scrollPane.addComponentListener(new ResizerListener(scrollPane));
+        }
+
+        private class ResizerListener extends java.awt.event.ComponentAdapter {
+                private final javax.swing.JScrollPane sp;
+
+                public ResizerListener(javax.swing.JScrollPane sp) {
+                        this.sp = sp;
+                }
+
+                @Override
+                public void componentResized(java.awt.event.ComponentEvent e) {
+                        resizeColumnWidths(inciTabla, sp);
+                }
+        }
+
+        /**
+         * Ajusta el ancho de las columnas (Lógica adaptativa "armónica").
+         */
+        private void resizeColumnWidths(javax.swing.JTable table, javax.swing.JScrollPane scrollPane) {
+                if (table.getRowCount() == 0)
+                        return;
+
+                table.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+                final javax.swing.table.TableColumnModel columnModel = table.getColumnModel();
+                int totalIdealWidth = 0;
+                int[] idealWidths = new int[table.getColumnCount()];
+
+                // 1. Calcular anchos ideales
+                for (int column = 0; column < table.getColumnCount(); column++) {
+                        int width = 60; // Ancho mínimo base
+
+                        // Cabecera
+                        java.awt.Component header = table.getTableHeader().getDefaultRenderer()
+                                        .getTableCellRendererComponent(table,
+                                                        columnModel.getColumn(column).getHeaderValue(), false, false,
+                                                        -1, column);
+                        width = Math.max(header.getPreferredSize().width + 20, width);
+
+                        // Contenido (Muestrear 50 filas)
+                        int limit = Math.min(table.getRowCount(), 50);
+                        for (int row = 0; row < limit; row++) {
+                                java.awt.Component renderer = table.prepareRenderer(table.getCellRenderer(row, column),
+                                                row, column);
+                                width = Math.max(renderer.getPreferredSize().width + 10, width);
+                        }
+
+                        idealWidths[column] = width;
+                        totalIdealWidth += width;
+                }
+
+                // 2. Obtener ancho disponible
+                int viewportWidth = scrollPane.getViewport().getWidth();
+                if (viewportWidth == 0)
+                        viewportWidth = table.getParent() != null ? table.getParent().getWidth() : 0;
+
+                // 3. Aplicar escala si sobra espacio
+                double scaleFactor = 1.0;
+                if (viewportWidth > totalIdealWidth && totalIdealWidth > 0) {
+                        scaleFactor = (double) viewportWidth / totalIdealWidth;
+                }
+
+                for (int column = 0; column < table.getColumnCount(); column++) {
+                        int finalWidth = (int) (idealWidths[column] * scaleFactor);
+                        columnModel.getColumn(column).setPreferredWidth(finalWidth);
+                }
         }
 
         /**
@@ -708,7 +739,7 @@ public class IncidPanel extends javax.swing.JPanel {
                         } else if (com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("incid.btn.update")
                                         .equalsIgnoreCase(accion)) {
 
-                                String comentario = JOptionPane.showInputDialog(
+                                String comentario = com.jmmunoz.netfix.vista.dialogos.ModernDialog.showInputDialog(
                                                 this,
                                                 com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                                 .getMessage("incid.msg.input.comment"),
@@ -751,7 +782,7 @@ public class IncidPanel extends javax.swing.JPanel {
                         ut.logAction("ERROR", "IncidPanel", "Intento de solucionar sin seleccionar fila.");
                         return;
                 }
-                String solucion = JOptionPane.showInputDialog(
+                String solucion = com.jmmunoz.netfix.vista.dialogos.ModernDialog.showInputDialog(
                                 this,
                                 com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                 .getMessage("incid.msg.input.solution"),
@@ -809,25 +840,40 @@ public class IncidPanel extends javax.swing.JPanel {
                         return;
                 }
 
-                // ... (Componentes del Diálogo kept same) ...
-
                 // Componentes del Diálogo
                 JComboBox<String> comboTecnicos = new JComboBox<>();
                 tecnicos.forEach(t -> comboTecnicos.addItem((String) t[1])); // Nombre
+                comboTecnicos.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 14));
 
                 JSpinner dateSpinner = new JSpinner(new SpinnerDateModel());
                 JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(dateSpinner, "dd/MM/yyyy");
                 dateSpinner.setEditor(dateEditor);
+                dateSpinner.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 14));
 
                 JComboBox<String> comboHuecos = new JComboBox<>();
+                comboHuecos.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 14));
 
                 // Panel
-                JPanel panel = new JPanel(new GridLayout(3, 2, 10, 10));
-                panel.add(new JLabel(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("incid.label.tech")));
+                JPanel panel = new JPanel(new GridLayout(3, 2, 10, 20));
+                panel.setOpaque(false);
+
+                JLabel lblTech = new JLabel(
+                                com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("incid.label.tech"));
+                lblTech.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14));
+
+                JLabel lblDate = new JLabel(
+                                com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("incid.label.date"));
+                lblDate.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14));
+
+                JLabel lblTime = new JLabel(
+                                com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("incid.label.time"));
+                lblTime.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14));
+
+                panel.add(lblTech);
                 panel.add(comboTecnicos);
-                panel.add(new JLabel(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("incid.label.date")));
+                panel.add(lblDate);
                 panel.add(dateSpinner);
-                panel.add(new JLabel(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("incid.label.time")));
+                panel.add(lblTime);
                 panel.add(comboHuecos);
 
                 // Listener para actualizar huecos
@@ -855,7 +901,9 @@ public class IncidPanel extends javax.swing.JPanel {
                 // Carga inicial
                 updateHuecos.run();
 
-                int res = JOptionPane.showConfirmDialog(this, panel,
+                int res = com.jmmunoz.netfix.vista.dialogos.ModernDialog.showConfirmDialog(
+                                this,
+                                panel,
                                 com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("incid.title.schedule"),
                                 JOptionPane.OK_CANCEL_OPTION);
 
@@ -925,7 +973,7 @@ public class IncidPanel extends javax.swing.JPanel {
                         }
                         String mac = txtMAC.getText();
                         if (mac != null && !mac.trim().isEmpty()) {
-                                mainFrame mf = (mainFrame) javax.swing.SwingUtilities
+                                MainFrame mf = (MainFrame) javax.swing.SwingUtilities
                                                 .getWindowAncestor(this);
                                 if (mf != null) {
                                         mf.navegarAparatos(mac);
@@ -953,7 +1001,7 @@ public class IncidPanel extends javax.swing.JPanel {
                         String sel = lista5G.getSelectedValue();
                         if (sel != null && !sel.trim().isEmpty()) {
                                 String sn = sel.substring(sel.indexOf(":") + 1, sel.indexOf("|")).trim();
-                                mainFrame mf = (mainFrame) javax.swing.SwingUtilities
+                                MainFrame mf = (MainFrame) javax.swing.SwingUtilities
                                                 .getWindowAncestor(this);
                                 if (mf != null) {
                                         mf.navegarAparatos(sn);
@@ -1186,5 +1234,85 @@ public class IncidPanel extends javax.swing.JPanel {
                         // Ignore
                 }
                 return -1;
+        }
+
+        private void setupSelectionListener() {
+                inciTabla.getSelectionModel().addListSelectionListener(e -> {
+                        if (!e.getValueIsAdjusting()) {
+                                int fila = inciTabla.getSelectedRow();
+                                if (fila != -1) {
+                                        try {
+                                                txtID.setText(inciTabla.getValueAt(fila, 0).toString());
+                                                txtContrato.setText(inciTabla.getValueAt(fila, 1)
+                                                                .toString());
+                                                txtDescripcion.setText(inciTabla.getValueAt(fila, 2)
+                                                                .toString());
+
+                                                txtNombre.setText(
+                                                                ut.obtenerTitular(Integer.parseInt(
+                                                                                inciTabla.getValueAt(
+                                                                                                fila, 1)
+                                                                                                .toString())));
+
+                                                String[] aparatos = ut.obtenerApaFTTH(Integer
+                                                                .parseInt(txtContrato.getText()));
+                                                ut.obtenerApa5G(Integer.parseInt(inciTabla
+                                                                .getValueAt(fila, 1).toString()),
+                                                                lista5G);
+                                                txtAparato.setText(aparatos[0]);
+                                                txtMoFT.setText(aparatos[2]);
+                                                txtMAC.setText(aparatos[1]);
+                                                crs = Utilities.ejecutarConsulta(
+                                                                Utilities.TipoConsulta.COMENTARIOS,
+                                                                Integer.valueOf(inciTabla
+                                                                                .getValueAt(fila, 0)
+                                                                                .toString()));
+                                                ut.cargarTabla(comenTable, crs);
+                                                com.jmmunoz.netfix.vista.tema.ThemeManager.getInstance()
+                                                                .configureComentariosTableColumns(
+                                                                                comenTable);
+
+                                                if ((inciTabla.getValueAt(fila,
+                                                                5).toString())
+                                                                .equals("sin_comunicar")) {
+                                                        actuButton.setText(
+                                                                        com.jmmunoz.netfix.config.AppConfig
+                                                                                        .getInstance()
+                                                                                        .getMessage("incid.btn.communicate"));
+                                                } else {
+                                                        actuButton.setText(
+                                                                        com.jmmunoz.netfix.config.AppConfig
+                                                                                        .getInstance()
+                                                                                        .getMessage("incid.btn.update"));
+                                                }
+                                        } catch (SQLException ex) {
+                                                ut.logAction("ERROR", "IncidPanel",
+                                                                "Error cargando detalles incidencia: "
+                                                                                + ex.getMessage());
+                                        }
+
+                                }
+                        }
+                });
+        }
+
+        private void restoreSelection(int idIncidencia) {
+                try {
+                        for (int i = 0; i < inciTabla.getRowCount(); i++) {
+                                Object val = inciTabla.getValueAt(i, 0); // Assuming ID is col 0
+                                if (val != null) {
+                                        int id = Integer.parseInt(val.toString());
+                                        if (id == idIncidencia) {
+                                                inciTabla.setRowSelectionInterval(i, i);
+                                                // Ensure viewport scrolls to selection
+                                                java.awt.Rectangle rect = inciTabla.getCellRect(i, 0, true);
+                                                inciTabla.scrollRectToVisible(rect);
+                                                return;
+                                        }
+                                }
+                        }
+                } catch (Exception e) {
+                        ut.logAction("WARNING", "IncidPanel", "Error restoring selection: " + e.getMessage());
+                }
         }
 }

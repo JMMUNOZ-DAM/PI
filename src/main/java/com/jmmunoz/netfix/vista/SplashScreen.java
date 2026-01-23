@@ -42,18 +42,20 @@ public class SplashScreen extends JWindow {
         // Cargar logo con ruta absoluta y relativa por si acaso
         URL url = getClass().getResource("/img/netfix_logo.png");
         if (url == null) {
-            System.err.println("Debug: Intentando ruta relativa para logo: img/netfix_logo.png");
+            System.getLogger(SplashScreen.class.getName()).log(System.Logger.Level.INFO,
+                    "Intentando ruta relativa para logo: img/netfix_logo.png");
             url = getClass().getResource("img/netfix_logo.png"); // Intento relativo
         }
 
         if (url != null) {
-            System.out.println("Debug: Logo encontrado en: " + url);
+            // Debug log removed
             ImageIcon icon = new ImageIcon(url);
             logo = icon.getImage();
             logoW = icon.getIconWidth();
             logoH = icon.getIconHeight();
         } else {
-            System.err.println("Error: No se encontró el logo en /img/netfix_logo.png ni en img/netfix_logo.png");
+            System.getLogger(SplashScreen.class.getName()).log(System.Logger.Level.ERROR,
+                    "Error: No se encontró el logo en /img/netfix_logo.png ni en img/netfix_logo.png");
         }
 
         setContentPane(new SplashPanel());

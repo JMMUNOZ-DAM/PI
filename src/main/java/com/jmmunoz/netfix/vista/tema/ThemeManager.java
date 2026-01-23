@@ -1,7 +1,7 @@
 package com.jmmunoz.netfix.vista.tema;
 
 import com.jmmunoz.netfix.vista.login;
-import com.jmmunoz.netfix.vista.mainFrame;
+import com.jmmunoz.netfix.vista.MainFrame;
 import com.jmmunoz.netfix.vista.IncidPanel;
 import com.jmmunoz.netfix.vista.AdminPanel;
 import com.jmmunoz.netfix.vista.AparatosPanel;
@@ -80,7 +80,7 @@ public class ThemeManager {
         UIManager.put("ScrollBar.thumbArc", 999);
         UIManager.put("ScrollBar.trackArc", 999);
 
-        // 3) Focus y bordes
+        // 3) Foco y bordes
         UIManager.put("Component.focusWidth", 1);
         UIManager.put("Component.innerFocusWidth", 0);
 
@@ -108,6 +108,13 @@ public class ThemeManager {
         UIManager.put("Table.font", new Font("Consolas", Font.PLAIN, 13));
         UIManager.put("TableHeader.font", new Font("Consolas", Font.BOLD, 13));
 
+        // 9) Mensajes de Dialogo en Español
+        UIManager.put("OptionPane.yesButtonText", "Sí");
+        UIManager.put("OptionPane.noButtonText", "No");
+        UIManager.put("OptionPane.cancelButtonText", "Cancelar");
+        UIManager.put("OptionPane.okButtonText", "Aceptar");
+        UIManager.put("OptionPane.title.text", "Mensaje");
+
         FlatLaf.updateUI();
     }
 
@@ -121,12 +128,12 @@ public class ThemeManager {
         view.setMinimumSize(new Dimension(560, 420));
         view.setLocationRelativeTo(null);
 
-        /* ========================= ROOT (FONDO) ========================= */
+        /* ========================= RAÍZ (FONDO) ========================= */
         JPanel root = new JPanel(new GridBagLayout());
         root.setBorder(new EmptyBorder(12, 12, 12, 12));
         root.putClientProperty(FlatClientProperties.STYLE, "background: #F5F6F8;");
 
-        /* ========================= CARD CENTRAL ========================= */
+        /* ========================= TARJETA CENTRAL ========================= */
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBorder(new CompoundBorder(
@@ -151,7 +158,7 @@ public class ThemeManager {
             logoLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
         }
 
-        /* ========================= BADGE ========================= */
+        /* ========================= INSIGNIA ========================= */
         JLabel badge = new JLabel("NOC · TICKETS · SLA");
         badge.setOpaque(true);
         badge.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -164,7 +171,7 @@ public class ThemeManager {
         subtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
         subtitle.putClientProperty(FlatClientProperties.STYLE, "font: plain 14 'Segoe UI'; foreground: #667085;");
 
-        /* ========================= HEADER ========================= */
+        /* ========================= CABECERA ========================= */
         card.add(logoLabel);
         card.add(Box.createVerticalStrut(10));
         card.add(badge);
@@ -203,7 +210,7 @@ public class ThemeManager {
         card.add(Box.createVerticalStrut(18));
         card.add(createFullWidthPanel(view.getLoginButton()));
 
-        /* ========================= FOOTER ========================= */
+        /* ========================= PIE DE PÁGINA ========================= */
         JLabel footer = new JLabel("Soporte: NOC / Sistemas · NETFIX");
         footer.setAlignmentX(Component.CENTER_ALIGNMENT);
         footer.putClientProperty(FlatClientProperties.STYLE, "font: 12 'Segoe UI'; foreground: #98A2B3;");
@@ -211,7 +218,7 @@ public class ThemeManager {
         card.add(Box.createVerticalStrut(14));
         card.add(footer);
 
-        /* ========================= COLOCAR CARD ========================= */
+        /* ========================= COLOCAR TARJETA ========================= */
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -250,14 +257,14 @@ public class ThemeManager {
     /**
      * Aplica el tema a la ventana principal (Dashboard).
      * 
-     * @param view Instancia de mainFrame.
+     * @param view Instancia de MainFrame.
      */
-    public void applyMainFrameTheme(mainFrame view) {
+    public void applyMainFrameTheme(MainFrame view) {
         // fondo general claro
         view.getFondoPanel().setBackground(TelecomTheme.APP_BG);
         view.getContentPanel().setBackground(TelecomTheme.APP_BG);
 
-        // sidebar telecom oscuro
+        // barra lateral telecom oscuro
         view.getPanelLateral().setBackground(TelecomTheme.NAV_BG);
         view.getPanelLateral().setOpaque(true);
 
@@ -270,7 +277,7 @@ public class ThemeManager {
         styleNavButton(view.getUsuButton(), view);
         styleNavButton(view.getAdminButton(), view);
 
-        // Hover effects - requires logic to know "active" button which is in mainFrame
+        // Efectos Hover - requiere lógica para saber qué botón es "activo" en MainFrame
         applyHoverEffect(view.getEstaButton(), view);
         applyHoverEffect(view.getInciButton(), view);
         applyHoverEffect(view.getAparaButton(), view);
@@ -278,7 +285,7 @@ public class ThemeManager {
         applyHoverEffect(view.getAdminButton(), view);
     }
 
-    private void styleNavButton(JButton b, mainFrame view) {
+    private void styleNavButton(JButton b, MainFrame view) {
         b.setOpaque(true);
         b.setBackground(TelecomTheme.NAV_BG);
         b.setForeground(TelecomTheme.TEXT_ON_DARK);
@@ -300,19 +307,23 @@ public class ThemeManager {
         b.setMaximumSize(dim);
     }
 
-    private void applyHoverEffect(JButton button, mainFrame view) {
+    private void applyHoverEffect(JButton button, MainFrame view) {
         button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                // Check if button is active using view's method or public getter for
+                // Comprobar si el botón está activo usando el método de la vista o getter
+                // público para
                 // activeButton
-                // Since activeButton is private in mainFrame, we might need a getter or method
-                // in mainFrame to check.
-                // Or we can encapsulate this logic fully here if we track active button here,
-                // but state is in mainFrame.
-                // Simpler approach: mainFrame manages state, we just add listener that checks
-                // state.
-                // We need view.getActiveButton()
+                // Dado que activeButton es privado en MainFrame, podríamos necesitar un getter
+                // o método
+                // en MainFrame para comprobar.
+                // O podemos encapsular esta lógica completamente aquí si rastreamos el botón
+                // activo aquí,
+                // pero el estado está en MainFrame.
+                // Enfoque más simple: MainFrame gestiona el estado, solo añadimos listener que
+                // comprueba
+                // el estado.
+                // Necesitamos view.getActiveButton()
                 if (button != view.getActiveButton()) {
                     button.setBackground(TelecomTheme.NAV_BG_HOVER);
                 }
@@ -326,7 +337,7 @@ public class ThemeManager {
             }
         });
 
-        // Add listener to children (components inside button)
+        // Añadir listener a hijos (componentes dentro del botón)
         for (Component c : button.getComponents()) {
             c.addMouseListener(new MouseAdapter() {
                 @Override
@@ -346,8 +357,9 @@ public class ThemeManager {
         }
     }
 
-    // Helper to get active border for mainFrame to use if needed, or mainFrame can
-    // use ThemeManager's
+    // Auxiliar para obtener borde activo para MainFrame si es necesario, o
+    // MainFrame puede
+    // usar el de ThemeManager
     public Border getActiveBorder() {
         return activeBorder;
     }
@@ -356,7 +368,8 @@ public class ThemeManager {
         return normalBorder;
     }
 
-    // We can also have a method in ThemeManager to set active button style directly
+    // También podemos tener un método en ThemeManager para establecer estilo de
+    // botón activo directamente
     public void setActiveNavButton(JButton button) {
         button.setBackground(TelecomTheme.NAV_BG_ACTIVE);
         button.setBorder(activeBorder);
@@ -393,7 +406,7 @@ public class ThemeManager {
         if (scroll != null) {
             scroll.setBorder(BorderFactory.createEmptyBorder());
             if (scroll.getViewport() != null) {
-                // SURFACE color usually white or light gray
+                // Color de SUPERFICIE usualmente blanco o gris claro
                 scroll.getViewport().setBackground(TelecomTheme.SURFACE);
             }
         }
@@ -433,7 +446,8 @@ public class ThemeManager {
         // Buscador
         if (view.getSeaField() != null) {
             view.getSeaField().setFont(new Font("Segoe UI", Font.PLAIN, 14));
-            // Preference size logic might remain in view or here, but here implies styling.
+            // La lógica de tamaño preferido podría permanecer en la vista o aquí, pero aquí
+            // implica estilo.
             // view.getSeaField().setPreferredSize(new Dimension(400, 32));
         }
         if (view.getSearchButtSis() != null) {
@@ -501,7 +515,7 @@ public class ThemeManager {
         iconLabel.setForeground(accentColor);
         iconLabel.setPreferredSize(new Dimension(40, 40));
 
-        // Wrapper para icono con fondo suave
+        // Envoltorio para icono con fondo suave
         JPanel iconWrapper = new JPanel(new BorderLayout());
         iconWrapper.setOpaque(false); // O pintar un fondo suave si se desea
         iconWrapper.add(iconLabel, BorderLayout.CENTER);
@@ -525,7 +539,7 @@ public class ThemeManager {
      */
     public void applyTelecomChartTheme(org.jfree.chart.JFreeChart chart) {
 
-        // Fondo del chart
+        // Fondo del gráfico
         chart.setBackgroundPaint(Color.WHITE);
 
         // Título
@@ -535,7 +549,7 @@ public class ThemeManager {
             chart.getTitle().setPadding(10, 0, 20, 0); // Espacio extra
         }
 
-        // Plot (categorías)
+        // Trama (categorías)
         if (chart.getPlot() instanceof org.jfree.chart.plot.CategoryPlot plot) {
 
             plot.setBackgroundPaint(Color.WHITE);
@@ -547,7 +561,7 @@ public class ThemeManager {
             plot.setRangeGridlinePaint(new Color(240, 240, 240));
 
             // Ejes
-            // Domain (Y en horizontal bar) -> Categorías (Días)
+            // Domain (Y en barra horizontal) -> Categorías (Días)
             if (plot.getDomainAxis() != null) {
                 plot.getDomainAxis().setTickLabelFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 12));
                 plot.getDomainAxis().setLabelFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 12));
@@ -556,7 +570,7 @@ public class ThemeManager {
                 plot.getDomainAxis().setTickMarksVisible(false);
             }
 
-            // Range (X en horizontal bar) -> Valores
+            // Range (X en barra horizontal) -> Valores
             if (plot.getRangeAxis() != null) {
                 plot.getRangeAxis().setTickLabelFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 11));
                 plot.getRangeAxis().setLabelFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 12));
@@ -612,7 +626,7 @@ public class ThemeManager {
      * @param view Instancia del AparatosPanel.
      */
     public void applyAparatosPanelTheme(AparatosPanel view) {
-        // ===== PAGE =====
+        // ===== PÁGINA =====
         view.setBackground(TelecomTheme.APP_BG);
         view.setOpaque(true);
 
@@ -639,12 +653,12 @@ public class ThemeManager {
         if (view.getDiagnoButton() != null)
             view.getDiagnoButton().setFont(btnFont);
 
-        // ===== CARD PRINCIPAL =====
+        // ===== PANEL PRINCIPAL =====
         if (view.getMainPanel() != null) {
             cardify(view.getMainPanel());
         }
 
-        // ===== LABELS (muted) =====
+        // ===== ETIQUETAS (tenues) =====
         Font lbl = new Font("Segoe UI", Font.PLAIN, 13);
         Color muted = TelecomTheme.TEXT_MUTED;
 
@@ -661,7 +675,7 @@ public class ThemeManager {
             }
         }
 
-        // ===== VALORES (más "dashboard") =====
+        // ===== VALORES (más "panel de control") =====
         Font val = new Font("Segoe UI", Font.BOLD, 14);
         Color text = TelecomTheme.TEXT;
 
@@ -683,7 +697,7 @@ public class ThemeManager {
             view.getNombreLabel().setForeground(text);
         }
 
-        // ===== TEXTAREA (observaciones) =====
+        // ===== ÁREA DE TEXTO (observaciones) =====
         if (view.getObservaciones() != null) {
             view.getObservaciones().setFont(new Font("Segoe UI", Font.PLAIN, 13));
             view.getObservaciones().setBackground(TelecomTheme.SURFACE);
@@ -698,7 +712,7 @@ public class ThemeManager {
             }
         }
 
-        // ===== LISTA DIAGNOSTICO =====
+        // ===== LISTA DIAGNÓSTICO =====
         if (view.getActualDiag() != null) {
             view.getActualDiag().setFont(new Font("Segoe UI Semibold", Font.PLAIN, 13));
             view.getActualDiag().setBackground(Color.WHITE);
@@ -715,7 +729,7 @@ public class ThemeManager {
             }
         }
 
-        // ===== (opcional) "pill" en estado general =====
+        // ===== (opcional) "cápsula" en estado general =====
         if (view.getStatusLabel() != null) {
             view.getStatusLabel().setOpaque(true);
             view.getStatusLabel().setBackground(new Color(230, 248, 255));
@@ -723,7 +737,7 @@ public class ThemeManager {
         }
 
         // ---------------------------------------------------------
-        // LAYOUT REFACTOR
+        // REFACTORIZACIÓN DE DISEÑO
         // ---------------------------------------------------------
         view.removeAll();
         view.setLayout(new GridBagLayout());
@@ -740,8 +754,9 @@ public class ThemeManager {
         view.add(view.getApaTitle(), gbc);
 
         // 2) Buscador (envuelto en panel flow para centrarlo junto)
-        // Need to check if we can add searchField and searchButton directly, assuming
-        // logic handles nulls
+        // Necesitamos comprobar si podemos añadir searchField y searchButton
+        // directamente, asumiendo
+        // que la lógica maneja nulos
         if (view.getSearchField() != null && view.getSearchButton() != null) {
             JPanel searchWrapper = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 10, 0));
             searchWrapper.setOpaque(false);
@@ -777,16 +792,7 @@ public class ThemeManager {
         view.repaint();
     }
 
-    /*
-     * private javax.swing.JLabel createKpiTitle(String text) {
-     * javax.swing.JLabel l = new javax.swing.JLabel(text,
-     * javax.swing.SwingConstants.CENTER);
-     * l.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-     * l.setForeground(TelecomTheme.TEXT_MUTED);
-     * return l;
-     * }
-     * 
-     * /**
+    /**
      * Ajusta el ancho de las columnas de la tabla de incidencias.
      * Prioriza la descripción.
      */
@@ -826,7 +832,7 @@ public class ThemeManager {
      * @param view Instancia del EstadisPanel.
      */
     public void applyEstadisPanelTheme(EstadisPanel view) {
-        // Fondo general del panel (page)
+        // Fondo general del panel (página)
         view.setBackground(TelecomTheme.APP_BG);
 
         // Tabla
@@ -882,7 +888,7 @@ public class ThemeManager {
      * @param view Instancia del IncidPanel.
      */
     public void applyIncidPanelTheme(IncidPanel view) {
-        // ===== PAGE =====
+        // ===== PÁGINA =====
         view.setBackground(TelecomTheme.APP_BG);
         view.setOpaque(true);
 
@@ -911,7 +917,7 @@ public class ThemeManager {
             view.getComenLabel().setForeground(TelecomTheme.TEXT);
         }
 
-        // ===== LABELS (muted) =====
+        // ===== ETIQUETAS (tenues) =====
         Font lbl = new Font("Segoe UI", Font.PLAIN, 13);
         Color muted = TelecomTheme.TEXT_MUTED;
 
@@ -964,7 +970,7 @@ public class ThemeManager {
         if (view.getSepaAparatos() != null)
             view.getSepaAparatos().setForeground(TelecomTheme.BORDER);
 
-        // ===== CARDS =====
+        // ===== TARJETAS =====
         if (view.getInciPanel() != null)
             cardify(view.getInciPanel());
         if (view.getDatosPanel() != null)
@@ -991,23 +997,23 @@ public class ThemeManager {
             view.getLista5G().setFont(new Font("Segoe UI", Font.PLAIN, 13));
         }
 
-        // Fills Viewport
+        // Rellena Viewport
         if (view.getInciTabla() != null)
             view.getInciTabla().setFillsViewportHeight(true);
         if (view.getComenTable() != null)
             view.getComenTable().setFillsViewportHeight(true);
 
         // ---------------------------------------------------------
-        // LAYOUT REFACTOR
+        // REFACTORIZACIÓN DE DISEÑO
         // ---------------------------------------------------------
-        // Quick Diagnostic Buttons Style
+        // Estilo de botones de diagnóstico rápido
         Font btnSmall = new Font("Segoe UI", Font.BOLD, 12);
         if (view.getBtnDiagFTTH() != null)
             view.getBtnDiagFTTH().setFont(btnSmall);
         if (view.getBtnDiagMovil() != null)
             view.getBtnDiagMovil().setFont(btnSmall);
 
-        // 1. RESTRUCTURE datosPanel
+        // 1. REESTRUCTURAR datosPanel
         javax.swing.JPanel datosPanel = view.getDatosPanel();
         if (datosPanel != null) {
             datosPanel.removeAll();
@@ -1172,7 +1178,7 @@ public class ThemeManager {
             datosPanel.add(buttonPanel, gbcD);
         }
 
-        // 2. RESTRUCTURE inciPanel
+        // 2. REESTRUCTURAR inciPanel
         javax.swing.JPanel inciPanel = view.getInciPanel();
         if (inciPanel != null) {
             inciPanel.removeAll();
@@ -1201,7 +1207,7 @@ public class ThemeManager {
                 inciPanel.add(view.getIncidenciasTable(), BorderLayout.CENTER);
         }
 
-        // 3. ROOT LAYOUT
+        // 3. DISEÑO RAÍZ
         view.removeAll();
         view.setLayout(new GridBagLayout());
 
@@ -1272,15 +1278,15 @@ public class ThemeManager {
                 String estado = (String) value;
 
                 if (estado != null) {
-                    setBorder(new EmptyBorder(0, 10, 0, 10)); // Padding
+                    setBorder(new EmptyBorder(0, 10, 0, 10)); // Relleno
                     if ("OK".equalsIgnoreCase(estado)) {
-                        setForeground(new Color(34, 197, 94)); // Green
+                        setForeground(new Color(34, 197, 94)); // Verde
                         setFont(getFont().deriveFont(Font.BOLD));
                     } else if ("ERROR".equalsIgnoreCase(estado)) {
-                        setForeground(new Color(239, 68, 68)); // Red
+                        setForeground(new Color(239, 68, 68)); // Rojo
                         setFont(getFont().deriveFont(Font.BOLD));
                     } else if ("WARNING".equalsIgnoreCase(estado)) {
-                        setForeground(new Color(249, 115, 22)); // Orange
+                        setForeground(new Color(249, 115, 22)); // Naranja
                         setFont(getFont().deriveFont(Font.BOLD));
                     } else {
                         setForeground(isSelected ? table.getSelectionForeground() : table.getForeground());

@@ -24,13 +24,14 @@ public class IncidenciaDetalleDialog extends JDialog {
     private JPanel sectClient, sectContract, sectInci, sectComen, sectDevices;
     // Áreas de contenido (inner)
     private JPanel contClient, contContract, contInci, contComen, contDevices;
+    private Utilities ut = new Utilities();
 
     public IncidenciaDetalleDialog(Frame owner, int idIncidencia) {
         super(owner, com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("incid.detail.title") + idIncidencia,
                 true);
         this.idIncidencia = idIncidencia;
 
-        System.out.println("DEBUG: Iniciando IncidenciaDetalleDialog para ID=" + idIncidencia);
+        ut.logAction("INFO", "IncidenciaDetalleDialog", "Iniciando vista detalle ID=" + idIncidencia);
 
         initComponents();
         cargarDatos();
@@ -108,11 +109,10 @@ public class IncidenciaDetalleDialog extends JDialog {
 
     private void cargarDatos() {
         try {
-            System.out.println("DEBUG: Ejecutando consulta INCI_DETALLE...");
+            // Debug logs removed to reduce noise
             ResultSet rs = Utilities.ejecutarConsulta(Utilities.TipoConsulta.INCI_DETALLE, idIncidencia);
 
             if (rs != null && rs.next()) {
-                System.out.println("DEBUG: Datos encontrados para incidencia.");
                 int idContrato = rs.getInt("id_contrato");
 
                 // Llenar Cliente
@@ -166,18 +166,19 @@ public class IncidenciaDetalleDialog extends JDialog {
                 // 3. Aparatos
                 cargarAparatos(idContrato);
 
-                System.out.println("DEBUG: Carga finalizada correctamente.");
+                // Debug logs removed
             } else {
-                System.out.println("DEBUG: El ResultSet está vacío para ID: " + idIncidencia);
+                ut.logAction("WARNING", "IncidenciaDetalleDialog", "ResultSet vacío para ID: " + idIncidencia);
                 contInci.add(new JLabel(
                         com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("incid.detail.msg.no.details")));
             }
         } catch (SQLException ex) {
-            System.err.println("DEBUG ERROR: " + ex.getMessage());
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(this,
+            ut.logAction("ERROR", "IncidenciaDetalleDialog", "Error DB al cargar detalles: " + ex.getMessage());
+            com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(this,
                     com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("incid.detail.error.db")
-                            + ex.getMessage());
+                            + ex.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         } finally {
             mainContent.revalidate();
             mainContent.repaint();
@@ -222,7 +223,7 @@ public class IncidenciaDetalleDialog extends JDialog {
                         com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("incid.detail.msg.no.comments")));
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            ut.logAction("ERROR", "IncidenciaDetalleDialog", "Error cargando comentarios: " + ex.getMessage());
         }
     }
 
@@ -243,7 +244,7 @@ public class IncidenciaDetalleDialog extends JDialog {
                 contDevices.add(new JLabel("• " + rs2.getString("datos_5g")));
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            ut.logAction("ERROR", "IncidenciaDetalleDialog", "Error cargando aparatos: " + ex.getMessage());
         }
     }
 }
