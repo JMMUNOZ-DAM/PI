@@ -1,1 +1,8 @@
 /target/
+MEMORIA_DESARROLLO.md
+RESPUESTAS_MEMORIA.md
+setup_script.iss
+Output/
+dependency-reduced-pom.xml
+*.sql
+src/main/resources/img/netfix_installer_banner.png
