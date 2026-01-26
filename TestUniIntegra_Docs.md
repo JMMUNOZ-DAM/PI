@@ -1,4 +1,4 @@
-# Documentación de Pruebas Unitarias y de Integración: `TestUniIntegra`
+# Documentación de Pruebas Unitarias y de Integración: `TestUniIntegra` (Versión Revisada)
 
 Este documento detalla la batería de pruebas implementada en la clase `com.jmmunoz.netfix.tests.TestUniIntegra`. Esta clase funciona como un ejecutor de pruebas independiente (Test Runner) que verifica tanto la lógica de negocio (Pruebas Unitarias) como la conectividad con la base de datos (Pruebas de Integración).
 
