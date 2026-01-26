@@ -1,8 +1,6 @@
-# Netfix - Sistema de Gestión de Telecomunicaciones
+# Proyecto Netfix Antigravity 
 
-## Introducción
-
-**Netfix** es una solución integral de gestión diseñada para compañías proveedoras de servicios de internet (ISP) y telecomunicaciones. Esta aplicación de escritorio, construida en Java con Swing y el look & feel **FlatLaf**, centraliza las operaciones críticas del negocio, facilitando la administración de contratos, parque de dispositivos (FTTH y 5G), gestión de incidencias técnicas y coordinación del personal.
+**Netfix Antigravity** es una aplicación de gestión empresarial avanzada para compañías de telecomunicaciones (ISP/Carriers).
 
 Su objetivo principal es optimizar el flujo de trabajo entre los diferentes roles de la organización (**Sistemas, Supervisores y Técnicos**), proporcionando herramientas específicas para la toma de decisiones y la operación diaria.
 
@@ -173,4 +171,4 @@ Definición de constantes de diseño (Colores hexadecimales, tipografías base).
     *   **Admin:** Acceso total (Sistemas).
     *   **Supervisor:** Gestión de técnicos e incidencias.
     *   **Técnico:** Resolución de incidencias y diagnóstico.
-<!-- Refactorizaci�n completa -->
+<!-- Refactorización completa -->
