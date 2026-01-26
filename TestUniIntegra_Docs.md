@@ -20,7 +20,7 @@ Estas pruebas se ejecutan sin conexión a la base de datos y verifican el correc
 | **U01** | **Email Valid (.com)** | Verifica que el validador de correos acepte dominios `.com`. | `true` (Válido) |
 | **U02** | **Email Valid (.es)** | Verifica que el validador de correos acepte dominios `.es`. | `true` (Válido) |
 | **U03** | **Email Invalid (gmail)** | Verifica que se rechacen dominios externos no corporativos (ej. `gmail.com`). | `false` (Inválido) |
-| **U04** | **Hashing no vacío** | Prueba que la función de hashing de contraseñas (`hashPass`) genere una cadena no vacía y distinta al texto original. | `true` |
+| **U04** | **Hashing no vacío** | Prueba que la función de hashing de contraseñas (`hashPass`) genere una cadena no vacía, y distinta al texto original. | `true` |
 | **U05** | **Verificación BCrypt** | Valida que una contraseña en texto plano coincida con su hash generado anteriormente usando `BCrypt`. | `true` (Coinciden) |
 | **U06** | **Actualización de Contraseña** | Verifica que al solicitar un cambio de contraseña, se genere un nuevo hash diferente al anterior. | `true` (Hash cambia) |
 | **U07** | **Pass Update (Vacío)** | Verifica que si se intenta actualizar la contraseña con un campo vacío, se mantenga el hash anterior (no se modifique). | `true` (Mantiene hash) |
