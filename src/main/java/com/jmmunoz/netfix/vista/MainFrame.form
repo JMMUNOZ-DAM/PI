@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Form version="1.3" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
+  <Properties>
+    <Property name="defaultCloseOperation" type="int" value="3"/>
+    <Property name="resizable" type="boolean" value="false"/>
+    <Property name="size" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+      <Dimension value="[1920, 1080]"/>
+    </Property>
+  </Properties>
+  <SyntheticProperties>
+    <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="true"/>
+  </SyntheticProperties>
+  <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="1"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+  </AuxValues>
+
+  <Layout>
+    <DimensionLayout dim="0">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Component id="fondoPanel" min="-2" max="-2" attributes="0"/>
+      </Group>
+    </DimensionLayout>
+    <DimensionLayout dim="1">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Component id="fondoPanel" alignment="0" max="32767" attributes="0"/>
+      </Group>
+    </DimensionLayout>
+  </Layout>
+  <SubComponents>
+    <Container class="javax.swing.JPanel" name="fondoPanel">
+      <Properties>
+        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="ff" green="ff" red="ff" type="rgb"/>
+        </Property>
+        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+          <Dimension value="[1920, 1080]"/>
+        </Property>
+      </Properties>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <Component id="panelLateral" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="contentPanel" min="-2" pref="1920" max="-2" attributes="0"/>
+                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Component id="panelLateral" max="32767" attributes="0"/>
+              <Component id="contentPanel" alignment="0" max="32767" attributes="0"/>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Container class="javax.swing.JPanel" name="panelLateral">
+          <Properties>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="99" green="99" red="99" type="rgb"/>
+            </Property>
+          </Properties>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="estaButton" alignment="0" max="32767" attributes="0"/>
+                  <Component id="inciButton" alignment="0" max="32767" attributes="0"/>
+                  <Component id="aparaButton" alignment="0" max="32767" attributes="0"/>
+                  <Component id="usuButton" alignment="0" max="32767" attributes="0"/>
+                  <Component id="adminButton" alignment="0" max="32767" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="logName" max="32767" attributes="0"/>
+                          <Component id="logRol" max="32767" attributes="0"/>
+                      </Group>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="salir" min="-2" pref="57" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="estaButton" min="-2" pref="51" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="inciButton" min="-2" pref="51" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="aparaButton" min="-2" pref="51" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="usuButton" min="-2" pref="51" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="adminButton" min="-2" pref="51" max="-2" attributes="0"/>
+                      <EmptySpace pref="711" max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
+                              <Component id="logName" min="-2" pref="25" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="logRol" min="-2" pref="25" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="salir" min="-2" pref="67" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+          <SubComponents>
+            <Component class="javax.swing.JButton" name="estaButton">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Segoe UI" size="24" style="0"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value=" Estad&#xed;sticas"/>
+                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                  <Border info="null"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="estaButtonActionPerformed"/>
+              </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="estaButton = new javax.swing.JButton();&#xd;&#xa;estaButton.setLayout(new java.awt.BorderLayout());&#xd;&#xa;&#xd;&#xa;// Texto / comportamiento&#xd;&#xa;estaButton.setText(&quot;Estad&#xed;sticas&quot;);&#xd;&#xa;estaButton.setFocusPainted(false);&#xd;&#xa;estaButton.setBorderPainted(false);&#xd;&#xa;estaButton.setContentAreaFilled(false);&#xd;&#xa;estaButton.setOpaque(false);&#xd;&#xa;estaButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));&#xd;&#xa;&#xd;&#xa;estaButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);&#xd;&#xa;estaButton.setMargin(new java.awt.Insets(10, 16, 10, 16));&#xd;&#xa;estaButton.putClientProperty(&quot;JButton.buttonType&quot;, &quot;borderless&quot;);&#xd;&#xa;&#xd;&#xa;// (Opcional recomendado) ancho fijo para justificar iconos en columna&#xd;&#xa;estaButton.setPreferredSize(new java.awt.Dimension(260, 48));&#xd;&#xa;estaButton.setMinimumSize(new java.awt.Dimension(260, 48));&#xd;&#xa;estaButton.setMaximumSize(new java.awt.Dimension(260, 48));&#xd;&#xa;&#xd;&#xa;// Icono a la derecha&#xd;&#xa;java.net.URL estaUrl = getClass().getResource(&quot;/img/nav/stats.png&quot;);&#xd;&#xa;if (estaUrl != null) {&#xd;&#xa;    javax.swing.ImageIcon icon = new javax.swing.ImageIcon(estaUrl);&#xd;&#xa;    java.awt.Image scaled = icon.getImage().getScaledInstance(&#xd;&#xa;            ICON_SIZE, ICON_SIZE, java.awt.Image.SCALE_SMOOTH&#xd;&#xa;    );&#xd;&#xa;&#xd;&#xa;    javax.swing.JLabel iconLabel = new javax.swing.JLabel(new javax.swing.ImageIcon(scaled));&#xd;&#xa;    iconLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 16));&#xd;&#xa;    iconLabel.setOpaque(false);&#xd;&#xa;    iconLabel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));&#xd;&#xa;&#xd;&#xa;    estaButton.add(iconLabel, java.awt.BorderLayout.EAST);&#xd;&#xa;}"/>
+              </AuxValues>
+            </Component>
+            <Component class="javax.swing.JButton" name="inciButton">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Segoe UI" size="24" style="0"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value=" Incidencias"/>
+                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                  <Border info="null"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="inciButtonActionPerformed"/>
+              </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="inciButton = new javax.swing.JButton();&#xd;&#xa;inciButton.setLayout(new java.awt.BorderLayout());&#xd;&#xa;&#xd;&#xa;// Texto / comportamiento&#xd;&#xa;inciButton.setText(&quot;Incidencias&quot;);&#xd;&#xa;inciButton.setFocusPainted(false);&#xd;&#xa;inciButton.setBorderPainted(false);&#xd;&#xa;inciButton.setContentAreaFilled(false);&#xd;&#xa;inciButton.setOpaque(false);&#xd;&#xa;inciButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));&#xd;&#xa;&#xd;&#xa;inciButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);&#xd;&#xa;inciButton.setMargin(new java.awt.Insets(10, 16, 10, 16));&#xd;&#xa;inciButton.putClientProperty(&quot;JButton.buttonType&quot;, &quot;borderless&quot;);&#xd;&#xa;&#xd;&#xa;// (Opcional recomendado) ancho fijo&#xd;&#xa;inciButton.setPreferredSize(new java.awt.Dimension(260, 48));&#xd;&#xa;inciButton.setMinimumSize(new java.awt.Dimension(260, 48));&#xd;&#xa;inciButton.setMaximumSize(new java.awt.Dimension(260, 48));&#xd;&#xa;&#xd;&#xa;// Icono a la derecha&#xd;&#xa;java.net.URL inciUrl = getClass().getResource(&quot;/img/nav/incidencias.png&quot;);&#xd;&#xa;if (inciUrl != null) {&#xd;&#xa;    javax.swing.ImageIcon icon = new javax.swing.ImageIcon(inciUrl);&#xd;&#xa;    java.awt.Image scaled = icon.getImage().getScaledInstance(&#xd;&#xa;            ICON_SIZE, ICON_SIZE, java.awt.Image.SCALE_SMOOTH&#xd;&#xa;    );&#xd;&#xa;&#xd;&#xa;    javax.swing.JLabel iconLabel = new javax.swing.JLabel(new javax.swing.ImageIcon(scaled));&#xd;&#xa;    iconLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 16));&#xd;&#xa;    iconLabel.setOpaque(false);&#xd;&#xa;    iconLabel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));&#xd;&#xa;&#xd;&#xa;    inciButton.add(iconLabel, java.awt.BorderLayout.EAST);&#xd;&#xa;}&#xd;&#xa;"/>
+              </AuxValues>
+            </Component>
+            <Component class="javax.swing.JButton" name="aparaButton">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Segoe UI" size="24" style="0"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value=" Aparatos"/>
+                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                  <Border info="null"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="aparaButtonActionPerformed"/>
+              </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="aparaButton = new javax.swing.JButton();&#xd;&#xa;aparaButton.setLayout(new java.awt.BorderLayout());&#xd;&#xa;&#xd;&#xa;// Texto / comportamiento&#xd;&#xa;aparaButton.setText(&quot;Aparatos&quot;);&#xd;&#xa;aparaButton.setFocusPainted(false);&#xd;&#xa;aparaButton.setBorderPainted(false);&#xd;&#xa;aparaButton.setContentAreaFilled(false);&#xd;&#xa;aparaButton.setOpaque(false);&#xd;&#xa;aparaButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));&#xd;&#xa;&#xd;&#xa;aparaButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);&#xd;&#xa;aparaButton.setMargin(new java.awt.Insets(10, 16, 10, 16));&#xd;&#xa;aparaButton.putClientProperty(&quot;JButton.buttonType&quot;, &quot;borderless&quot;);&#xd;&#xa;&#xd;&#xa;// (Opcional recomendado) ancho fijo&#xd;&#xa;aparaButton.setPreferredSize(new java.awt.Dimension(260, 48));&#xd;&#xa;aparaButton.setMinimumSize(new java.awt.Dimension(260, 48));&#xd;&#xa;aparaButton.setMaximumSize(new java.awt.Dimension(260, 48));&#xd;&#xa;&#xd;&#xa;// Icono a la derecha&#xd;&#xa;java.net.URL apaUrl = getClass().getResource(&quot;/img/nav/aparatos.png&quot;);&#xd;&#xa;if (apaUrl != null) {&#xd;&#xa;    javax.swing.ImageIcon icon = new javax.swing.ImageIcon(apaUrl);&#xd;&#xa;    java.awt.Image scaled = icon.getImage().getScaledInstance(&#xd;&#xa;            ICON_SIZE, ICON_SIZE, java.awt.Image.SCALE_SMOOTH&#xd;&#xa;    );&#xd;&#xa;&#xd;&#xa;    javax.swing.JLabel iconLabel = new javax.swing.JLabel(new javax.swing.ImageIcon(scaled));&#xd;&#xa;    iconLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 16));&#xd;&#xa;    iconLabel.setOpaque(false);&#xd;&#xa;    iconLabel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));&#xd;&#xa;&#xd;&#xa;    aparaButton.add(iconLabel, java.awt.BorderLayout.EAST);&#xd;&#xa;}"/>
+              </AuxValues>
+            </Component>
+            <Component class="javax.swing.JButton" name="usuButton">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Segoe UI" size="24" style="0"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value=" Usuarios"/>
+                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                  <Border info="null"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="usuButtonActionPerformed"/>
+              </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="usuButton = new javax.swing.JButton();&#xd;&#xa;usuButton.setLayout(new java.awt.BorderLayout());&#xd;&#xa;&#xd;&#xa;// Texto / comportamiento&#xd;&#xa;usuButton.setText(&quot;Usuarios&quot;);&#xd;&#xa;usuButton.setFocusPainted(false);&#xd;&#xa;usuButton.setBorderPainted(false);&#xd;&#xa;usuButton.setContentAreaFilled(false);&#xd;&#xa;usuButton.setOpaque(false);&#xd;&#xa;usuButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));&#xd;&#xa;&#xd;&#xa;usuButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);&#xd;&#xa;usuButton.setMargin(new java.awt.Insets(10, 16, 10, 16));&#xd;&#xa;usuButton.putClientProperty(&quot;JButton.buttonType&quot;, &quot;borderless&quot;);&#xd;&#xa;&#xd;&#xa;// (Opcional recomendado) ancho fijo&#xd;&#xa;usuButton.setPreferredSize(new java.awt.Dimension(260, 48));&#xd;&#xa;usuButton.setMinimumSize(new java.awt.Dimension(260, 48));&#xd;&#xa;usuButton.setMaximumSize(new java.awt.Dimension(260, 48));&#xd;&#xa;&#xd;&#xa;// Icono a la derecha&#xd;&#xa;java.net.URL userUrl = getClass().getResource(&quot;/img/nav/usuarios.png&quot;);&#xd;&#xa;if (userUrl != null) {&#xd;&#xa;    javax.swing.ImageIcon icon = new javax.swing.ImageIcon(userUrl);&#xd;&#xa;    java.awt.Image scaled = icon.getImage().getScaledInstance(&#xd;&#xa;            ICON_SIZE, ICON_SIZE, java.awt.Image.SCALE_SMOOTH&#xd;&#xa;    );&#xd;&#xa;&#xd;&#xa;    javax.swing.JLabel iconLabel = new javax.swing.JLabel(new javax.swing.ImageIcon(scaled));&#xd;&#xa;    iconLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 16));&#xd;&#xa;    iconLabel.setOpaque(false);&#xd;&#xa;    iconLabel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));&#xd;&#xa;&#xd;&#xa;    usuButton.add(iconLabel, java.awt.BorderLayout.EAST);&#xd;&#xa;}"/>
+              </AuxValues>
+            </Component>
+            <Component class="javax.swing.JButton" name="adminButton">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Segoe UI" size="24" style="0"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value=" Administrar"/>
+                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                  <Border info="null"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="adminButtonActionPerformed"/>
+              </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="adminButton = new javax.swing.JButton();&#xd;&#xa;adminButton.setLayout(new java.awt.BorderLayout());&#xd;&#xa;&#xd;&#xa;// Texto / comportamiento&#xd;&#xa;adminButton.setText(&quot;Administrar&quot;);&#xd;&#xa;adminButton.setFocusPainted(false);&#xd;&#xa;adminButton.setBorderPainted(false);&#xd;&#xa;adminButton.setContentAreaFilled(false);&#xd;&#xa;adminButton.setOpaque(false);&#xd;&#xa;adminButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));&#xd;&#xa;&#xd;&#xa;adminButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);&#xd;&#xa;adminButton.setMargin(new java.awt.Insets(10, 16, 10, 16));&#xd;&#xa;adminButton.putClientProperty(&quot;JButton.buttonType&quot;, &quot;borderless&quot;);&#xd;&#xa;&#xd;&#xa;// (Opcional recomendado) ancho fijo&#xd;&#xa;adminButton.setPreferredSize(new java.awt.Dimension(260, 48));&#xd;&#xa;adminButton.setMinimumSize(new java.awt.Dimension(260, 48));&#xd;&#xa;adminButton.setMaximumSize(new java.awt.Dimension(260, 48));&#xd;&#xa;&#xd;&#xa;// Icono a la derecha&#xd;&#xa;java.net.URL adminUrl = getClass().getResource(&quot;/img/nav/admin.png&quot;);&#xd;&#xa;if (adminUrl != null) {&#xd;&#xa;    javax.swing.ImageIcon icon = new javax.swing.ImageIcon(adminUrl);&#xd;&#xa;    java.awt.Image scaled = icon.getImage().getScaledInstance(&#xd;&#xa;            ICON_SIZE, ICON_SIZE, java.awt.Image.SCALE_SMOOTH&#xd;&#xa;    );&#xd;&#xa;&#xd;&#xa;    javax.swing.JLabel iconLabel = new javax.swing.JLabel(new javax.swing.ImageIcon(scaled));&#xd;&#xa;    iconLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 16));&#xd;&#xa;    iconLabel.setOpaque(false);&#xd;&#xa;    iconLabel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));&#xd;&#xa;&#xd;&#xa;    adminButton.add(iconLabel, java.awt.BorderLayout.EAST);&#xd;&#xa;}"/>
+              </AuxValues>
+            </Component>
+            <Component class="javax.swing.JLabel" name="logName">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Segoe UI" size="24" style="0"/>
+                </Property>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="logRol">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Segoe UI" size="24" style="0"/>
+                </Property>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JButton" name="salir">
+              <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/img/logout.png"/>
+                </Property>
+                <Property name="toolTipText" type="java.lang.String" value="Pulse para cerrar sesi&#xf3;n."/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="salirActionPerformed"/>
+              </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="salir = new javax.swing.JButton();&#xd;&#xa;&#xd;&#xa;salir.setText(&quot;&quot;);&#xd;&#xa;salir.setFocusPainted(false);&#xd;&#xa;salir.setBorderPainted(false);&#xd;&#xa;salir.setContentAreaFilled(false);&#xd;&#xa;salir.setOpaque(false);&#xd;&#xa;salir.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));&#xd;&#xa;salir.setToolTipText(&quot;Cerrar sesi&#xf3;n&quot;);&#xd;&#xa;&#xd;&#xa;java.net.URL normalUrl = getClass().getResource(&quot;/img/logout.png&quot;);&#xd;&#xa;java.net.URL hoverUrl  = getClass().getResource(&quot;/img/logout_hover.png&quot;);&#xd;&#xa;&#xd;&#xa;java.util.function.Consumer&lt;java.net.URL&gt; setScaledIcon = (url) -&gt; {&#xd;&#xa;    if (url == null) return;&#xd;&#xa;    int size = Math.min(salir.getWidth(), salir.getHeight());&#xd;&#xa;    if (size &lt;= 0) return;&#xd;&#xa;&#xd;&#xa;    javax.swing.ImageIcon icon = new javax.swing.ImageIcon(url);&#xd;&#xa;    java.awt.Image scaled = icon.getImage()&#xd;&#xa;            .getScaledInstance(size, size, java.awt.Image.SCALE_SMOOTH);&#xd;&#xa;    salir.setIcon(new javax.swing.ImageIcon(scaled));&#xd;&#xa;};&#xd;&#xa;&#xd;&#xa;// cuando el bot&#xf3;n ya tiene tama&#xf1;o real&#xd;&#xa;salir.addComponentListener(new java.awt.event.ComponentAdapter() {&#xd;&#xa;    @Override public void componentResized(java.awt.event.ComponentEvent e) {&#xd;&#xa;        setScaledIcon.accept(normalUrl);&#xd;&#xa;        salir.removeComponentListener(this); // solo una vez&#xd;&#xa;    }&#xd;&#xa;});&#xd;&#xa;&#xd;&#xa;// hover&#xd;&#xa;salir.addMouseListener(new java.awt.event.MouseAdapter() {&#xd;&#xa;    @Override public void mouseEntered(java.awt.event.MouseEvent e) {&#xd;&#xa;        setScaledIcon.accept(hoverUrl);&#xd;&#xa;    }&#xd;&#xa;    @Override public void mouseExited(java.awt.event.MouseEvent e) {&#xd;&#xa;        setScaledIcon.accept(normalUrl);&#xd;&#xa;    }&#xd;&#xa;});"/>
+              </AuxValues>
+            </Component>
+          </SubComponents>
+        </Container>
+        <Container class="javax.swing.JPanel" name="contentPanel">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+          </Properties>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
+        </Container>
+      </SubComponents>
+    </Container>
+  </SubComponents>
+</Form>
