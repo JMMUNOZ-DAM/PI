@@ -1,6 +1,6 @@
-# Proyecto Netfix Antigravity 
+# Proyecto NETFIX 
 
-**Netfix Antigravity** es una aplicación de gestión empresarial avanzada para compañías de telecomunicaciones (ISP/Carriers).
+**NETFIX** es una aplicación de gestión empresarial avanzada para compañías de telecomunicaciones (ISP/Carriers).
 
 Su objetivo principal es optimizar el flujo de trabajo entre los diferentes roles de la organización (**Sistemas, Supervisores y Técnicos**), proporcionando herramientas específicas para la toma de decisiones y la operación diaria.
 
