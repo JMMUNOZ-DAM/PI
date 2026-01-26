@@ -173,3 +173,4 @@ Definici贸n de constantes de dise帽o (Colores hexadecimales, tipograf铆as base).
     *   **Admin:** Acceso total (Sistemas).
     *   **Supervisor:** Gesti贸n de t茅cnicos e incidencias.
     *   **T茅cnico:** Resoluci贸n de incidencias y diagn贸stico.
+<!-- Refactorizaci髇 completa -->
