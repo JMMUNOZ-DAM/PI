@@ -1,6 +1,6 @@
 /*
  * AppConfig.java
- * Clase Singleton para gestionar la configuración y textos de la aplicación.
+ * Clase centralizada para gestionar la configuración y textos de la aplicación.
  */
 package com.jmmunoz.netfix.config;
 
@@ -10,7 +10,7 @@ import java.util.Locale;
 
 /**
  * Gestiona la carga de recursos de texto desde messages.properties.
- * Implementa el patrón Singleton.
+ * Proporciona una instancia única compartida.
  */
 public class AppConfig {
 

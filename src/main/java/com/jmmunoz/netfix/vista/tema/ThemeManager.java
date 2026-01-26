@@ -44,7 +44,7 @@ import org.jfree.chart.labels.ItemLabelAnchor;
 
 /**
  * Gestor centralizado de temas y estilos visuales para la aplicación Netfix.
- * Implementa el patrón Singleton para proporcionar un punto de acceso único
+ * Utiliza una instancia única para proporcionar un punto de acceso global
  * a toda la lógica visual.
  * 
  * @author Juanma Muñoz
