@@ -180,9 +180,7 @@ public class ThemeManager {
         card.add(Box.createVerticalStrut(15));
 
         /* ========================= CAMPOS ========================= */
-        // Accedemos a los componentes a través de getters que debemos crear en
-        // login.java
-        // NOTA: Asumo que se añadirán getters públicos en login.java
+        // Accedemos a los componentes a través de getters
 
         // Estilos
         view.getMailUser().setFont(new Font("Segoe UI", Font.PLAIN, 16));
@@ -311,19 +309,6 @@ public class ThemeManager {
         button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                // Comprobar si el botón está activo usando el método de la vista o getter
-                // público para
-                // activeButton
-                // Dado que activeButton es privado en MainFrame, podríamos necesitar un getter
-                // o método
-                // en MainFrame para comprobar.
-                // O podemos encapsular esta lógica completamente aquí si rastreamos el botón
-                // activo aquí,
-                // pero el estado está en MainFrame.
-                // Enfoque más simple: MainFrame gestiona el estado, solo añadimos listener que
-                // comprueba
-                // el estado.
-                // Necesitamos view.getActiveButton()
                 if (button != view.getActiveButton()) {
                     button.setBackground(TelecomTheme.NAV_BG_HOVER);
                 }
@@ -357,9 +342,7 @@ public class ThemeManager {
         }
     }
 
-    // Auxiliar para obtener borde activo para MainFrame si es necesario, o
-    // MainFrame puede
-    // usar el de ThemeManager
+    // Auxiliar para obtener borde activo para MainFrame si es necesario
     public Border getActiveBorder() {
         return activeBorder;
     }
@@ -368,8 +351,6 @@ public class ThemeManager {
         return normalBorder;
     }
 
-    // También podemos tener un método en ThemeManager para establecer estilo de
-    // botón activo directamente
     public void setActiveNavButton(JButton button) {
         button.setBackground(TelecomTheme.NAV_BG_ACTIVE);
         button.setBorder(activeBorder);
@@ -406,7 +387,6 @@ public class ThemeManager {
         if (scroll != null) {
             scroll.setBorder(BorderFactory.createEmptyBorder());
             if (scroll.getViewport() != null) {
-                // Color de SUPERFICIE usualmente blanco o gris claro
                 scroll.getViewport().setBackground(TelecomTheme.SURFACE);
             }
         }
@@ -446,9 +426,7 @@ public class ThemeManager {
         // Buscador
         if (view.getSeaField() != null) {
             view.getSeaField().setFont(new Font("Segoe UI", Font.PLAIN, 14));
-            // La lógica de tamaño preferido podría permanecer en la vista o aquí, pero aquí
-            // implica estilo.
-            // view.getSeaField().setPreferredSize(new Dimension(400, 32));
+
         }
         if (view.getSearchButtSis() != null) {
             view.getSearchButtSis().setFont(new Font("Segoe UI", Font.BOLD, 14));
@@ -754,9 +732,6 @@ public class ThemeManager {
         view.add(view.getApaTitle(), gbc);
 
         // 2) Buscador (envuelto en panel flow para centrarlo junto)
-        // Necesitamos comprobar si podemos añadir searchField y searchButton
-        // directamente, asumiendo
-        // que la lógica maneja nulos
         if (view.getSearchField() != null && view.getSearchButton() != null) {
             JPanel searchWrapper = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 10, 0));
             searchWrapper.setOpaque(false);
@@ -821,7 +796,7 @@ public class ThemeManager {
                 table.getColumnModel().getColumn(5).setPreferredWidth(100);
 
             } catch (Exception e) {
-                // Failsafe
+                // Ignoramos
             }
         }
     }
@@ -839,8 +814,6 @@ public class ThemeManager {
         styleTable(view.getInciTabla(), null);
         configureTableColumns(view.getInciTabla());
 
-        // El resto se gestiona en buildDashboardLayout() de EstadisPanel usando
-        // createKPICard()
     }
 
     public void applyIncidenciaDetalleTheme(javax.swing.JDialog dialog) {

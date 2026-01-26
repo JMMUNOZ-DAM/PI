@@ -46,7 +46,7 @@ public class SupervisorPanel extends javax.swing.JPanel {
         public SupervisorPanel(com.jmmunoz.netfix.modelo.Usuario user) {
                 this.currentUser = user;
                 initComponents();
-                // ⬇️ anula tamaños fijos del diseñador
+                // Anula tamaños fijos del diseñador
                 setPreferredSize(null);
                 setMinimumSize(new java.awt.Dimension(0, 0));
                 setMaximumSize(new java.awt.Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
@@ -58,6 +58,7 @@ public class SupervisorPanel extends javax.swing.JPanel {
                 usersPanel.setMaximumSize(new java.awt.Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
                 applyTelecomStyle();
                 configurarBuscador();
+                setupTableSelectionListener();
                 cargarDatos();
         }
 
@@ -81,7 +82,7 @@ public class SupervisorPanel extends javax.swing.JPanel {
          */
         public void cargarDatos() {
                 crs = Utilities.ejecutarConsulta(Utilities.TipoConsulta.ROLES, 0);
-                rolAlta.removeAllItems(); // Clear before adding
+                rolAlta.removeAllItems();
                 try {
                         while (crs.next()) {
                                 String r = crs.getString("descripcion");
@@ -97,62 +98,23 @@ public class SupervisorPanel extends javax.swing.JPanel {
                 SwingUtilities.invokeLater(() -> {
                         try {
                                 if ("Supervisor".equalsIgnoreCase(currentUser.getRol())) {
-                                        // Supervisors see restricted list (no "Sistemas")
+                                        // Supervisores ven lista restringida (no "Sistemas")
                                         rs = Utilities.ejecutarConsulta(Utilities.TipoConsulta.USUARIOS_STRICT, 0);
                                 } else {
-                                        // Sistemas/Admin see all
+                                        // Sistemas/Admin ven todos
                                         rs = Utilities.ejecutarConsulta(Utilities.TipoConsulta.USUARIOS, 0);
                                 }
 
                                 ut.cargarTabla(usersTable, rs);
+
+                                // IMPORTANTE: Actualiza el sorter ANTES de redimensionar o pintar
+                                // De lo contrario, la tabla usa el rowCount del modelo viejo (sorter)
+                                // pero intenta acceder a datos del modelo nuevo -> IndexOutOfBounds
+                                sorter.setModel((DefaultTableModel) usersTable.getModel());
+
                                 // Forzar redimensionado tras la carga
                                 setupScrollListener(jScrollPane1);
                                 resizeColumnWidths(usersTable, jScrollPane1);
-
-                                // Actualizamos el sorter con el nuevo modelo en caso de recarga
-                                sorter.setModel((DefaultTableModel) usersTable.getModel());
-
-                                usersTable.getSelectionModel().addListSelectionListener(e -> {
-                                        if (!e.getValueIsAdjusting()) {
-                                                int fila = usersTable.getSelectedRow();
-                                                if (fila != -1) {
-                                                        idText.setText(usersTable.getValueAt(fila, 0).toString());
-                                                        nameText.setText(usersTable.getValueAt(fila, 1).toString());
-
-                                                        // Reload roles for edit combo with filtering
-                                                        ResultSet rsRoles = Utilities.ejecutarConsulta(
-                                                                        Utilities.TipoConsulta.ROLES, 0);
-                                                        rolCombo.removeAllItems();
-                                                        try {
-                                                                while (rsRoles.next()) {
-                                                                        String r = rsRoles.getString("descripcion");
-                                                                        if (canAssignRole(r)) {
-                                                                                rolCombo.addItem(r);
-                                                                        }
-                                                                }
-                                                        } catch (SQLException ex) {
-                                                                System.getLogger(SupervisorPanel.class.getName()).log(
-                                                                                System.Logger.Level.ERROR,
-                                                                                (String) null, ex);
-                                                        }
-
-                                                        String currentRole = usersTable.getValueAt(fila, 2).toString();
-                                                        // If current role is not in the allowed list (e.g. Supervisor
-                                                        // viewing Sistemas),
-                                                        // simply add it temporarily so it shows up, or handle it?
-                                                        // Requirement says "only can GIVE role", doesn't say can't
-                                                        // view.
-                                                        // But if they edit, they can't save as Sistemas.
-                                                        // Let's ensure selected item is set if available.
-                                                        rolCombo.setSelectedItem(currentRole);
-
-                                                        mailText.setText(usersTable.getValueAt(fila, 3).toString());
-                                                        passText.setText(usersTable.getValueAt(fila, 4).toString());
-                                                }
-                                        }
-                                });
-                                // Actualizamos el sorter con el nuevo modelo en caso de recarga
-                                // sorter.setModel((DefaultTableModel) usersTable.getModel());
 
                         } catch (SQLException ex) {
                                 System.out.println(ex.getMessage());
@@ -259,6 +221,51 @@ public class SupervisorPanel extends javax.swing.JPanel {
         }
 
         /**
+         * Configura el listener de selección de la tabla de usuarios.
+         * <p>
+         * Detecta cuando se selecciona una fila en la tabla y rellena automáticamente
+         * los campos del formulario de "Modificar Usuario" con los datos de la fila
+         * seleccionada.
+         * </p>
+         * Se configura una única vez en inicialización para evitar problemas de
+         * duplicidad de listeners durante las recargas de datos.
+         */
+        private void setupTableSelectionListener() {
+                usersTable.getSelectionModel().addListSelectionListener(e -> {
+                        if (!e.getValueIsAdjusting()) {
+                                int fila = usersTable.getSelectedRow();
+                                if (fila != -1) {
+                                        idText.setText(usersTable.getValueAt(fila, 0).toString());
+                                        nameText.setText(usersTable.getValueAt(fila, 1).toString());
+
+                                        // Cargar roles para el combo de edición con filtrado
+                                        ResultSet rsRoles = Utilities.ejecutarConsulta(
+                                                        Utilities.TipoConsulta.ROLES, 0);
+                                        rolCombo.removeAllItems();
+                                        try {
+                                                while (rsRoles.next()) {
+                                                        String r = rsRoles.getString("descripcion");
+                                                        if (canAssignRole(r)) {
+                                                                rolCombo.addItem(r);
+                                                        }
+                                                }
+                                        } catch (SQLException ex) {
+                                                System.getLogger(SupervisorPanel.class.getName()).log(
+                                                                System.Logger.Level.ERROR,
+                                                                (String) null, ex);
+                                        }
+
+                                        String currentRole = usersTable.getValueAt(fila, 2).toString();
+                                        rolCombo.setSelectedItem(currentRole);
+
+                                        mailText.setText(usersTable.getValueAt(fila, 3).toString());
+                                        passText.setText(usersTable.getValueAt(fila, 4).toString());
+                                }
+                        }
+                });
+        }
+
+        /**
          * Aplica el tema visual corporativo.
          * Rediseña el layout principal, ajusta fuentes, colores y estilos de tabla.
          */
@@ -337,12 +344,14 @@ public class SupervisorPanel extends javax.swing.JPanel {
                 // Botones
                 Font btn = new Font("Segoe UI", Font.BOLD, 14);
                 searchButton1.setFont(btn);
+                searchButton1.setFont(btn);
                 modButton.setFont(btn);
+                bajaButton.setFont(btn);
                 altaButton.setFont(btn);
 
-                // 3) Quita los bordes antiguos y pon cards
+                // 3) Quita los bordes antiguos y pone cards
                 mainPanel.setBorder(BorderFactory.createEmptyBorder());
-                mainPanel.setOpaque(false); // lo vamos a envolver
+                mainPanel.setOpaque(false); // lo envolvemos en un panel transparente
 
                 altaPanel.setBorder(BorderFactory.createEmptyBorder()); // fuera etched
                 altaPanel.setOpaque(false);
@@ -350,21 +359,13 @@ public class SupervisorPanel extends javax.swing.JPanel {
                 // 4) Tabla estilo telecom
                 ThemeManager.getInstance().styleTable(usersTable, jScrollPane1);
 
-                // Remove fixed sizes on table scroll if present
+                // Elimina tamaños fijos de la tabla
                 jScrollPane1.setMinimumSize(new Dimension(200, 200));
                 jScrollPane1.setPreferredSize(null);
                 usersTable.setFillsViewportHeight(true);
                 jScrollPane1.setBorder(BorderFactory.createEmptyBorder());
 
                 ThemeManager.getInstance().cardify(mainPanel);
-                // TelecomUI.cardify(altaPanel); // No cardify altaPanel to avoid double-card
-                // look if implied
-
-                // ---------------------------------------------------------
-                // LAYOUT REFACTOR - ROOT ONLY
-                // (We preserve mainPanel's internal GroupLayout to match AparatosPanel
-                // behavior)
-                // ---------------------------------------------------------
 
                 usersPanel.removeAll();
                 usersPanel.setLayout(new java.awt.GridBagLayout());
@@ -377,7 +378,7 @@ public class SupervisorPanel extends javax.swing.JPanel {
                 gbc.anchor = java.awt.GridBagConstraints.LINE_START;
                 gbc.fill = java.awt.GridBagConstraints.NONE;
 
-                // 1) Title
+                // 1) Titulos
                 usersPanel.add(ususTitle, gbc);
 
                 // 2) Buscador
@@ -393,10 +394,10 @@ public class SupervisorPanel extends javax.swing.JPanel {
                 // 3) Main Panel (Content)
                 gbc.gridy++;
                 gbc.weighty = 0.0;
-                gbc.fill = java.awt.GridBagConstraints.HORIZONTAL; // Use available width
+                gbc.fill = java.awt.GridBagConstraints.HORIZONTAL;
                 usersPanel.add(mainPanel, gbc);
 
-                // Push top
+                // Lo forzamos para que se ajuste al top
                 gbc.gridy++;
                 gbc.weighty = 1.0;
                 gbc.fill = java.awt.GridBagConstraints.BOTH;
@@ -429,6 +430,7 @@ public class SupervisorPanel extends javax.swing.JPanel {
                 altasTitle = new javax.swing.JLabel();
                 userLlabel = new javax.swing.JLabel();
                 modButton = new javax.swing.JButton();
+                bajaButton = new javax.swing.JButton();
                 altaPanel = new javax.swing.JPanel();
                 altaLabel = new javax.swing.JLabel();
                 nameAlta = new javax.swing.JTextField();
@@ -495,6 +497,15 @@ public class SupervisorPanel extends javax.swing.JPanel {
                 modButton.addActionListener(new java.awt.event.ActionListener() {
                         public void actionPerformed(java.awt.event.ActionEvent evt) {
                                 modButtonActionPerformed(evt);
+                        }
+                });
+
+                bajaButton.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+                bajaButton.setForeground(new java.awt.Color(204, 0, 0));
+                bajaButton.setText("DAR DE BAJA");
+                bajaButton.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                bajaButtonActionPerformed(evt);
                         }
                 });
 
@@ -686,7 +697,11 @@ public class SupervisorPanel extends javax.swing.JPanel {
                                                                                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE,
                                                                                                                                                 javax.swing.GroupLayout.DEFAULT_SIZE,
                                                                                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                                                                                .addComponent(modButton)
+                                                                                                                                .addGroup(mainPanelLayout
+                                                                                                                                                .createSequentialGroup()
+                                                                                                                                                .addComponent(modButton)
+                                                                                                                                                .addGap(18, 18, 18)
+                                                                                                                                                .addComponent(bajaButton))
                                                                                                                                 .addGroup(mainPanelLayout
                                                                                                                                                 .createSequentialGroup()
                                                                                                                                                 .addGroup(mainPanelLayout
@@ -819,7 +834,11 @@ public class SupervisorPanel extends javax.swing.JPanel {
                                                                                                                                 32,
                                                                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE))
                                                                                                 .addGap(18, 18, 18)
-                                                                                                .addComponent(modButton)
+                                                                                                .addGroup(mainPanelLayout
+                                                                                                                .createParallelGroup(
+                                                                                                                                javax.swing.GroupLayout.Alignment.BASELINE)
+                                                                                                                .addComponent(modButton)
+                                                                                                                .addComponent(bajaButton))
                                                                                                 .addPreferredGap(
                                                                                                                 javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                                                                 .addComponent(altasTitle)
@@ -915,14 +934,14 @@ public class SupervisorPanel extends javax.swing.JPanel {
                 String id = idText.getText().trim();
                 Object rolObj = rolCombo.getSelectedItem();
 
-                // Retrieve original hash from table to compare
+                // Obtenemos el hash original de la tabla para comparar
                 int selectedRow = usersTable.getSelectedRow();
                 String originalHash = "";
                 if (selectedRow != -1) {
                         originalHash = usersTable.getValueAt(selectedRow, 4).toString();
                 }
 
-                // Use utility to decide whether to use original hash or new hash
+                // Usamos la utilidad para decidir si usar el hash original o el nuevo
                 String passwordToSend = ut.procesarPasswordUpdate(inputPass, originalHash);
 
                 // Validaciones
@@ -999,6 +1018,52 @@ public class SupervisorPanel extends javax.swing.JPanel {
         }// GEN-LAST:event_modButtonActionPerformed
 
         /**
+         * Acción del botón "DAR DE BAJA".
+         * <p>
+         * Permite eliminar un usuario del sistema tras confirmar la acción.
+         * Verifica que haya un usuario seleccionado, solicita confirmación
+         * mediante un diálogo y ejecuta el borrado en la base de datos.
+         * </p>
+         * 
+         * @param evt Evento del botón.
+         */
+        private void bajaButtonActionPerformed(java.awt.event.ActionEvent evt) {
+                String id = idText.getText().trim();
+
+                if (id.isEmpty()) {
+                        com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(this,
+                                        "Selecciona un usuario de la tabla para darlo de baja.",
+                                        com.jmmunoz.netfix.config.AppConfig.getInstance()
+                                                        .getMessage("supervisor.title.error"),
+                                        JOptionPane.WARNING_MESSAGE);
+                        return;
+                }
+
+                // Confirmación
+                int opt = JOptionPane.showConfirmDialog(this,
+                                "¿Estás seguro de que deseas dar de baja este usuario?\nEsta acción es irreversible.",
+                                "Confirmar Baja",
+                                JOptionPane.YES_NO_OPTION,
+                                JOptionPane.WARNING_MESSAGE);
+
+                if (opt == JOptionPane.YES_OPTION) {
+                        ut.ejecutarUpdate(Utilities.TipoConsulta.DELETE_USER, id);
+
+                        // LOG ACTION
+                        ut.logAction("OK", "SupervisorPanel",
+                                        "Usuario con ID " + id + " dado de baja por " + currentUser.getNombre());
+
+                        com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(this,
+                                        "Usuario dado de baja correctamente.",
+                                        com.jmmunoz.netfix.config.AppConfig.getInstance()
+                                                        .getMessage("supervisor.title.success"),
+                                        JOptionPane.INFORMATION_MESSAGE);
+                        limpiarCamposMod();
+                        cargarDatos();
+                }
+        }
+
+        /**
          * Acción del botón "ALTA" (Registrar Usuario).
          * Valida los campos del formulario de alta (nombre, rol, email, passwords)
          * e inserta el nuevo usuario en la base de datos si todo es correcto.
@@ -1009,13 +1074,8 @@ public class SupervisorPanel extends javax.swing.JPanel {
                 // Obtener valores
                 String nombre = nameAlta.getText().trim();
                 String email = mailAlta.getText().trim();
-
                 String password = new String(passAlta.getPassword()).trim();
-
-                // Si confiAlta es JPasswordField, usa esto:
                 String confiPass = new String(confAlta.getPassword()).trim();
-                // Si confiAlta es JTextField, entonces sería:
-                // String confiPass = confiAlta.getText().trim();
 
                 Object rolObj = rolAlta.getSelectedItem();
 
@@ -1060,6 +1120,25 @@ public class SupervisorPanel extends javax.swing.JPanel {
                                         JOptionPane.ERROR_MESSAGE);
                         mailAlta.requestFocus();
                         return;
+                }
+
+                // Verificar si existe email
+                try {
+                        ResultSet rsExiste = Utilities.ejecutarConsulta(Utilities.TipoConsulta.USUARIO, email);
+                        if (rsExiste.next()) {
+                                com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(this,
+                                                "Ya existe un usuario con ese correo electrónico.",
+                                                com.jmmunoz.netfix.config.AppConfig.getInstance()
+                                                                .getMessage("supervisor.title.error"),
+                                                JOptionPane.ERROR_MESSAGE);
+                                ut.logAction("WARNING", "SupervisorPanel",
+                                                "Intento de alta duplicada para email: " + email);
+                                mailAlta.requestFocus();
+                                return;
+                        }
+                } catch (SQLException ex) {
+                        ut.logAction("ERROR", "SupervisorPanel",
+                                        "Error verificando email duplicado: " + ex.getMessage());
                 }
 
                 if (password.isEmpty()) {
@@ -1139,6 +1218,7 @@ public class SupervisorPanel extends javax.swing.JPanel {
         private javax.swing.JTextField mailText;
         private javax.swing.JPanel mainPanel;
         private javax.swing.JButton modButton;
+        private javax.swing.JButton bajaButton;
         private javax.swing.JTextField nameAlta;
         private javax.swing.JLabel nameLabel1;
         private javax.swing.JTextField nameText;

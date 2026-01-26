@@ -5,7 +5,6 @@
 package com.jmmunoz.netfix.vista;
 
 import com.jmmunoz.netfix.modelo.Usuario;
-import com.jmmunoz.netfix.vista.tema.TelecomTheme;
 import com.jmmunoz.netfix.vista.tema.ThemeManager;
 import java.awt.CardLayout;
 
@@ -117,7 +116,6 @@ public class MainFrame extends javax.swing.JFrame {
         setLocation(0, 0);
 
         setExtendedState(JFrame.MAXIMIZED_BOTH);
-        // setSize(1600, 900); // Removed fixed size
         setLocationRelativeTo(null);
         setResizable(true);
     }
@@ -148,7 +146,7 @@ public class MainFrame extends javax.swing.JFrame {
             case "supervisor":
                 // Puede ver admin pero no tocar todo (ejemplo)
                 adminButton.setEnabled(false);
-                // Si quieres limitar algo más, aquí
+
                 break;
 
             case "tecnico":
@@ -157,8 +155,7 @@ public class MainFrame extends javax.swing.JFrame {
                 usuButton.setText(
                         " " + com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("main.nav.users.singular")
                                 .trim());
-                // Opcional: ocultar
-                // adminButton.setVisible(false);
+
                 break;
 
             default:
@@ -233,7 +230,7 @@ public class MainFrame extends javax.swing.JFrame {
         inciButton.setMargin(new java.awt.Insets(10, 16, 10, 16));
         inciButton.putClientProperty("JButton.buttonType", "borderless");
 
-        // (Opcional recomendado) ancho fijo
+        // ancho fijo
         inciButton.setPreferredSize(new java.awt.Dimension(260, 48));
         inciButton.setMinimumSize(new java.awt.Dimension(260, 48));
         inciButton.setMaximumSize(new java.awt.Dimension(260, 48));
@@ -268,7 +265,7 @@ public class MainFrame extends javax.swing.JFrame {
         aparaButton.setMargin(new java.awt.Insets(10, 16, 10, 16));
         aparaButton.putClientProperty("JButton.buttonType", "borderless");
 
-        // (Opcional recomendado) ancho fijo
+        // ancho fijo
         aparaButton.setPreferredSize(new java.awt.Dimension(260, 48));
         aparaButton.setMinimumSize(new java.awt.Dimension(260, 48));
         aparaButton.setMaximumSize(new java.awt.Dimension(260, 48));
@@ -303,7 +300,7 @@ public class MainFrame extends javax.swing.JFrame {
         usuButton.setMargin(new java.awt.Insets(10, 16, 10, 16));
         usuButton.putClientProperty("JButton.buttonType", "borderless");
 
-        // (Opcional recomendado) ancho fijo
+        // ancho fijo
         usuButton.setPreferredSize(new java.awt.Dimension(260, 48));
         usuButton.setMinimumSize(new java.awt.Dimension(260, 48));
         usuButton.setMaximumSize(new java.awt.Dimension(260, 48));
@@ -338,7 +335,7 @@ public class MainFrame extends javax.swing.JFrame {
         adminButton.setMargin(new java.awt.Insets(10, 16, 10, 16));
         adminButton.putClientProperty("JButton.buttonType", "borderless");
 
-        // (Opcional recomendado) ancho fijo
+        // ancho fijo
         adminButton.setPreferredSize(new java.awt.Dimension(260, 48));
         adminButton.setMinimumSize(new java.awt.Dimension(260, 48));
         adminButton.setMaximumSize(new java.awt.Dimension(260, 48));

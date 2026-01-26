@@ -55,7 +55,7 @@ public class Utilities {
         try {
             DatabaseManager db = DatabaseManager.getInstance();
 
-            // 1️⃣ Obtener hash desde BD
+            // 1️ Obtener hash desde BD
             String hashBD = db.executePreparedString(
                     Querys.login,
                     mail);
@@ -65,7 +65,7 @@ public class Utilities {
                 return false;
             }
 
-            // 2️⃣ Comparar hash
+            // 2️ Comparar hash
             return PasswordUtils.checkPassword(
                     passwordIntroducida,
                     hashBD);
@@ -108,6 +108,7 @@ public class Utilities {
         ROLES,
         UPDATEUSER,
         ALTA,
+        DELETE_USER,
         USUARIO,
         ALL_CONTRATOS_APARATOS,
         FREE_APARATOS,
@@ -252,6 +253,8 @@ public class Utilities {
                     db.executeUpdate(Querys.updateUser, params);
                 case ALTA ->
                     db.executeUpdate(Querys.altaUser, params);
+                case DELETE_USER ->
+                    db.executeUpdate(Querys.deleteUser, params);
                 case ASIGNAR_APARATO ->
                     db.executeUpdate(Querys.updateAparatoContrato, params);
                 case LIBERAR_APARATO ->
@@ -400,7 +403,7 @@ public class Utilities {
                 int modelRow = table.convertRowIndexToModel(row);
                 TableModel model = table.getModel();
 
-                // 🔐 Comprobación de columnas
+                // Comprobación de columnas
                 if (model.getColumnCount() > 5) {
 
                     Object estadoValor = model.getValueAt(modelRow, 5);
@@ -677,7 +680,7 @@ public class Utilities {
             db.executeUpdate(Querys.createTableHorarios);
             db.executeUpdate(Querys.createTableAgenda);
 
-            // Sync inicial
+            // Sincronización inicial
             db.executeUpdate(Querys.syncTecnicos);
             db.executeUpdate(Querys.initHorariosDefecto);
 

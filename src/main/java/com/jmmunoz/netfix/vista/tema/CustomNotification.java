@@ -36,7 +36,7 @@ public class CustomNotification {
     }
 
     /**
-     * Muestra una notificación modal usando JOptionPane estándar.
+     * Muestra una notificación modal usando ModernDialog.
      */
     public static void show(Component parent, String message, Type type) {
         show(parent, null, message, type);
