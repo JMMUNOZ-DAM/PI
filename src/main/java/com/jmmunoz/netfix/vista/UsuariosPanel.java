@@ -176,8 +176,12 @@ public class UsuariosPanel extends javax.swing.JPanel {
                 idText = new javax.swing.JLabel();
 
                 setBackground(new java.awt.Color(255, 255, 255));
+                // setPreferredSize(new java.awt.Dimension(1592, 946)); // Preferencia fija
+                // eliminada
 
                 usersPanel.setBackground(new java.awt.Color(255, 255, 255));
+                // usersPanel.setPreferredSize(new java.awt.Dimension(1592, 946)); //
+                // Preferencia fija eliminada
 
                 ususTitle.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
                 ususTitle.setText(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("user.manage.title"));

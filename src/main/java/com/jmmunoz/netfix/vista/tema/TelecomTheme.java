@@ -30,13 +30,13 @@ public final class TelecomTheme {
     public static final Color TEXT = new Color(16, 24, 40);
     public static final Color TEXT_MUTED = new Color(102, 112, 133);
 
-    // Sidebar
+    // Sidebar (si lo quieres “telecom” sin ser dark total)
     public static final Color NAV_BG = new Color(10, 18, 35);
     public static final Color NAV_BG_ACTIVE = new Color(14, 26, 48);
     public static final Color NAV_BG_HOVER = new Color(18, 34, 62);
     public static final Color TEXT_ON_DARK = new Color(230, 235, 245);
 
-    // Estados
+    // Estados (útiles para incidencias)
     public static final Color OK = new Color(0, 180, 120);
     public static final Color WARN = new Color(255, 170, 0);
     public static final Color ERROR = new Color(220, 70, 70);

@@ -26,6 +26,10 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
 /**
+ *
+ * @author Juanma Muñoz
+ */
+/**
  * Panel de Gestión de Incidencias.
  * <p>
  * Permite listar, filtrar y gestionar detalladamente las incidencias.
@@ -53,6 +57,8 @@ public class IncidPanel extends javax.swing.JPanel {
                 initCustomComponents();
                 configurarBuscador();
                 cargarDatos();
+                // log de depuración eliminado si existe, añadiendo log de éxito explícito en
+                // cargarDatos si es necesario o aquí
                 setupSelectionListener();
         }
 
@@ -1011,8 +1017,10 @@ public class IncidPanel extends javax.swing.JPanel {
                         }
                 });
 
+                // Apply Theme
                 ThemeManager.getInstance().applyIncidPanelTheme(this);
         }
+        // Local styling methods removed - moved to ThemeManager
 
         /**
          * Limpia los campos de texto del panel de detalles.
@@ -1223,7 +1231,7 @@ public class IncidPanel extends javax.swing.JPanel {
                                 return Integer.parseInt(text.trim());
                         }
                 } catch (NumberFormatException e) {
-                        // Ignora el error
+                        // Ignore
                 }
                 return -1;
         }
@@ -1291,12 +1299,12 @@ public class IncidPanel extends javax.swing.JPanel {
         private void restoreSelection(int idIncidencia) {
                 try {
                         for (int i = 0; i < inciTabla.getRowCount(); i++) {
-                                Object val = inciTabla.getValueAt(i, 0); // asume que el ID es la primera columna
+                                Object val = inciTabla.getValueAt(i, 0); // Assuming ID is col 0
                                 if (val != null) {
                                         int id = Integer.parseInt(val.toString());
                                         if (id == idIncidencia) {
                                                 inciTabla.setRowSelectionInterval(i, i);
-                                                // Asegura que la vista del viewport se desplace a la selección
+                                                // Ensure viewport scrolls to selection
                                                 java.awt.Rectangle rect = inciTabla.getCellRect(i, 0, true);
                                                 inciTabla.scrollRectToVisible(rect);
                                                 return;
@@ -1304,7 +1312,7 @@ public class IncidPanel extends javax.swing.JPanel {
                                 }
                         }
                 } catch (Exception e) {
-                        ut.logAction("WARNING", "IncidPanel", "Error restaurando selección: " + e.getMessage());
+                        ut.logAction("WARNING", "IncidPanel", "Error restoring selection: " + e.getMessage());
                 }
         }
 }

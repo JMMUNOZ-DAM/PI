@@ -50,6 +50,9 @@ public class EstadisPanel extends javax.swing.JPanel {
         private JComboBox<Integer> yearCombo;
 
         public EstadisPanel() {
+                // Ignoramos initComponents() generado o lo limpiamos
+                // initComponents();
+
                 // Configuración base
                 setLayout(new BorderLayout());
                 setBackground(TelecomTheme.APP_BG);
@@ -101,10 +104,10 @@ public class EstadisPanel extends javax.swing.JPanel {
                 add(headerPanel, BorderLayout.NORTH);
 
                 // --- 2. CONTENIDO PRINCIPAL (División: Tabla | Gráfico) ---
-                // Usa un JSplitPane o un GridLayout. El mockup muestra split.
-                // Tiene un Panel principal con GridBag o GridLayout para simular el split
+                // Usamos un JSplitPane o un GridLayout. El mockup muestra split.
+                // Haremos un Panel principal con GridBag o GridLayout para simular el split
                 // 50/50 o 40/60.
-                // Usa JSplitPane para flexibilidad.
+                // Usaremos JSplitPane para flexibilidad.
 
                 JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
                 splitPane.setOpaque(false);
@@ -144,6 +147,7 @@ public class EstadisPanel extends javax.swing.JPanel {
                                         } else {
                                                 idInci = Integer.parseInt(val.toString());
                                         }
+                                        // Debug removed
 
                                         Window parentWindow = SwingUtilities.getWindowAncestor(EstadisPanel.this);
                                         IncidenciaDetalleDialog dialog;
@@ -168,6 +172,8 @@ public class EstadisPanel extends javax.swing.JPanel {
                 // chartWrapper
                 JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
                 toolbar.setOpaque(false);
+
+                // Combos
                 // Combos
                 String[] meses = new String[12];
                 for (int i = 0; i < 12; i++) {
@@ -291,7 +297,8 @@ public class EstadisPanel extends javax.swing.JPanel {
                                 ThemeManager.getInstance().configureTableColumns(inciTabla);
 
                                 // FORZAR REDIMENSIONADO
-                                JScrollPane sp = (JScrollPane) inciTabla.getParent().getParent();
+                                JScrollPane sp = (JScrollPane) inciTabla.getParent().getParent(); // Viewport ->
+                                                                                                  // ScrollPane
                                 resizeColumnWidths(inciTabla, sp);
 
                                 // 2. Cargar Gráfico (Con filtros)

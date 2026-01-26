@@ -36,7 +36,7 @@ public class SplashScreen extends JWindow {
 
     public SplashScreen() {
         // Configuración básica
-        setSize(800, 500); // Un poco más grande
+        setSize(800, 500); // Un poco más grande para que luzca
         setLocationRelativeTo(null);
 
         // Cargar logo con ruta absoluta y relativa por si acaso
@@ -48,6 +48,7 @@ public class SplashScreen extends JWindow {
         }
 
         if (url != null) {
+            // Debug log removed
             ImageIcon icon = new ImageIcon(url);
             logo = icon.getImage();
             logoW = icon.getIconWidth();
@@ -64,7 +65,7 @@ public class SplashScreen extends JWindow {
     private void startAnimation() {
         startTime = System.currentTimeMillis();
 
-        timer = new Timer(16, e -> {
+        timer = new Timer(16, e -> { // ~60 FPS
             long elapsed = System.currentTimeMillis() - startTime;
 
             if (elapsed < FADE_IN_DURATION) {

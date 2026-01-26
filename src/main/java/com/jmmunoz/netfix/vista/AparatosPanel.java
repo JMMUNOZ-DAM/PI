@@ -443,6 +443,7 @@ public class AparatosPanel extends javax.swing.JPanel {
                         return; // Detiene la ejecución si está vacío
                 }
                 searchText = searchField.getText();
+                // impresión de depuración eliminada
                 cargarDiagnostico();
         }// GEN-LAST:event_searchButtonActionPerformed
 
@@ -587,6 +588,12 @@ public class AparatosPanel extends javax.swing.JPanel {
                 }
         }
 
+        /**
+         * Aplica el tema visual corporativo.
+         * Estiliza el panel de búsqueda, el card de detalles y los botones.
+         */
+        // applyTelecomStyle eliminado - lógica movida a ThemeManager
+
         // Variables declaration - do not modify//GEN-BEGIN:variables
         private javax.swing.JList<String> actualDiag;
         private javax.swing.JLabel actualDlbale;
@@ -634,6 +641,7 @@ public class AparatosPanel extends javax.swing.JPanel {
                 return mainPanel;
         }
 
+        // Muted Labels
         public javax.swing.JLabel getTipoLabel() {
                 return tipoLabel;
         }
@@ -666,6 +674,7 @@ public class AparatosPanel extends javax.swing.JPanel {
                 return actualDlbale;
         }
 
+        // Value Labels
         public javax.swing.JLabel getTipLbl() {
                 return tipLbl;
         }
@@ -694,6 +703,7 @@ public class AparatosPanel extends javax.swing.JPanel {
                 return nombreLabel;
         }
 
+        // Text Areas / Lists
         public javax.swing.JTextArea getObservaciones() {
                 return observaciones;
         }

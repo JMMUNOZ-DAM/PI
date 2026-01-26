@@ -141,7 +141,7 @@ public class login extends javax.swing.JFrame {
                 String email = mailUser.getText().trim();
                 String pass = new String(password.getPassword()).trim();
 
-                // 1 Campos vacíos
+                // 1️⃣ Campos vacíos
                 if (email.isEmpty() || pass.isEmpty()) {
                         CustomNotification.show(
                                         this,

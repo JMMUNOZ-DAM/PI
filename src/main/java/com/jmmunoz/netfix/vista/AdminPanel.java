@@ -455,7 +455,7 @@ public class AdminPanel extends javax.swing.JPanel {
                 ut.logAction("ERROR", "AdminPanel", "Error liberando dispositivo " + selectedAparatoId);
             }
             cargarContratos();
-            onContractSelected(); // Refresca el estado de la UI
+            onContractSelected(); // Refresh UI state
         }
     }
 
@@ -562,7 +562,7 @@ public class AdminPanel extends javax.swing.JPanel {
                         com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("admin.title.cancel"),
                         com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("admin.msg.5g.cancel"),
                         com.jmmunoz.netfix.vista.tema.CustomNotification.Type.WARNING);
-                // Si liberamos el antiguo, refrescamos para mostrar que ahora está vacío
+                // If we released the old one, refresh to show it's now empty
                 cargarContratos();
                 onContractSelected();
                 return;
@@ -800,7 +800,12 @@ public class AdminPanel extends javax.swing.JPanel {
         searchButtSis = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
+        // setPreferredSize(new java.awt.Dimension(1592, 946)); // Removed fixed
+        // preference
+
         adminPanel.setBackground(new java.awt.Color(255, 255, 255));
+        // adminPanel.setPreferredSize(new java.awt.Dimension(1592, 946)); // Removed
+        // fixed preference
 
         sisTitle.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
         sisTitle.setText(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("admin.title.system"));
