@@ -1,6 +1,6 @@
 /*
  * GlobalTestRunner.java
- * Clase independiente para ejecución de batería de pruebas (Unidad e Integración).
+ * Clase independiente para ejecución de batería de pruebas de Unidad e Integración.
  */
 package com.jmmunoz.netfix.tests;
 
