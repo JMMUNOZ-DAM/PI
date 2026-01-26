@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.jmmunoz.netfix.config"},{"l":"com.jmmunoz.netfix.controlador"},{"l":"com.jmmunoz.netfix.modelo"},{"l":"com.jmmunoz.netfix.tests"},{"l":"com.jmmunoz.netfix.vista"},{"l":"com.jmmunoz.netfix.vista.dialogos"},{"l":"com.jmmunoz.netfix.vista.tema"}];updateSearchResults();
