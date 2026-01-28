@@ -171,4 +171,5 @@ Definición de constantes de diseño (Colores hexadecimales, tipografías base).
     *   **Admin:** Acceso total (Sistemas).
     *   **Supervisor:** Gestión de técnicos e incidencias.
     *   **Técnico:** Resolución de incidencias y diagnóstico.
-<!-- Refactorización completa -->
+
+<!-- Última actualización: 28/01/2026 -->
