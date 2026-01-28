@@ -109,6 +109,7 @@ public class Utilities {
         ROLES,
         UPDATEUSER,
         ALTA,
+        DELETEUSER,
         USUARIO,
         ALL_CONTRATOS_APARATOS,
         FREE_APARATOS,
@@ -123,7 +124,8 @@ public class Utilities {
         GET_LOGS,
         INCI_MES_ANIO,
         INCI_DETALLE,
-        INSERT_INCIDENCIA_FULL
+        INSERT_INCIDENCIA_FULL,
+        GET_TECNICO_SPEC
     }
 
     /**
@@ -212,6 +214,9 @@ public class Utilities {
                 case INCI_DETALLE -> {
                     return db.executePreparedQuery(Querys.detalleIncidenciaFull, params);
                 }
+                case GET_TECNICO_SPEC -> {
+                    return db.executePreparedQuery(Querys.getTecnicoSpec, params);
+                }
 
                 // Caso por defecto para tipos de consulta que no retornan ResultSet (ej.
                 // UPDATEs)
@@ -249,10 +254,63 @@ public class Utilities {
                     db.executeUpdate(Querys.solucionar, params);
                 case DERIVAR ->
                     db.executeUpdate(Querys.derivar, params);
-                case UPDATEUSER ->
-                    db.executeUpdate(Querys.updateUser, params);
-                case ALTA ->
-                    db.executeUpdate(Querys.altaUser, params);
+                case UPDATEUSER -> {
+                    // params: nombre, rol, email, password, id, (optional) especialidad
+                    int result = db.executeUpdate(Querys.updateUser, params[0], params[1], params[2], params[3],
+                            params[4]);
+
+                    String rol = params[1].toString();
+                    String idUsuario = params[4].toString();
+
+                    if ("tecnico".equalsIgnoreCase(rol)) {
+                        String especialidad = (params.length > 5) ? params[5].toString() : "General";
+                        java.sql.ResultSet rs = db.executeQuery(Querys.checkTecnicoExists, idUsuario);
+                        boolean exists = (rs != null && rs.next());
+                        if (rs != null)
+                            rs.close();
+
+                        if (exists) {
+                            db.executeUpdate(Querys.updateTecnicoSpec, especialidad, idUsuario);
+                        } else {
+                            db.executeUpdate(Querys.insertTecnico, idUsuario, especialidad);
+                        }
+                    } else {
+                        // If role changed from tecnico to something else, remove from tecnicos
+                        db.executeUpdate(Querys.deleteTecnico, idUsuario);
+                    }
+                    yield result;
+                }
+                case ALTA -> {
+                    // params: nombre, rol, email, password, (optional) especialidad
+                    int result = db.executeUpdate(Querys.altaUser, params[0], params[1], params[2], params[3]);
+
+                    if (params.length > 4 && "tecnico".equalsIgnoreCase(params[1].toString())) {
+                        // Get new user ID
+                        java.sql.ResultSet rs = db.executeQuery(Querys.usuario, params[2]); // query by email
+                        if (rs != null && rs.next()) {
+                            int newId = rs.getInt("id_usuario");
+                            db.executeUpdate(Querys.insertTecnico, newId, params[4]);
+                        }
+                        if (rs != null)
+                            rs.close();
+                    }
+                    yield result;
+                }
+                case DELETEUSER -> {
+                    // Check if user is technician and has agenda
+                    // Query for technician ID
+                    // params[0] is id_usuario
+                    java.sql.ResultSet rs = db.executeQuery(Querys.getTecnicoId, params);
+                    if (rs != null && rs.next()) {
+                        int idTecnico = rs.getInt("id_tecnico");
+                        // Delete Agenda items for this technician
+                        db.executeUpdate(Querys.deleteAgenda, idTecnico);
+                    }
+                    if (rs != null)
+                        rs.close();
+
+                    yield db.executeUpdate(Querys.deleteUser, params);
+                }
                 case ASIGNAR_APARATO ->
                     db.executeUpdate(Querys.updateAparatoContrato, params);
                 case LIBERAR_APARATO ->
@@ -729,7 +787,7 @@ public class Utilities {
         // igual)
         java.util.Calendar cal = java.util.Calendar.getInstance();
         cal.setTime(fecha);
-        int diaSemana = cal.get(java.util.Calendar.DAY_OF_WEEK); // 1=Sun, 2=Mon...
+        int diaSemana = cal.get(java.util.Calendar.DAY_OF_WEEK); // 1=Dom, 2=Lun...
 
         try {
             DatabaseManager db = DatabaseManager.getInstance();

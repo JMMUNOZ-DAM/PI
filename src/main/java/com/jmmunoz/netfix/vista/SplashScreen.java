@@ -48,7 +48,6 @@ public class SplashScreen extends JWindow {
         }
 
         if (url != null) {
-            // Debug log removed
             ImageIcon icon = new ImageIcon(url);
             logo = icon.getImage();
             logoW = icon.getIconWidth();

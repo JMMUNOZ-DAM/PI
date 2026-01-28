@@ -46,7 +46,7 @@ public class SupervisorPanel extends javax.swing.JPanel {
         public SupervisorPanel(com.jmmunoz.netfix.modelo.Usuario user) {
                 this.currentUser = user;
                 initComponents();
-                // ⬇️ anula tamaños fijos del diseñador
+                // anula tamaños fijos del diseñador
                 setPreferredSize(null);
                 setMinimumSize(new java.awt.Dimension(0, 0));
                 setMaximumSize(new java.awt.Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
@@ -58,7 +58,32 @@ public class SupervisorPanel extends javax.swing.JPanel {
                 usersPanel.setMaximumSize(new java.awt.Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
                 applyTelecomStyle();
                 configurarBuscador();
+                configurarBuscador();
                 cargarDatos();
+                setupRoleListeners();
+        }
+
+        private void setupRoleListeners() {
+                rolAlta.addItemListener(e -> {
+                        if (e.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
+                                String role = (String) e.getItem();
+                                boolean isTecnico = "Tecnico".equalsIgnoreCase(role);
+                                especialidadLabelAlta.setVisible(isTecnico);
+                                especialidadAlta.setVisible(isTecnico);
+                        }
+                });
+
+                rolCombo.addItemListener(e -> {
+                        if (e.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
+                                Object item = e.getItem();
+                                if (item != null) {
+                                        String role = item.toString();
+                                        boolean isTecnico = "Tecnico".equalsIgnoreCase(role);
+                                        especialidadLabelMod.setVisible(isTecnico);
+                                        especialidadCombo.setVisible(isTecnico);
+                                }
+                        }
+                });
         }
 
         private boolean canAssignRole(String role) {
@@ -97,20 +122,22 @@ public class SupervisorPanel extends javax.swing.JPanel {
                 SwingUtilities.invokeLater(() -> {
                         try {
                                 if ("Supervisor".equalsIgnoreCase(currentUser.getRol())) {
-                                        // Supervisors see restricted list (no "Sistemas")
+                                        // Los supervisores ven una lista restringida (sin "Sistemas")
                                         rs = Utilities.ejecutarConsulta(Utilities.TipoConsulta.USUARIOS_STRICT, 0);
                                 } else {
-                                        // Sistemas/Admin see all
+                                        // Sistemas/Admin ven todo
                                         rs = Utilities.ejecutarConsulta(Utilities.TipoConsulta.USUARIOS, 0);
                                 }
 
                                 ut.cargarTabla(usersTable, rs);
-                                // Forzar redimensionado tras la carga
-                                setupScrollListener(jScrollPane1);
-                                resizeColumnWidths(usersTable, jScrollPane1);
 
-                                // Actualizamos el sorter con el nuevo modelo en caso de recarga
+                                // ACTUALIZAR EL SORTER INMEDIATAMENTE DESPUÉS DE ACTUALIZAR EL MODELO para
+                                // evitar
+                                // IndexOutOfBoundsException
                                 sorter.setModel((DefaultTableModel) usersTable.getModel());
+
+                                // Forzar redimensionado tras la carga
+                                resizeColumnWidths(usersTable, jScrollPane1);
 
                                 usersTable.getSelectionModel().addListSelectionListener(e -> {
                                         if (!e.getValueIsAdjusting()) {
@@ -119,7 +146,7 @@ public class SupervisorPanel extends javax.swing.JPanel {
                                                         idText.setText(usersTable.getValueAt(fila, 0).toString());
                                                         nameText.setText(usersTable.getValueAt(fila, 1).toString());
 
-                                                        // Reload roles for edit combo with filtering
+                                                        // Recargar roles para el combo de edición con filtrado
                                                         ResultSet rsRoles = Utilities.ejecutarConsulta(
                                                                         Utilities.TipoConsulta.ROLES, 0);
                                                         rolCombo.removeAllItems();
@@ -148,6 +175,27 @@ public class SupervisorPanel extends javax.swing.JPanel {
 
                                                         mailText.setText(usersTable.getValueAt(fila, 3).toString());
                                                         passText.setText(usersTable.getValueAt(fila, 4).toString());
+
+                                                        // Load specialty if technician
+                                                        if ("Tecnico".equalsIgnoreCase(currentRole)) {
+                                                                String idStr = usersTable.getValueAt(fila, 0)
+                                                                                .toString();
+                                                                try {
+                                                                        ResultSet specRes = Utilities.ejecutarConsulta(
+                                                                                        Utilities.TipoConsulta.GET_TECNICO_SPEC,
+                                                                                        idStr);
+                                                                        if (specRes != null && specRes.next()) {
+                                                                                String spec = specRes.getString(
+                                                                                                "especialidad");
+                                                                                especialidadCombo.setSelectedItem(spec);
+                                                                        }
+                                                                        if (specRes != null)
+                                                                                specRes.close();
+                                                                } catch (SQLException ex) {
+                                                                        System.out.println("Error loading specialty: "
+                                                                                        + ex.getMessage());
+                                                                }
+                                                        }
                                                 }
                                         }
                                 });
@@ -333,11 +381,19 @@ public class SupervisorPanel extends javax.swing.JPanel {
                 confAlta.setFont(inp);
                 confAlta.addActionListener(e -> altaButton.doClick());
                 rolAlta.setFont(inp);
+                // Especialidades
+                especialidadLabelAlta.setFont(lbl);
+                especialidadLabelAlta.setForeground(muted);
+                especialidadAlta.setFont(inp);
+                especialidadCombo.setFont(inp);
+                especialidadLabelMod.setFont(lbl);
+                especialidadLabelMod.setForeground(muted);
 
                 // Botones
                 Font btn = new Font("Segoe UI", Font.BOLD, 14);
                 searchButton1.setFont(btn);
                 modButton.setFont(btn);
+                bajaButton.setFont(btn);
                 altaButton.setFont(btn);
 
                 // 3) Quita los bordes antiguos y pon cards
@@ -355,6 +411,8 @@ public class SupervisorPanel extends javax.swing.JPanel {
                 jScrollPane1.setPreferredSize(null);
                 usersTable.setFillsViewportHeight(true);
                 jScrollPane1.setBorder(BorderFactory.createEmptyBorder());
+
+                setupScrollListener(jScrollPane1);
 
                 ThemeManager.getInstance().cardify(mainPanel);
                 // TelecomUI.cardify(altaPanel); // No cardify altaPanel to avoid double-card
@@ -417,6 +475,27 @@ public class SupervisorPanel extends javax.swing.JPanel {
         // Code">//GEN-BEGIN:initComponents
         private void initComponents() {
 
+                especialidadAlta = new javax.swing.JComboBox<>();
+                especialidadCombo = new javax.swing.JComboBox<>();
+                especialidadLabelAlta = new javax.swing.JLabel();
+                especialidadLabelMod = new javax.swing.JLabel();
+
+                especialidadAlta.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+                especialidadAlta.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Calle", "Agente" }));
+                especialidadAlta.setVisible(false);
+
+                especialidadCombo.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+                especialidadCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Calle", "Agente" }));
+                especialidadCombo.setVisible(false);
+
+                especialidadLabelAlta.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+                especialidadLabelAlta.setText("Especialidad:");
+                especialidadLabelAlta.setVisible(false);
+
+                especialidadLabelMod.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+                especialidadLabelMod.setText("Especialidad:");
+                especialidadLabelMod.setVisible(false);
+
                 usersPanel = new javax.swing.JPanel();
                 ususTitle = new javax.swing.JLabel();
                 searchField1 = new javax.swing.JTextField();
@@ -429,6 +508,7 @@ public class SupervisorPanel extends javax.swing.JPanel {
                 altasTitle = new javax.swing.JLabel();
                 userLlabel = new javax.swing.JLabel();
                 modButton = new javax.swing.JButton();
+                bajaButton = new javax.swing.JButton();
                 altaPanel = new javax.swing.JPanel();
                 altaLabel = new javax.swing.JLabel();
                 nameAlta = new javax.swing.JTextField();
@@ -498,6 +578,14 @@ public class SupervisorPanel extends javax.swing.JPanel {
                         }
                 });
 
+                bajaButton.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+                bajaButton.setText("Dar de Baja");
+                bajaButton.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                bajaButtonActionPerformed(evt);
+                        }
+                });
+
                 altaPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
                 altaLabel.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
@@ -535,6 +623,13 @@ public class SupervisorPanel extends javax.swing.JPanel {
                                 altaButtonActionPerformed(evt);
                         }
                 });
+
+                // Eliminamos configuraciones de fuente manuales aquí para usar
+                // applyTelecomStyle
+                // especialidadLabelAlta.setFont(new java.awt.Font("Segoe UI", 0, 18));
+                // especialidadAlta.setFont(new java.awt.Font("Segoe UI", 0, 24));
+                // especialidadLabelMod.setFont(new java.awt.Font("Segoe UI", 0, 18));
+                // especialidadCombo.setFont(new java.awt.Font("Segoe UI", 0, 24));
 
                 javax.swing.GroupLayout altaPanelLayout = new javax.swing.GroupLayout(altaPanel);
                 altaPanel.setLayout(altaPanelLayout);
@@ -576,13 +671,27 @@ public class SupervisorPanel extends javax.swing.JPanel {
                                                                                 .addGroup(altaPanelLayout
                                                                                                 .createSequentialGroup()
                                                                                                 .addGap(0, 102, Short.MAX_VALUE)
-                                                                                                .addComponent(rLabel)
-                                                                                                .addPreferredGap(
-                                                                                                                javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                                                                .addComponent(rolAlta,
-                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                                                244,
-                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                                                .addGroup(altaPanelLayout
+                                                                                                                .createParallelGroup(
+                                                                                                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                                                .addGroup(altaPanelLayout
+                                                                                                                                .createSequentialGroup()
+                                                                                                                                .addComponent(rLabel)
+                                                                                                                                .addPreferredGap(
+                                                                                                                                                javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                                                                                .addComponent(rolAlta,
+                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                                                                244,
+                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                                                                .addGroup(altaPanelLayout
+                                                                                                                                .createSequentialGroup()
+                                                                                                                                .addComponent(especialidadLabelAlta)
+                                                                                                                                .addPreferredGap(
+                                                                                                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                                                                                .addComponent(especialidadAlta,
+                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                                                                244,
+                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))))
                                                                                 .addGroup(altaPanelLayout
                                                                                                 .createSequentialGroup()
                                                                                                 .addComponent(confiLabel)
@@ -604,25 +713,46 @@ public class SupervisorPanel extends javax.swing.JPanel {
                                                 .addGroup(altaPanelLayout.createSequentialGroup()
                                                                 .addGap(24, 24, 24)
                                                                 .addGroup(altaPanelLayout.createParallelGroup(
-                                                                                javax.swing.GroupLayout.Alignment.BASELINE)
-                                                                                .addComponent(altaLabel)
-                                                                                .addComponent(nameAlta,
-                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                                .addComponent(rLabel)
-                                                                                .addComponent(rolAlta,
-                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                                .addGap(45, 45, 45)
-                                                                .addGroup(altaPanelLayout.createParallelGroup(
-                                                                                javax.swing.GroupLayout.Alignment.BASELINE)
-                                                                                .addComponent(maiLabel)
-                                                                                .addComponent(mailAlta,
-                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                .addGroup(altaPanelLayout
+                                                                                                .createSequentialGroup()
+                                                                                                .addGroup(altaPanelLayout
+                                                                                                                .createParallelGroup(
+                                                                                                                                javax.swing.GroupLayout.Alignment.BASELINE)
+                                                                                                                .addComponent(altaLabel)
+                                                                                                                .addComponent(nameAlta,
+                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                                                .addGap(45, 45, 45)
+                                                                                                .addGroup(altaPanelLayout
+                                                                                                                .createParallelGroup(
+                                                                                                                                javax.swing.GroupLayout.Alignment.BASELINE)
+                                                                                                                .addComponent(maiLabel)
+                                                                                                                .addComponent(mailAlta,
+                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                                                .addGroup(altaPanelLayout
+                                                                                                .createSequentialGroup()
+                                                                                                .addGroup(altaPanelLayout
+                                                                                                                .createParallelGroup(
+                                                                                                                                javax.swing.GroupLayout.Alignment.BASELINE)
+                                                                                                                .addComponent(rLabel)
+                                                                                                                .addComponent(rolAlta,
+                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                                                .addPreferredGap(
+                                                                                                                javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                                                .addGroup(altaPanelLayout
+                                                                                                                .createParallelGroup(
+                                                                                                                                javax.swing.GroupLayout.Alignment.BASELINE)
+                                                                                                                .addComponent(especialidadLabelAlta)
+                                                                                                                .addComponent(especialidadAlta,
+                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))))
                                                                 .addGap(66, 66, 66)
                                                                 .addGroup(altaPanelLayout.createParallelGroup(
                                                                                 javax.swing.GroupLayout.Alignment.BASELINE)
@@ -686,7 +816,11 @@ public class SupervisorPanel extends javax.swing.JPanel {
                                                                                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE,
                                                                                                                                                 javax.swing.GroupLayout.DEFAULT_SIZE,
                                                                                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                                                                                .addComponent(modButton)
+                                                                                                                                .addGroup(mainPanelLayout
+                                                                                                                                                .createSequentialGroup()
+                                                                                                                                                .addComponent(modButton)
+                                                                                                                                                .addGap(18, 18, 18)
+                                                                                                                                                .addComponent(bajaButton))
                                                                                                                                 .addGroup(mainPanelLayout
                                                                                                                                                 .createSequentialGroup()
                                                                                                                                                 .addGroup(mainPanelLayout
@@ -700,9 +834,7 @@ public class SupervisorPanel extends javax.swing.JPanel {
                                                                                                                                                                                 javax.swing.GroupLayout.Alignment.LEADING)
                                                                                                                                                                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
                                                                                                                                                                                 mainPanelLayout.createSequentialGroup()
-                                                                                                                                                                                                .addComponent(nameText)
-                                                                                                                                                                                                .addGap(18, 18, 18)
-                                                                                                                                                                                                .addComponent(rolLabel))
+                                                                                                                                                                                                .addComponent(nameText))
                                                                                                                                                                 .addComponent(mailText))
                                                                                                                                                 .addGap(382, 382,
                                                                                                                                                                 382)))
@@ -738,11 +870,28 @@ public class SupervisorPanel extends javax.swing.JPanel {
                                                                                                                 javax.swing.LayoutStyle.ComponentPlacement.RELATED,
                                                                                                                 javax.swing.GroupLayout.DEFAULT_SIZE,
                                                                                                                 Short.MAX_VALUE)
-                                                                                                .addComponent(rolCombo,
-                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                                                286,
-                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                                                .addGap(43, 43, 43)))
+                                                                                                .addGroup(mainPanelLayout
+                                                                                                                .createParallelGroup(
+                                                                                                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                                                .addGroup(mainPanelLayout
+                                                                                                                                .createSequentialGroup()
+                                                                                                                                .addComponent(rolLabel)
+                                                                                                                                .addPreferredGap(
+                                                                                                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                                                                                .addComponent(rolCombo,
+                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                                                                220,
+                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                                                                .addGroup(mainPanelLayout
+                                                                                                                                .createSequentialGroup()
+                                                                                                                                .addComponent(especialidadLabelMod)
+                                                                                                                                .addPreferredGap(
+                                                                                                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                                                                                .addComponent(especialidadCombo,
+                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                                                                220,
+                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                                                                .addGap(10, 10, 10)))
                                                                 .addGroup(mainPanelLayout.createParallelGroup(
                                                                                 javax.swing.GroupLayout.Alignment.LEADING)
                                                                                 .addComponent(jScrollPane1,
@@ -776,13 +925,29 @@ public class SupervisorPanel extends javax.swing.JPanel {
                                                                                                 .addGroup(mainPanelLayout
                                                                                                                 .createParallelGroup(
                                                                                                                                 javax.swing.GroupLayout.Alignment.LEADING)
-                                                                                                                .addComponent(rolCombo,
-                                                                                                                                javax.swing.GroupLayout.Alignment.TRAILING,
-                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                                                                32,
-                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                                                                .addComponent(rolLabel,
-                                                                                                                                javax.swing.GroupLayout.Alignment.TRAILING)
+                                                                                                                .addGroup(mainPanelLayout
+                                                                                                                                .createSequentialGroup()
+                                                                                                                                .addGroup(mainPanelLayout
+                                                                                                                                                .createParallelGroup(
+                                                                                                                                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                                                                                .addGroup(mainPanelLayout
+                                                                                                                                                                .createParallelGroup(
+                                                                                                                                                                                javax.swing.GroupLayout.Alignment.BASELINE)
+                                                                                                                                                                .addComponent(rolCombo,
+                                                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                                                                                                32,
+                                                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                                                                                                .addComponent(rolLabel)))
+                                                                                                                                .addPreferredGap(
+                                                                                                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                                                                                .addGroup(mainPanelLayout
+                                                                                                                                                .createParallelGroup(
+                                                                                                                                                                javax.swing.GroupLayout.Alignment.BASELINE)
+                                                                                                                                                .addComponent(especialidadLabelMod)
+                                                                                                                                                .addComponent(especialidadCombo,
+                                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                                                                                32,
+                                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)))
                                                                                                                 .addGroup(mainPanelLayout
                                                                                                                                 .createParallelGroup(
                                                                                                                                                 javax.swing.GroupLayout.Alignment.BASELINE)
@@ -819,7 +984,11 @@ public class SupervisorPanel extends javax.swing.JPanel {
                                                                                                                                 32,
                                                                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE))
                                                                                                 .addGap(18, 18, 18)
-                                                                                                .addComponent(modButton)
+                                                                                                .addGroup(mainPanelLayout
+                                                                                                                .createParallelGroup(
+                                                                                                                                javax.swing.GroupLayout.Alignment.BASELINE)
+                                                                                                                .addComponent(modButton)
+                                                                                                                .addComponent(bajaButton))
                                                                                                 .addPreferredGap(
                                                                                                                 javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                                                                 .addComponent(altasTitle)
@@ -987,7 +1156,7 @@ public class SupervisorPanel extends javax.swing.JPanel {
 
                 // Ejecutar UPDATE
                 ut.ejecutarUpdate(Utilities.TipoConsulta.UPDATEUSER, nombre, rolObj.toString(), email, passwordToSend,
-                                id);
+                                id, especialidadCombo.getSelectedItem());
 
                 com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(this,
                                 com.jmmunoz.netfix.config.AppConfig.getInstance()
@@ -995,6 +1164,7 @@ public class SupervisorPanel extends javax.swing.JPanel {
                                 com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                 .getMessage("supervisor.title.success"),
                                 JOptionPane.INFORMATION_MESSAGE);
+                ut.logAction("OK", "SupervisorPanel", "Usuario actualizado: " + email);
                 cargarDatos();
         }// GEN-LAST:event_modButtonActionPerformed
 
@@ -1100,16 +1270,28 @@ public class SupervisorPanel extends javax.swing.JPanel {
                                 nombre,
                                 rolObj.toString(),
                                 email,
-                                ut.hashPass(password));
+                                ut.hashPass(password),
+                                especialidadAlta.getSelectedItem());
 
                 com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(this,
                                 com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("supervisor.success.add"),
                                 com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                 .getMessage("supervisor.title.success"),
                                 JOptionPane.INFORMATION_MESSAGE);
-                limpiarCamposMod();
+                ut.logAction("OK", "SupervisorPanel", "Usuario creado: " + email);
+                limpiarCamposAlta();
                 cargarDatos();
         }// GEN-LAST:event_altaButtonActionPerformed
+
+        private void limpiarCamposAlta() {
+                nameAlta.setText("");
+                mailAlta.setText("");
+                passAlta.setText("");
+                confAlta.setText("");
+                rolAlta.setSelectedIndex(-1);
+                especialidadAlta.setVisible(false);
+                especialidadLabelAlta.setVisible(false);
+        }
 
         /**
          * Limpia los campos del formulario de edición (no el de alta).
@@ -1122,7 +1304,55 @@ public class SupervisorPanel extends javax.swing.JPanel {
                 rolCombo.setSelectedIndex(-1); // nada seleccionado
         }
 
+        private void bajaButtonActionPerformed(java.awt.event.ActionEvent evt) {
+                // Obtener ID
+                String id = idText.getText().trim();
+
+                // Validaciones
+                if (id.isEmpty()) {
+                        com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(this,
+                                        com.jmmunoz.netfix.config.AppConfig.getInstance()
+                                                        .getMessage("user.error.invalid.id"),
+                                        com.jmmunoz.netfix.config.AppConfig.getInstance()
+                                                        .getMessage("user.title.error"),
+                                        JOptionPane.ERROR_MESSAGE);
+                        return;
+                }
+
+                // Confirmación
+                int confirm = com.jmmunoz.netfix.vista.dialogos.ModernDialog.showConfirmDialog(this,
+                                "¿Estás seguro de que quieres dar de baja a este usuario? Esta acción no se puede deshacer.",
+                                "Confirmar Baja",
+                                javax.swing.JOptionPane.YES_NO_OPTION);
+
+                if (confirm == javax.swing.JOptionPane.OK_OPTION) {
+                        // Ejecutar DELETE
+                        int result = ut.ejecutarUpdate(
+                                        Utilities.TipoConsulta.DELETEUSER,
+                                        id);
+
+                        if (result > 0) {
+                                com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(this,
+                                                "Usuario dado de baja correctamente.",
+                                                com.jmmunoz.netfix.config.AppConfig.getInstance()
+                                                                .getMessage("user.title.success"),
+                                                JOptionPane.INFORMATION_MESSAGE);
+                                ut.logAction("OK", "SupervisorPanel", "Usuario eliminado: " + id);
+                                limpiarCamposMod();
+                                cargarDatos();
+                        } else {
+                                com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(this,
+                                                "Error al dar de baja el usuario.",
+                                                com.jmmunoz.netfix.config.AppConfig.getInstance()
+                                                                .getMessage("user.title.error"),
+                                                JOptionPane.ERROR_MESSAGE);
+                                ut.logAction("ERROR", "SupervisorPanel", "Error al eliminar usuario: " + id);
+                        }
+                }
+        }
+
         // Variables declaration - do not modify//GEN-BEGIN:variables
+        private javax.swing.JButton bajaButton; // Added manually
         private javax.swing.JButton altaButton;
         private javax.swing.JLabel altaLabel;
         private javax.swing.JPanel altaPanel;
@@ -1155,5 +1385,10 @@ public class SupervisorPanel extends javax.swing.JPanel {
         private javax.swing.JPanel usersPanel;
         private javax.swing.JTable usersTable;
         private javax.swing.JLabel ususTitle;
-        // End of variables declaration//GEN-END:variables
+        // Declaración de variables - no modificar
+        private javax.swing.JComboBox<String> especialidadAlta;
+        private javax.swing.JComboBox<String> especialidadCombo;
+        private javax.swing.JLabel especialidadLabelAlta;
+        private javax.swing.JLabel especialidadLabelMod;
+        // Fin de declaración de variables
 }

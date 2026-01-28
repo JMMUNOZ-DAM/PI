@@ -70,7 +70,7 @@ public class AdminPanel extends javax.swing.JPanel {
     private int selectedContratoId = -1;
     private int selectedAparatoId = -1;
     private String selectedTipoAparato = "";
-    private JScrollPane scrollPane; // Promoted to field for ThemeManager access
+    private JScrollPane scrollPane;
 
     /**
      * Creates new form incidenciasPanel
@@ -80,7 +80,9 @@ public class AdminPanel extends javax.swing.JPanel {
         setupCustomUI();
         com.jmmunoz.netfix.vista.tema.ThemeManager.getInstance().applyAdminPanelTheme(this);
         // Asegurar que la BD soporta id_contrato NULL
-        new Utilities().ejecutarUpdate(Utilities.TipoConsulta.FIX_SCHEMA);
+        Utilities ut = new Utilities();
+        ut.ejecutarUpdate(Utilities.TipoConsulta.FIX_SCHEMA);
+        ut.logAction("OK", "AdminPanel", "Esquema de base de datos verificado/corregido.");
         setupScrollListener();
         cargarContratos();
     }
@@ -455,7 +457,7 @@ public class AdminPanel extends javax.swing.JPanel {
                 ut.logAction("ERROR", "AdminPanel", "Error liberando dispositivo " + selectedAparatoId);
             }
             cargarContratos();
-            onContractSelected(); // Refresh UI state
+            onContractSelected(); // Refrescamos para mostrar que el contrato está vacío
         }
     }
 
@@ -562,7 +564,7 @@ public class AdminPanel extends javax.swing.JPanel {
                         com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("admin.title.cancel"),
                         com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("admin.msg.5g.cancel"),
                         com.jmmunoz.netfix.vista.tema.CustomNotification.Type.WARNING);
-                // If we released the old one, refresh to show it's now empty
+                // Si cancelamos, recargamos para mostrar que el contrato está vacío
                 cargarContratos();
                 onContractSelected();
                 return;
@@ -778,8 +780,7 @@ public class AdminPanel extends javax.swing.JPanel {
                     });
                 }
             } catch (java.sql.SQLException ex) {
-                System.getLogger(AdminPanel.class.getName()).log(System.Logger.Level.ERROR,
-                        "Error loading logs: " + ex.getMessage());
+                new Utilities().logAction("ERROR", "AdminPanel", "Error cargando logs: " + ex.getMessage());
             }
         }
     }

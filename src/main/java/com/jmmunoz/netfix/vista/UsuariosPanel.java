@@ -143,8 +143,7 @@ public class UsuariosPanel extends javax.swing.JPanel {
                                 rolCombo.addItem(rs.getString("descripcion"));
                         }
                 } catch (SQLException ex) {
-                        System.getLogger(SupervisorPanel.class.getName()).log(System.Logger.Level.ERROR, (String) null,
-                                        ex);
+                        ut.logAction("ERROR", "UsuariosPanel", "Error cargando roles: " + ex.getMessage());
                 }
                 rolCombo.setSelectedItem(usuario.getRol());
                 passText.setText(usuario.getPassword());
@@ -420,6 +419,7 @@ public class UsuariosPanel extends javax.swing.JPanel {
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                         .getMessage("user.title.error"),
                                         JOptionPane.ERROR_MESSAGE);
+                        ut.logAction("WARNING", "UsuariosPanel", "Intento de actualización con nombre vacío.");
                         return;
                 }
 
@@ -430,6 +430,7 @@ public class UsuariosPanel extends javax.swing.JPanel {
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                         .getMessage("user.title.error"),
                                         JOptionPane.ERROR_MESSAGE);
+                        ut.logAction("WARNING", "UsuariosPanel", "Intento de actualización con rol vacío.");
                         return;
                 }
 
@@ -440,6 +441,7 @@ public class UsuariosPanel extends javax.swing.JPanel {
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                         .getMessage("user.title.error"),
                                         JOptionPane.ERROR_MESSAGE);
+                        ut.logAction("WARNING", "UsuariosPanel", "Intento de actualización con email vacío.");
                         return;
                 }
 
@@ -450,6 +452,7 @@ public class UsuariosPanel extends javax.swing.JPanel {
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                         .getMessage("user.title.error"),
                                         JOptionPane.ERROR_MESSAGE);
+                        ut.logAction("WARNING", "UsuariosPanel", "Intento de actualización con contraseña vacía.");
                         return;
                 }
 
@@ -460,6 +463,7 @@ public class UsuariosPanel extends javax.swing.JPanel {
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                         .getMessage("user.title.error"),
                                         JOptionPane.ERROR_MESSAGE);
+                        ut.logAction("WARNING", "UsuariosPanel", "Intento de actualización con ID inválido.");
                         return;
                 }
 
@@ -485,6 +489,7 @@ public class UsuariosPanel extends javax.swing.JPanel {
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                         .getMessage("user.title.success"),
                                         JOptionPane.INFORMATION_MESSAGE);
+                        ut.logAction("OK", "UsuariosPanel", "Perfil actualizado correctamente: " + id);
                         cargarDatos();
                 } else {
                         com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(this,
@@ -493,6 +498,7 @@ public class UsuariosPanel extends javax.swing.JPanel {
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                         .getMessage("user.title.error"),
                                         JOptionPane.ERROR_MESSAGE);
+                        ut.logAction("ERROR", "UsuariosPanel", "Error al actualizar perfil: " + id);
                 }
 
         }// GEN-LAST:event_modButtonActionPerformed

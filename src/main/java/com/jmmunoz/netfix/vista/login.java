@@ -150,6 +150,7 @@ public class login extends javax.swing.JFrame {
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                         .getMessage("login.error.empty.msg"),
                                         CustomNotification.Type.WARNING);
+                        ut.logAction("WARNING", "Login", "Intento de login con campos vacíos");
                         return; // No continuar
                 }
 
@@ -163,6 +164,7 @@ public class login extends javax.swing.JFrame {
                                                         .getMessage("login.error.domain.msg"),
                                         CustomNotification.Type.WARNING);
                         mailUser.requestFocus();
+                        ut.logAction("WARNING", "Login", "Dominio de email inválido: " + email);
                         return; // No continuar
                 }
 
@@ -177,6 +179,7 @@ public class login extends javax.swing.JFrame {
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                         .getMessage("login.error.access.msg"),
                                         CustomNotification.Type.ERROR);
+                        ut.logAction("WARNING", "Login", "Credenciales incorrectas para: " + email);
                         return;
                 }
 
