@@ -137,7 +137,7 @@ public class ThemeManager {
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBorder(new CompoundBorder(
-                new LineBorder(new Color(220, 224, 230), 1, true),
+                new LineBorder(TelecomTheme.BORDER, 1, true),
                 new EmptyBorder(20, 20, 20, 20)));
         card.putClientProperty(FlatClientProperties.STYLE, "background: #FFFFFF;");
         card.setMaximumSize(new Dimension(600, Integer.MAX_VALUE));
@@ -180,9 +180,6 @@ public class ThemeManager {
         card.add(Box.createVerticalStrut(15));
 
         /* ========================= CAMPOS ========================= */
-        // Accedemos a los componentes a través de getters que debemos crear en
-        // login.java
-        // NOTA: Asumo que se añadirán getters públicos en login.java
 
         // Estilos
         view.getMailUser().setFont(new Font("Segoe UI", Font.PLAIN, 16));
@@ -311,19 +308,6 @@ public class ThemeManager {
         button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                // Comprobar si el botón está activo usando el método de la vista o getter
-                // público para
-                // activeButton
-                // Dado que activeButton es privado en MainFrame, podríamos necesitar un getter
-                // o método
-                // en MainFrame para comprobar.
-                // O podemos encapsular esta lógica completamente aquí si rastreamos el botón
-                // activo aquí,
-                // pero el estado está en MainFrame.
-                // Enfoque más simple: MainFrame gestiona el estado, solo añadimos listener que
-                // comprueba
-                // el estado.
-                // Necesitamos view.getActiveButton()
                 if (button != view.getActiveButton()) {
                     button.setBackground(TelecomTheme.NAV_BG_HOVER);
                 }
@@ -359,7 +343,6 @@ public class ThemeManager {
 
     // Auxiliar para obtener borde activo para MainFrame si es necesario, o
     // MainFrame puede
-    // usar el de ThemeManager
     public Border getActiveBorder() {
         return activeBorder;
     }
@@ -446,9 +429,6 @@ public class ThemeManager {
         // Buscador
         if (view.getSeaField() != null) {
             view.getSeaField().setFont(new Font("Segoe UI", Font.PLAIN, 14));
-            // La lógica de tamaño preferido podría permanecer en la vista o aquí, pero aquí
-            // implica estilo.
-            // view.getSeaField().setPreferredSize(new Dimension(400, 32));
         }
         if (view.getSearchButtSis() != null) {
             view.getSearchButtSis().setFont(new Font("Segoe UI", Font.BOLD, 14));
@@ -485,9 +465,9 @@ public class ThemeManager {
      */
     public JPanel createKPICard(String title, JLabel valueLabel, Color accentColor, String iconChar) {
         JPanel card = new JPanel(new BorderLayout(15, 0));
-        card.setBackground(Color.WHITE);
+        card.setBackground(TelecomTheme.WHITE);
         card.setBorder(new CompoundBorder(
-                new LineBorder(new Color(230, 230, 230), 1, true),
+                new LineBorder(TelecomTheme.BORDER_LIGHT, 1, true),
                 new EmptyBorder(15, 20, 15, 20)));
 
         // Borde de acento izquierdo
@@ -540,7 +520,7 @@ public class ThemeManager {
     public void applyTelecomChartTheme(org.jfree.chart.JFreeChart chart) {
 
         // Fondo del gráfico
-        chart.setBackgroundPaint(Color.WHITE);
+        chart.setBackgroundPaint(TelecomTheme.WHITE);
 
         // Título
         if (chart.getTitle() != null) {
@@ -552,13 +532,13 @@ public class ThemeManager {
         // Trama (categorías)
         if (chart.getPlot() instanceof org.jfree.chart.plot.CategoryPlot plot) {
 
-            plot.setBackgroundPaint(Color.WHITE);
+            plot.setBackgroundPaint(TelecomTheme.WHITE);
             plot.setOutlineVisible(false);
 
             // rejilla sutil vertical (para ver valores X)
             plot.setDomainGridlinesVisible(false);
             plot.setRangeGridlinesVisible(true);
-            plot.setRangeGridlinePaint(new Color(240, 240, 240));
+            plot.setRangeGridlinePaint(TelecomTheme.GRID_LINE);
 
             // Ejes
             // Domain (Y en barra horizontal) -> Categorías (Días)
@@ -590,7 +570,7 @@ public class ThemeManager {
                 r.setShadowVisible(false);
 
                 // color telecom (Azul principal)
-                r.setSeriesPaint(0, new Color(20, 100, 192));
+                r.setSeriesPaint(0, TelecomTheme.CHART_PRIMARY);
 
                 // estilo moderno
                 r.setBarPainter(new org.jfree.chart.renderer.category.StandardBarPainter());
@@ -715,24 +695,24 @@ public class ThemeManager {
         // ===== LISTA DIAGNÓSTICO =====
         if (view.getActualDiag() != null) {
             view.getActualDiag().setFont(new Font("Segoe UI Semibold", Font.PLAIN, 13));
-            view.getActualDiag().setBackground(Color.WHITE);
+            view.getActualDiag().setBackground(TelecomTheme.WHITE);
             view.getActualDiag().setForeground(TelecomTheme.ACCENT_DARK);
             view.getActualDiag().setFixedCellHeight(28); // Más aire entre líneas
         }
 
         if (view.getListaDiag() != null) {
             view.getListaDiag().setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(new Color(230, 230, 230), 1),
+                    BorderFactory.createLineBorder(TelecomTheme.BORDER_LIGHT, 1),
                     BorderFactory.createEmptyBorder(10, 10, 10, 10)));
             if (view.getListaDiag().getViewport() != null) {
-                view.getListaDiag().getViewport().setBackground(Color.WHITE);
+                view.getListaDiag().getViewport().setBackground(TelecomTheme.WHITE);
             }
         }
 
         // ===== (opcional) "cápsula" en estado general =====
         if (view.getStatusLabel() != null) {
             view.getStatusLabel().setOpaque(true);
-            view.getStatusLabel().setBackground(new Color(230, 248, 255));
+            view.getStatusLabel().setBackground(TelecomTheme.BG_INFO);
             view.getStatusLabel().setBorder(BorderFactory.createEmptyBorder(4, 10, 4, 10));
         }
 
@@ -993,7 +973,7 @@ public class ThemeManager {
             view.getLista5G().setBackground(TelecomTheme.SURFACE);
             view.getLista5G().setForeground(TelecomTheme.TEXT);
             view.getLista5G().setSelectionBackground(TelecomTheme.ACCENT);
-            view.getLista5G().setSelectionForeground(Color.WHITE);
+            view.getLista5G().setSelectionForeground(TelecomTheme.WHITE);
             view.getLista5G().setFont(new Font("Segoe UI", Font.PLAIN, 13));
         }
 
@@ -1280,13 +1260,13 @@ public class ThemeManager {
                 if (estado != null) {
                     setBorder(new EmptyBorder(0, 10, 0, 10)); // Relleno
                     if ("OK".equalsIgnoreCase(estado)) {
-                        setForeground(new Color(34, 197, 94)); // Verde
+                        setForeground(TelecomTheme.OK); // Verde
                         setFont(getFont().deriveFont(Font.BOLD));
                     } else if ("ERROR".equalsIgnoreCase(estado)) {
-                        setForeground(new Color(239, 68, 68)); // Rojo
+                        setForeground(TelecomTheme.ERROR); // Rojo
                         setFont(getFont().deriveFont(Font.BOLD));
                     } else if ("WARNING".equalsIgnoreCase(estado)) {
-                        setForeground(new Color(249, 115, 22)); // Naranja
+                        setForeground(TelecomTheme.WARN); // Naranja
                         setFont(getFont().deriveFont(Font.BOLD));
                     } else {
                         setForeground(isSelected ? table.getSelectionForeground() : table.getForeground());

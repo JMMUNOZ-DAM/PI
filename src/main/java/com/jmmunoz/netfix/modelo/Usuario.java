@@ -41,7 +41,7 @@ public class Usuario {
         this.password = password;
     }
 
-    // Getters (y setters si los necesitas)
+    // Getters y setters
 
     /**
      * @return El identificador único del usuario.

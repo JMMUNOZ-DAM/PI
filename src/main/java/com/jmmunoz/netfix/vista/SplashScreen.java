@@ -5,7 +5,7 @@
 package com.jmmunoz.netfix.vista;
 
 import java.awt.AlphaComposite;
-import java.awt.Color;
+import com.jmmunoz.netfix.vista.tema.TelecomTheme;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -100,19 +100,17 @@ public class SplashScreen extends JWindow {
     private class SplashPanel extends JPanel {
         public SplashPanel() {
             setOpaque(false);
-            setBackground(Color.BLACK);
+            setBackground(TelecomTheme.BLACK);
         }
 
         @Override
         protected void paintComponent(Graphics g) {
-            // super.paintComponent(g); // No llamar a super.paintComponent si se dibuja
-            // todo el fondo
             Graphics2D g2d = (Graphics2D) g;
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
             // Fondo negro sólido
-            g2d.setColor(Color.BLACK);
+            g2d.setColor(TelecomTheme.BLACK);
             g2d.fillRect(0, 0, getWidth(), getHeight());
 
             if (logo != null && opacity > 0) {

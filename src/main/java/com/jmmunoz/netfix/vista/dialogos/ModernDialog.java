@@ -3,7 +3,7 @@ package com.jmmunoz.netfix.vista.dialogos;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.jmmunoz.netfix.vista.tema.TelecomTheme;
 import java.awt.BorderLayout;
-import java.awt.Color;
+
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -35,21 +35,18 @@ public class ModernDialog extends JDialog {
         super(owner, title, ModalityType.APPLICATION_MODAL);
 
         // Configuración básica
-        setUndecorated(true); // Opcional: si queremos control total, pero FlatLaf decora bonito por defecto.
-        // Vamos a dejarlo decorado pero "limpio" o usar undecorated + custom title bar.
-        // El usuario pide "menos Swing", así que undecorated con borde propio queda
-        // mejor.
+        setUndecorated(true);
 
         // Configuración de fondo
         JPanel main = new JPanel(new BorderLayout());
-        main.setBackground(Color.WHITE);
+        main.setBackground(TelecomTheme.WHITE);
         main.setBorder(new CompoundBorder(
-                new LineBorder(new Color(200, 200, 200), 1),
+                new LineBorder(TelecomTheme.BORDER_DARK, 1),
                 new EmptyBorder(0, 0, 0, 0)));
 
-        // 1. Header (Título + Botón X opcional)
+        // 1. Cabecera (Título + Botón X opcional)
         JPanel header = new JPanel(new BorderLayout());
-        header.setBackground(Color.WHITE);
+        header.setBackground(TelecomTheme.WHITE);
         header.setBorder(new EmptyBorder(15, 20, 15, 20));
 
         JLabel titleLabel = new JLabel(title);
@@ -61,7 +58,7 @@ public class ModernDialog extends JDialog {
         // Botón cerrar (X)
         JButton closeBtn = new JButton("X");
         closeBtn.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        closeBtn.setForeground(Color.GRAY);
+        closeBtn.setForeground(TelecomTheme.GRAY);
         closeBtn.setBorder(null);
         closeBtn.setContentAreaFilled(false);
         closeBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -70,17 +67,17 @@ public class ModernDialog extends JDialog {
 
         header.add(closeBtn, BorderLayout.EAST);
 
-        // 2. Content
+        // 2. Contenido
         contentPanel = new JPanel(new BorderLayout());
-        contentPanel.setBackground(Color.WHITE);
+        contentPanel.setBackground(TelecomTheme.WHITE);
         contentPanel.setBorder(new EmptyBorder(10, 20, 10, 20));
         if (bodyComponent != null) {
             contentPanel.add(bodyComponent, BorderLayout.CENTER);
         }
 
-        // 3. Footer (Botones)
+        // 3. Pie de página (Botones)
         buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 15));
-        buttonPanel.setBackground(new Color(245, 247, 250)); // Gris muy suave
+        buttonPanel.setBackground(TelecomTheme.BG_SUBTLE); // Gris muy suave
         buttonPanel.setBorder(new EmptyBorder(10, 20, 10, 20));
 
         main.add(header, BorderLayout.NORTH);
@@ -89,7 +86,7 @@ public class ModernDialog extends JDialog {
 
         setContentPane(main);
 
-        // Sombra (FlatLaf property)
+        // Sombra (propiedad FlatLaf)
         getRootPane().putClientProperty(FlatClientProperties.STYLE, "dropShadowSize: 10; panel.background: #FFFFFF");
     }
 
@@ -102,11 +99,6 @@ public class ModernDialog extends JDialog {
         btn.addActionListener(e -> {
             if (action != null)
                 action.run();
-            // No cerramos automáticamente aquí, dejamos que la acción lo decida (o llamar a
-            // close() dentro de action)
-            // Normalmente "Aceptar" cierra si todo va bien.
-            // Para simplificar este diálogo "modal-like", asumimos cierre si no hay error.
-            // Pero mejor dejar al caller llamar a dispose() o setConfirmed(true).
         });
         buttonPanel.add(btn);
     }
@@ -138,23 +130,18 @@ public class ModernDialog extends JDialog {
     private void stylePrimaryButton(JButton btn) {
         btn.setFont(new Font("Segoe UI", Font.BOLD, 14));
         btn.setBackground(TelecomTheme.ACCENT);
-        btn.setForeground(Color.WHITE);
+        btn.setForeground(TelecomTheme.WHITE);
         btn.setFocusPainted(false);
         btn.setBorder(new EmptyBorder(8, 20, 8, 20));
-        // btn.putClientProperty(FlatClientProperties.STYLE, "arc: 12;"); // Removed
-        // causing crash
     }
 
     private void styleSecondaryButton(JButton btn) {
         btn.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        btn.setBackground(new Color(255, 255, 255));
-        btn.setForeground(Color.GRAY);
+        btn.setBackground(TelecomTheme.WHITE);
+        btn.setForeground(TelecomTheme.GRAY);
         btn.setFocusPainted(false);
-        // btn.setBorder(new LineBorder(new Color(200, 200, 200), 1)); // Redundant
-        // btn.putClientProperty(FlatClientProperties.STYLE, "arc: 12;"); // Removed
-        // causing crash
         btn.setBorder(new CompoundBorder(
-                new LineBorder(new Color(210, 210, 210), 1, true),
+                new LineBorder(TelecomTheme.BORDER_DARK, 1, true),
                 new EmptyBorder(7, 19, 7, 19)));
     }
 
@@ -168,7 +155,7 @@ public class ModernDialog extends JDialog {
         setVisible(true);
     }
 
-    // --- STATIC HELPERS FOR REPLACING JOPTIONPANE ---
+    // --- MÉTODOS ESTÁTICOS DE AYUDA PARA REEMPLAZAR JOPTIONPANE ---
 
     public static void showMessageDialog(Component parentComponent, Object message, String title, int messageType) {
         Window owner = (parentComponent instanceof Window) ? (Window) parentComponent
@@ -188,7 +175,7 @@ public class ModernDialog extends JDialog {
         dialog.showDialog();
     }
 
-    // Overload: showMessageDialog with just message (uses default title/type)
+    // Sobrecarga: showMessageDialog solo con mensaje (usa título/tipo por defecto)
     public static void showMessageDialog(Component parentComponent, Object message) {
         showMessageDialog(parentComponent, message, "Info", javax.swing.JOptionPane.INFORMATION_MESSAGE);
     }
@@ -208,22 +195,17 @@ public class ModernDialog extends JDialog {
 
         ModernDialog dialog = new ModernDialog(owner, title, body);
 
-        // User requested: "Accept" on LEFT, "Cancel" on RIGHT.
-        // In FlowLayout(RIGHT), items are added: [1] [2] [3]
-        // So we add Accept first, then Cancel.
+        // añadimos Aceptar primero, luego Cancelar.
 
         dialog.addAcceptButton(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("btn.accept"));
         dialog.addCancelButton(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("btn.cancel"));
-
-        // Note: For JOptionPane.OK_CANCEL_OPTION, we map simple Accept/Cancel.
-        // If more options needed, we could expand.
 
         dialog.showDialog();
 
         return dialog.isConfirmed() ? javax.swing.JOptionPane.OK_OPTION : javax.swing.JOptionPane.CANCEL_OPTION;
     }
 
-    // Overload: showConfirmDialog with just message
+    // Sobrecarga: showConfirmDialog solo con mensaje
     public static int showConfirmDialog(Component parentComponent, Object message) {
         return showConfirmDialog(parentComponent, message, "Confirm", javax.swing.JOptionPane.OK_CANCEL_OPTION);
     }
@@ -257,15 +239,15 @@ public class ModernDialog extends JDialog {
         if (dialog.isConfirmed()) {
             return textField.getText();
         }
-        return null; // Cancelled
+        return null; // Cancelado
     }
 
-    // Overload: showInputDialog with just message
+    // Sobrecarga: showInputDialog solo con mensaje
     public static String showInputDialog(Component parentComponent, Object message) {
         return showInputDialog(parentComponent, message, "Input", javax.swing.JOptionPane.PLAIN_MESSAGE);
     }
 
-    // Overload: showInputDialog for generic selection (Dropdown)
+    // Sobrecarga: showInputDialog para selección genérica (Desplegable)
     public static Object showInputDialog(Component parentComponent, Object message, String title, int messageType,
             Icon icon, Object[] selectionValues, Object initialSelectionValue) {
 
@@ -275,12 +257,12 @@ public class ModernDialog extends JDialog {
         JPanel panel = new JPanel(new BorderLayout(0, 10));
         panel.setOpaque(false);
 
-        // Body message
+        // Mensaje del cuerpo
         JLabel lbl = new JLabel("<html><body style='width: 300px'>" + message.toString() + "</body></html>");
         lbl.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         panel.add(lbl, BorderLayout.NORTH);
 
-        // Dropdown
+        // Desplegable
         javax.swing.JComboBox<Object> comboBox = new javax.swing.JComboBox<>(selectionValues);
         if (initialSelectionValue != null) {
             comboBox.setSelectedItem(initialSelectionValue);

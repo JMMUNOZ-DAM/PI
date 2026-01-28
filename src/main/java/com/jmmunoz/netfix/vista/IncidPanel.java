@@ -78,6 +78,11 @@ public class IncidPanel extends javax.swing.JPanel {
 
                                 rs = Utilities.ejecutarConsulta(Utilities.TipoConsulta.INCIDENCIAS);
                                 ut.cargarTabla(inciTabla, rs);
+
+                                // Actualizamos el sorter con el nuevo modelo INMEDIATAMENTE para evitar
+                                // desincronización
+                                sorter.setModel((DefaultTableModel) inciTabla.getModel());
+
                                 com.jmmunoz.netfix.vista.tema.ThemeManager.getInstance()
                                                 .configureIncidenciasTableColumns(inciTabla);
 
@@ -87,9 +92,6 @@ public class IncidPanel extends javax.swing.JPanel {
 
                                 ut.logAction("OK", "IncidPanel", "Datos de incidencias cargados correctamente ("
                                                 + inciTabla.getRowCount() + " registros)");
-
-                                // Actualizamos el sorter con el nuevo modelo en caso de recarga
-                                sorter.setModel((DefaultTableModel) inciTabla.getModel());
 
                                 // Restaurar selección
                                 if (currentId != -1) {
@@ -770,36 +772,54 @@ public class IncidPanel extends javax.swing.JPanel {
         }// GEN-LAST:event_actuButtonActionPerformed
 
         private void soluButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_soluButtonActionPerformed
-                int idIncidencia = getSelectedIncidenciaId();
-                if (idIncidencia == -1) {
-                        CustomNotification.show(
+                try {
+                        int idIncidencia = getSelectedIncidenciaId();
+                        if (idIncidencia == -1) {
+                                CustomNotification.show(
+                                                this,
+                                                com.jmmunoz.netfix.config.AppConfig.getInstance()
+                                                                .getMessage("incid.msg.select.req"),
+                                                com.jmmunoz.netfix.config.AppConfig.getInstance()
+                                                                .getMessage("incid.msg.select.solve"),
+                                                CustomNotification.Type.WARNING);
+                                ut.logAction("ERROR", "IncidPanel", "Intento de solucionar sin seleccionar fila.");
+                                return;
+                        }
+                        String solucion = com.jmmunoz.netfix.vista.dialogos.ModernDialog.showInputDialog(
                                         this,
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
-                                                        .getMessage("incid.msg.select.req"),
+                                                        .getMessage("incid.msg.input.solution"),
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
-                                                        .getMessage("incid.msg.select.solve"),
-                                        CustomNotification.Type.WARNING);
-                        ut.logAction("ERROR", "IncidPanel", "Intento de solucionar sin seleccionar fila.");
-                        return;
+                                                        .getMessage("incid.title.new.comment"),
+                                        JOptionPane.PLAIN_MESSAGE);
+                        // Si cancela o deja vacío
+                        if (solucion == null || solucion.trim().isEmpty()) {
+                                return;
+                        }
+                        int result = ut.ejecutarUpdate(
+                                        Utilities.TipoConsulta.SOLUCIONAR,
+                                        currentUser.getIdUsuario(),
+                                        solucion,
+                                        idIncidencia);
+
+                        if (result > 0) {
+                                ut.logAction("OK", "IncidPanel",
+                                                "Incidencia " + idIncidencia + " marcada como solucionada.");
+                                limpiarCampos();
+                                cargarDatos();
+                        } else {
+                                ut.logAction("ERROR", "IncidPanel",
+                                                "Error al solucionar incidencia " + idIncidencia);
+                                CustomNotification.show(
+                                                this,
+                                                "Error",
+                                                "No se pudo actualizar la incidencia.",
+                                                CustomNotification.Type.ERROR);
+                        }
+
+                } catch (Exception ex) {
+                        ut.logAction("ERROR", "IncidPanel", "Excepción crítica al solucionar: " + ex.getMessage());
                 }
-                String solucion = com.jmmunoz.netfix.vista.dialogos.ModernDialog.showInputDialog(
-                                this,
-                                com.jmmunoz.netfix.config.AppConfig.getInstance()
-                                                .getMessage("incid.msg.input.solution"),
-                                com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("incid.title.new.comment"),
-                                JOptionPane.PLAIN_MESSAGE);
-                // Si cancela o deja vacío
-                if (solucion == null || solucion.trim().isEmpty()) {
-                        return;
-                }
-                ut.ejecutarUpdate(
-                                Utilities.TipoConsulta.SOLUCIONAR,
-                                currentUser.getIdUsuario(),
-                                solucion,
-                                idIncidencia);
-                ut.logAction("OK", "IncidPanel", "Incidencia " + idIncidencia + " marcada como solucionada.");
-                limpiarCampos();
-                cargarDatos();
 
         }// GEN-LAST:event_soluButtonActionPerformed
 

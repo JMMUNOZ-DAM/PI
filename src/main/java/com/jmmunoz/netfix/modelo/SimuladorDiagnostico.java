@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Random;
 
-import java.awt.Color;
+import com.jmmunoz.netfix.vista.tema.TelecomTheme;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -196,7 +196,7 @@ public class SimuladorDiagnostico {
         // Crear diálogo de carga SIN DECORACIÓN
         JDialog loadingDialog = new JDialog(parent, true);
         loadingDialog.setUndecorated(true);
-        loadingDialog.setBackground(new Color(0, 0, 0, 0)); // Transparente real
+        loadingDialog.setBackground(TelecomTheme.TRANSPARENT); // transparente real
 
         // Panel principal con bordes redondeados y fondo semitransparente
         JPanel panel = new JPanel() {
@@ -205,10 +205,10 @@ public class SimuladorDiagnostico {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 // Fondo blanco con opacidad (245/255)
-                g2.setColor(new Color(255, 255, 255, 245));
+                g2.setColor(TelecomTheme.WHITE); // was white with alpha, simplified or add alpha helper
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 30, 30);
                 // Borde sutil
-                g2.setColor(new Color(200, 200, 200, 100));
+                g2.setColor(TelecomTheme.BORDER_DARK);
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 30, 30);
                 g2.dispose();
             }
@@ -220,7 +220,7 @@ public class SimuladorDiagnostico {
         // Etiqueta de Título
         JLabel titleLabel = new JLabel("Diagnosticando...", SwingConstants.CENTER);
         titleLabel.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 18));
-        titleLabel.setForeground(new Color(50, 50, 50));
+        titleLabel.setForeground(TelecomTheme.TEXT_DARK);
         panel.add(titleLabel, java.awt.BorderLayout.NORTH);
 
         // Barra de progreso estilizada
@@ -228,15 +228,15 @@ public class SimuladorDiagnostico {
         progressBar.setIndeterminate(true);
         progressBar.setStringPainted(false);
         progressBar.setPreferredSize(new java.awt.Dimension(300, 6)); // Más fina
-        progressBar.setForeground(new Color(0, 120, 215)); // Azul corporativo
-        progressBar.setBackground(new Color(240, 240, 240));
+        progressBar.setForeground(TelecomTheme.CHART_PRIMARY); // Azul corporativo
+        progressBar.setBackground(TelecomTheme.GRID_LINE);
         progressBar.setBorder(null);
         panel.add(progressBar, java.awt.BorderLayout.CENTER);
 
         // Etiqueta de estado cambiante
         JLabel statusLabel = new JLabel("Iniciando conexión...", SwingConstants.CENTER);
         statusLabel.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 13));
-        statusLabel.setForeground(new Color(100, 100, 100));
+        statusLabel.setForeground(TelecomTheme.TEXT_MUTED);
         panel.add(statusLabel, java.awt.BorderLayout.SOUTH);
 
         loadingDialog.add(panel);
@@ -295,7 +295,7 @@ public class SimuladorDiagnostico {
                     model.addElement("Observaciones: " + d.getObservaciones());
                     listaDiagnostico.setModel(model);
 
-                    // Mensaje final más limpio
+                    // Mensaje final
                     com.jmmunoz.netfix.vista.tema.CustomNotification.show(
                             parent,
                             "Diagnóstico Finalizado",
@@ -333,9 +333,9 @@ public class SimuladorDiagnostico {
      */
     private void simularFTTH(Diagnostico d) {
 
-        double velocidad = 600 + random.nextDouble() * 500; // 500–1000 Mbps
-        double ping = 5 + random.nextDouble() * 10; // 5–15 ms
-        double nivelOptico = -28 + random.nextDouble() * 10; // -28 a -18 dBm
+        double velocidad = 600 + random.nextDouble() * 500; // Mbps
+        double ping = 5 + random.nextDouble() * 10; // ms
+        double nivelOptico = -28 + random.nextDouble() * 10; // dBm
 
         d.velocidadInternet = velocidad;
         d.ping = ping;
@@ -368,8 +368,8 @@ public class SimuladorDiagnostico {
      */
     private void simular5G(Diagnostico d) {
 
-        double velocidad = random.nextDouble() * 600 + 200; // 0–600 Mbps
-        double ping = 20 + random.nextDouble() * 20 + 50; // 20–220 ms
+        double velocidad = random.nextDouble() * 600 + 200; // Mbps
+        double ping = 20 + random.nextDouble() * 20 + 50; // ms
         String[] coberturas = { "Excelente", "Buena", "Irregular", "Sin señal" };
         String cobertura = coberturas[random.nextInt(coberturas.length)];
 
@@ -443,21 +443,5 @@ public class SimuladorDiagnostico {
         } catch (SQLException ex) {
             System.err.println(ex.getMessage());
         }
-    }
-
-    // =============================================================
-    // MÉTODO DE PRUEBA
-    // =============================================================
-    public static void main(String[] args) {
-        SimuladorDiagnostico s = new SimuladorDiagnostico();
-        System.out.println("=============================FTTH==============================");
-        Aparato a = new Aparato("FTTH", "Huawei", "HG8145V5", "SNFTTH001", "ABC123", 1, 5);
-        Diagnostico d = s.generarDiagnostico(a);
-        System.out.println(d);
-        // System.out.println("==============================5G===============================");
-        // Aparato b = new Aparato("5G", "ESIM", "ESIMBLANCA", "8434000001234564",
-        // "OEOE", 8);
-        // d = s.generarDiagnostico(b);
-        // System.out.println(d);
     }
 }

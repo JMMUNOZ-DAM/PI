@@ -50,7 +50,7 @@ public class EstadisPanel extends javax.swing.JPanel {
         private JComboBox<Integer> yearCombo;
 
         public EstadisPanel() {
-                // Ignoramos initComponents() generado o lo limpiamos
+                // Ignoramos initComponents() generado
                 // initComponents();
 
                 // Configuración base
@@ -86,28 +86,25 @@ public class EstadisPanel extends javax.swing.JPanel {
                 // Tarjeta Pendientes (Amarillo/Naranja)
                 kpiPanel.add(ThemeManager.getInstance().createKPICard(
                                 com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("stats.kpi.pending"),
-                                lblPendientesVal, new Color(255, 193, 7), "🕒"));
+                                lblPendientesVal, TelecomTheme.WARN, "🕒"));
 
                 // Tarjeta Resueltas (Verde)
                 kpiPanel.add(ThemeManager.getInstance().createKPICard(
                                 com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("stats.kpi.resolved"),
-                                lblResueltasVal, new Color(40, 167, 69), "✅"));
+                                lblResueltasVal, TelecomTheme.OK, "✅"));
 
                 // Tarjeta Sin Comunicar (Rojo)
                 kpiPanel.add(ThemeManager.getInstance().createKPICard(
                                 com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage(
                                                 "stats.kpi.uncommunicated"),
-                                lblSincoVal, new Color(220, 53, 69), "❗"));
+                                lblSincoVal, TelecomTheme.ERROR, "❗"));
 
                 headerPanel.add(kpiPanel, BorderLayout.CENTER);
 
                 add(headerPanel, BorderLayout.NORTH);
 
                 // --- 2. CONTENIDO PRINCIPAL (División: Tabla | Gráfico) ---
-                // Usamos un JSplitPane o un GridLayout. El mockup muestra split.
-                // Haremos un Panel principal con GridBag o GridLayout para simular el split
-                // 50/50 o 40/60.
-                // Usaremos JSplitPane para flexibilidad.
+                // Usa JSplitPane para flexibilidad.
 
                 JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
                 splitPane.setOpaque(false);
@@ -128,7 +125,7 @@ public class EstadisPanel extends javax.swing.JPanel {
                 inciTabla = new JTable();
                 JScrollPane scrollTable = new JScrollPane(inciTabla);
                 scrollTable.setBorder(BorderFactory.createEmptyBorder()); // Sin borde extra
-                scrollTable.getViewport().setBackground(Color.WHITE);
+                scrollTable.getViewport().setBackground(TelecomTheme.WHITE);
                 tableWrapper.add(scrollTable, BorderLayout.CENTER);
 
                 // Listener para doble clic -> Ver detalles

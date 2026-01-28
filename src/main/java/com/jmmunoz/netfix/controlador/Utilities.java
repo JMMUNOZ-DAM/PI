@@ -8,7 +8,7 @@ import com.jmmunoz.netfix.modelo.DatabaseManager;
 import com.jmmunoz.netfix.modelo.Querys;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
+
 import java.awt.Component;
 import java.awt.Dimension;
 import java.sql.ResultSet;
@@ -31,6 +31,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.mindrot.jbcrypt.BCrypt;
+import com.jmmunoz.netfix.vista.tema.TelecomTheme;
 
 /**
  * Clase de utilidad que centraliza la lógica de negocio, acceso a datos y
@@ -409,31 +410,31 @@ public class Utilities {
 
                         switch (estado) {
                             case "Pendiente" -> {
-                                c.setBackground(Color.YELLOW);
-                                c.setForeground(Color.BLACK);
+                                c.setBackground(TelecomTheme.WARN);
+                                c.setForeground(TelecomTheme.BLACK);
                             }
                             case "Resuelto" -> {
-                                c.setBackground(Color.GREEN);
-                                c.setForeground(Color.BLACK);
+                                c.setBackground(TelecomTheme.OK);
+                                c.setForeground(TelecomTheme.BLACK);
                             }
                             case "sin_comunicar" -> {
-                                c.setBackground(new Color(255, 236, 236));
-                                c.setForeground(new Color(153, 0, 0));
+                                c.setBackground(TelecomTheme.BG_ERROR);
+                                c.setForeground(TelecomTheme.TEXT_ERROR);
                             }
                             default -> {
-                                c.setBackground(Color.WHITE);
-                                c.setForeground(Color.BLACK);
+                                c.setBackground(TelecomTheme.WHITE);
+                                c.setForeground(TelecomTheme.BLACK);
                             }
                         }
                     } else {
-                        c.setBackground(Color.WHITE);
-                        c.setForeground(Color.BLACK);
+                        c.setBackground(TelecomTheme.WHITE);
+                        c.setForeground(TelecomTheme.BLACK);
                     }
 
                 } else {
                     // Si no hay columna de estado
-                    c.setBackground(Color.WHITE);
-                    c.setForeground(Color.BLACK);
+                    c.setBackground(TelecomTheme.WHITE);
+                    c.setForeground(TelecomTheme.BLACK);
                 }
 
                 // Mantener el color de selección
