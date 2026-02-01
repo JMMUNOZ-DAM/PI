@@ -53,16 +53,19 @@ public class AparatosPanel extends javax.swing.JPanel {
          */
 
         // <editor-fold defaultstate="collapsed" desc="Generated
+        // <editor-fold defaultstate="collapsed" desc="Generated
         // Code">//GEN-BEGIN:initComponents
         private void initComponents() {
 
                 apaTitle = new javax.swing.JLabel();
                 searchField = new javax.swing.JTextField();
                 searchButton = new javax.swing.JButton();
+                clearButton = new javax.swing.JButton();
                 mainPanel = new javax.swing.JPanel();
                 tipLbl = new javax.swing.JLabel();
                 macL = new javax.swing.JLabel();
                 statusLabel = new javax.swing.JLabel();
+                statusLabel.setVisible(false);
                 tipoLabel = new javax.swing.JLabel();
                 nsLabeel = new javax.swing.JLabel();
                 macLabel = new javax.swing.JLabel();
@@ -81,15 +84,13 @@ public class AparatosPanel extends javax.swing.JPanel {
                 numConLabel = new javax.swing.JLabel();
                 diagnoButton = new javax.swing.JButton();
 
+                setBackground(new java.awt.Color(255, 255, 255));
+                setPreferredSize(new java.awt.Dimension(1592, 946));
+
                 apaTitle.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
                 apaTitle.setText(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("aparatos.title"));
 
                 searchField.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-                searchField.addActionListener(new java.awt.event.ActionListener() {
-                        public void actionPerformed(java.awt.event.ActionEvent evt) {
-                                searchButtonActionPerformed(evt);
-                        }
-                });
 
                 searchButton.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
                 searchButton.setText(
@@ -97,6 +98,14 @@ public class AparatosPanel extends javax.swing.JPanel {
                 searchButton.addActionListener(new java.awt.event.ActionListener() {
                         public void actionPerformed(java.awt.event.ActionEvent evt) {
                                 searchButtonActionPerformed(evt);
+                        }
+                });
+
+                clearButton.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+                clearButton.setText(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("aparatos.btn.clear"));
+                clearButton.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                clearButtonActionPerformed(evt);
                         }
                 });
 
@@ -118,8 +127,7 @@ public class AparatosPanel extends javax.swing.JPanel {
                 macLabel.setText(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("aparatos.label.mac"));
 
                 nombreLabel.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-                nombreLabel.setText(
-                                com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("aparatos.label.name"));
+                nombreLabel.setText("");
 
                 contratoLabel.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
                 contratoLabel.setText(com.jmmunoz.netfix.config.AppConfig.getInstance()
@@ -231,12 +239,18 @@ public class AparatosPanel extends javax.swing.JPanel {
                                                                                                                                                 122))
                                                                                                                 .addGroup(mainPanelLayout
                                                                                                                                 .createSequentialGroup()
-                                                                                                                                .addComponent(lasDlabel)
-                                                                                                                                .addGap(18, 18, 18)
-                                                                                                                                .addComponent(feLastLabel,
-                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                                                                                243,
-                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                                                                .addGroup(mainPanelLayout
+                                                                                                                                                .createParallelGroup(
+                                                                                                                                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                                                                                .addGroup(mainPanelLayout
+                                                                                                                                                                .createSequentialGroup()
+                                                                                                                                                                .addComponent(lasDlabel)
+                                                                                                                                                                .addGap(18, 18, 18)
+                                                                                                                                                                .addComponent(feLastLabel,
+                                                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                                                                                                243,
+                                                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                                                                                                .addComponent(obserPanel))
                                                                                                                                 .addPreferredGap(
                                                                                                                                                 javax.swing.LayoutStyle.ComponentPlacement.RELATED,
                                                                                                                                                 javax.swing.GroupLayout.DEFAULT_SIZE,
@@ -251,23 +265,18 @@ public class AparatosPanel extends javax.swing.JPanel {
                                                                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE)))
                                                                                 .addGroup(mainPanelLayout
                                                                                                 .createSequentialGroup()
-                                                                                                .addGroup(mainPanelLayout
-                                                                                                                .createParallelGroup(
-                                                                                                                                javax.swing.GroupLayout.Alignment.LEADING)
-                                                                                                                .addComponent(obserPanel)
-                                                                                                                .addComponent(obervaText,
-                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                                                                851,
-                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                                                .addComponent(obervaText,
+                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                                851,
+                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
                                                                                                 .addGap(0, 0, Short.MAX_VALUE)))
                                                                 .addContainerGap()));
                 mainPanelLayout.setVerticalGroup(
                                 mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                 .addGroup(mainPanelLayout.createSequentialGroup()
-                                                                .addGroup(mainPanelLayout
-                                                                                .createParallelGroup(
-                                                                                                javax.swing.GroupLayout.Alignment.LEADING,
-                                                                                                false)
+                                                                .addGroup(mainPanelLayout.createParallelGroup(
+                                                                                javax.swing.GroupLayout.Alignment.LEADING,
+                                                                                false)
                                                                                 .addGroup(mainPanelLayout
                                                                                                 .createSequentialGroup()
                                                                                                 .addGap(10, 10, 10)
@@ -338,8 +347,7 @@ public class AparatosPanel extends javax.swing.JPanel {
                                                                                                                 311,
                                                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE))
                                                                                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
-                                                                                                mainPanelLayout
-                                                                                                                .createSequentialGroup()
+                                                                                                mainPanelLayout.createSequentialGroup()
                                                                                                                 .addComponent(actualDlbale)
                                                                                                                 .addPreferredGap(
                                                                                                                                 javax.swing.LayoutStyle.ComponentPlacement.RELATED,
@@ -369,9 +377,8 @@ public class AparatosPanel extends javax.swing.JPanel {
                                                                                 javax.swing.GroupLayout.Alignment.LEADING)
                                                                                 .addGroup(layout.createSequentialGroup()
                                                                                                 .addGap(448, 448, 448)
-                                                                                                .addGroup(layout
-                                                                                                                .createParallelGroup(
-                                                                                                                                javax.swing.GroupLayout.Alignment.TRAILING)
+                                                                                                .addGroup(layout.createParallelGroup(
+                                                                                                                javax.swing.GroupLayout.Alignment.TRAILING)
                                                                                                                 .addGroup(layout.createSequentialGroup()
                                                                                                                                 .addComponent(searchField,
                                                                                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE,
@@ -388,6 +395,11 @@ public class AparatosPanel extends javax.swing.JPanel {
                                                                                                 .addComponent(diagnoButton,
                                                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE,
                                                                                                                 396,
+                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                                .addGap(18, 18, 18)
+                                                                                                .addComponent(clearButton,
+                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                                138,
                                                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE))
                                                                                 .addGroup(layout.createSequentialGroup()
                                                                                                 .addContainerGap()
@@ -420,10 +432,19 @@ public class AparatosPanel extends javax.swing.JPanel {
                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE)
                                                                 .addPreferredGap(
                                                                                 javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                                .addComponent(diagnoButton)
+                                                                .addGroup(layout.createParallelGroup(
+                                                                                javax.swing.GroupLayout.Alignment.BASELINE)
+                                                                                .addComponent(diagnoButton)
+                                                                                .addComponent(clearButton))
                                                                 .addGap(0, 13, Short.MAX_VALUE)));
         }// </editor-fold>//GEN-END:initComponents
 
+        /**
+         * Listener para el buscador.
+         * Valida que el campo no esté vacío y ejecuta la carga del diagnóstico.
+         * 
+         * @param evt Evento del botón.
+         */
         /**
          * Listener para el buscador.
          * Valida que el campo no esté vacío y ejecuta la carga del diagnóstico.
@@ -446,6 +467,46 @@ public class AparatosPanel extends javax.swing.JPanel {
                 // impresión de depuración eliminada
                 cargarDiagnostico();
         }// GEN-LAST:event_searchButtonActionPerformed
+
+        /**
+         * Action listener para el botón de limpiar.
+         * Resetea todos los campos del panel.
+         */
+        /**
+         * Listener para el botón de limpiar.
+         * Llama a {@link #limpiarCampos()} para resetear el formulario.
+         * 
+         * @param evt Evento del botón.
+         */
+        private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {
+                limpiarCampos();
+        }
+
+        /**
+         * Resetea todos los campos de información y la lista de diagnóstico.
+         */
+        /**
+         * Resetea todos los campos de información, contadores y la lista de
+         * diagnóstico.
+         * Deja el panel listo para una nueva búsqueda.
+         */
+        public void limpiarCampos() {
+                searchField.setText("");
+                tipLbl.setText("");
+                numSLabel.setText("");
+                macL.setText("");
+                nombreLabel.setText("");
+                numConLabel.setText("");
+                feLastLabel.setText("");
+                statusLabel.setText("");
+                statusLabel.setVisible(false);
+                numConsultas = 0;
+                actualDiag.setModel(new DefaultListModel<>());
+                observaciones.setText("");
+                nsLabeel.setText(com.jmmunoz.netfix.config.AppConfig.getInstance()
+                                .getMessage("aparatos.label.serial"));
+                ut.logAction("INFO", "AparatosPanel", "Campos limpiados.");
+        }
 
         /**
          * Permite realizar una búsqueda programática desde otros paneles.
@@ -535,7 +596,7 @@ public class AparatosPanel extends javax.swing.JPanel {
 
                                 feLastLabel.setText(String.valueOf(fila[6]));
                                 statusLabel.setText(String.valueOf(fila[7]));
-
+                                statusLabel.setVisible(true);
                                 numConsultas++; // Incrementamos el contador de consultas
 
                                 DefaultListModel<String> model = new DefaultListModel<>();
@@ -588,17 +649,12 @@ public class AparatosPanel extends javax.swing.JPanel {
                 }
         }
 
-        /**
-         * Aplica el tema visual corporativo.
-         * Estiliza el panel de búsqueda, el card de detalles y los botones.
-         */
-        // applyTelecomStyle eliminado - lógica movida a ThemeManager
-
         // Variables declaration - do not modify//GEN-BEGIN:variables
         private javax.swing.JList<String> actualDiag;
         private javax.swing.JLabel actualDlbale;
         private javax.swing.JLabel apaTitle;
         private javax.swing.JLabel contratoLabel;
+        private javax.swing.JButton clearButton;
         private javax.swing.JButton diagnoButton;
         private javax.swing.JLabel estadoLabel;
         private javax.swing.JLabel feLastLabel;
@@ -621,6 +677,13 @@ public class AparatosPanel extends javax.swing.JPanel {
         private javax.swing.JLabel tipoLabel;
         // End of variables declaration//GEN-END:variables
 
+        // ==========================================
+        // Getters para acceso a componentes UI
+        // ==========================================
+
+        /**
+         * @return Etiqueta del título del panel.
+         */
         public javax.swing.JLabel getApaTitle() {
                 return apaTitle;
         }
@@ -637,11 +700,15 @@ public class AparatosPanel extends javax.swing.JPanel {
                 return diagnoButton;
         }
 
+        public javax.swing.JButton getClearButton() {
+                return clearButton;
+        }
+
         public javax.swing.JPanel getMainPanel() {
                 return mainPanel;
         }
 
-        // Muted Labels
+        // Etiquetas Atenuadas
         public javax.swing.JLabel getTipoLabel() {
                 return tipoLabel;
         }
@@ -674,7 +741,7 @@ public class AparatosPanel extends javax.swing.JPanel {
                 return actualDlbale;
         }
 
-        // Value Labels
+        // Etiquetas de Valor
         public javax.swing.JLabel getTipLbl() {
                 return tipLbl;
         }
@@ -703,7 +770,7 @@ public class AparatosPanel extends javax.swing.JPanel {
                 return nombreLabel;
         }
 
-        // Text Areas / Lists
+        // Áreas de Texto / Listas
         public javax.swing.JTextArea getObservaciones() {
                 return observaciones;
         }

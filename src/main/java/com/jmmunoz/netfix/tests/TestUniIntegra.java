@@ -9,6 +9,16 @@ import com.jmmunoz.netfix.modelo.Usuario;
 import com.jmmunoz.netfix.modelo.SimuladorDiagnostico;
 import java.sql.ResultSet;
 
+/**
+ * Runner independiente para la ejecución de pruebas unitarias y de integración.
+ * <p>
+ * Permite verificar la lógica de negocio (validación de emails, hashing) y
+ * la conectividad básica con la base de datos sin necesidad de lanzar la UI
+ * completa.
+ * </p>
+ * 
+ * @author Juanma Muñoz
+ */
 public class TestUniIntegra {
 
         // Contadores
@@ -16,6 +26,11 @@ public class TestUniIntegra {
         private static int testsPassed = 0;
         private static int testsFailed = 0;
 
+        /**
+         * Punto de entrada principal para la ejecución de pruebas.
+         * 
+         * @param args Argumentos de línea de comandos (no utilizados).
+         */
         public static void main(String[] args) {
                 System.out.println("==========================================");
                 System.out.println("   INICIANDO BATERÍA DE PRUEBAS NETFIX    ");

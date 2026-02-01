@@ -34,6 +34,10 @@ public class SplashScreen extends JWindow {
     private Image logo;
     private int logoW, logoH;
 
+    /**
+     * Crea e inicializa la pantalla de splash.
+     * Configura el tamaño, carga el logo e inicia la animación.
+     */
     public SplashScreen() {
         // Configuración básica
         setSize(800, 500); // Un poco más grande para que luzca
@@ -61,6 +65,10 @@ public class SplashScreen extends JWindow {
         startAnimation();
     }
 
+    /**
+     * Inicia la animación de fade-in, espera y fade-out.
+     * Utiliza un Timer para actualizar la opacidad.
+     */
     private void startAnimation() {
         startTime = System.currentTimeMillis();
 
@@ -90,6 +98,10 @@ public class SplashScreen extends JWindow {
         setVisible(true);
     }
 
+    /**
+     * Lanza la ventana de login y cierra el splash screen.
+     * Se ejecuta al finalizar la animación.
+     */
     private void launchLogin() {
         SwingUtilities.invokeLater(() -> {
             new login().setVisible(true);

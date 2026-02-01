@@ -32,6 +32,11 @@ public class UsuariosPanel extends javax.swing.JPanel {
         Utilities ut = new Utilities();
         Usuario usuario;
 
+        /**
+         * Crea un nuevo panel de gestión de usuario.
+         * 
+         * @param usuario El usuario autenticado cuyos datos se mostrarán.
+         */
         public UsuariosPanel(Usuario usuario) {
                 initComponents();
                 this.usuario = usuario;
@@ -89,39 +94,143 @@ public class UsuariosPanel extends javax.swing.JPanel {
                 com.jmmunoz.netfix.vista.tema.ThemeManager.getInstance().cardify(mainPanel1);
 
                 // ---------------------------------------------------------
-                // REFACTORIZACIÓN DE DISEÑO - SOLO RAÍZ
-                // (Preservamos el GroupLayout interno de mainPanel1 para coincidir
-                // con el comportamiento de AparatosPanel)
+                // LAYOUT OVERRIDE (Arregla espaciado)
+                // ---------------------------------------------------------
+                // Override para eliminar "centering" o espacios
+                this.setLayout(new java.awt.BorderLayout());
+                this.add(usersPanel, java.awt.BorderLayout.CENTER);
+
+                // ---------------------------------------------------------
+                // CONFIGURACIÓN DE ETIQUETAS Y CAMPOS
+                // ---------------------------------------------------------
+                // Acortar etiquetas
+                idLabel.setText(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("user.label.id.short"));
+                nameLabel1.setText(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("user.label.name"));
+                emaiLabel.setText(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("user.label.email"));
+                rolLabel.setText(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("user.label.role"));
+                contratoLabel1.setText(com.jmmunoz.netfix.config.AppConfig.getInstance()
+                                .getMessage("user.label.password.short"));
+
+                // Evitar que los campos se colapsen cuando el llenado del padre es NONE
+                nameText.setColumns(30);
+                mailText.setColumns(30);
+                passText.setColumns(30);
+                rolCombo.setPreferredSize(new java.awt.Dimension(200, 32));
+
+                // ---------------------------------------------------------
+                // LAYOUT DEL PANEL PRINCIPAL (Formulario)
+                // ---------------------------------------------------------
+                mainPanel1.setLayout(new java.awt.GridBagLayout());
+                mainPanel1.removeAll();
+
+                java.awt.GridBagConstraints gbc = new java.awt.GridBagConstraints();
+                gbc.insets = new java.awt.Insets(10, 10, 10, 10);
+                gbc.anchor = java.awt.GridBagConstraints.WEST;
+                gbc.fill = java.awt.GridBagConstraints.NONE; // POR DEFECTO NONE para campos
+
+                // Fila 0: ID
+                gbc.gridy = 0;
+                gbc.gridx = 0;
+                gbc.weightx = 0.0;
+                mainPanel1.add(idLabel, gbc);
+
+                gbc.gridx = 1;
+                gbc.gridwidth = 3;
+                gbc.fill = java.awt.GridBagConstraints.HORIZONTAL; // Permitir que el texto del ID llene sus columnas
+                                                                   // pero no más
+                gbc.fill = java.awt.GridBagConstraints.NONE;
+                mainPanel1.add(idText, gbc);
+                gbc.gridwidth = 1;
+
+                // Fila 1: Nombre (Etiqueta + Campo) | Rol (Etiqueta + Campo)
+                gbc.gridy = 1;
+
+                // Etiqueta Nombre
+                gbc.gridx = 0;
+                mainPanel1.add(nameLabel1, gbc);
+
+                // Campo Nombre
+                gbc.gridx = 1;
+                gbc.fill = java.awt.GridBagConstraints.NONE; // Tamaño fijo
+                mainPanel1.add(nameText, gbc);
+
+                // Etiqueta Rol
+                gbc.gridx = 2;
+                mainPanel1.add(rolLabel, gbc);
+
+                // Combo Rol
+                gbc.gridx = 3;
+                gbc.fill = java.awt.GridBagConstraints.NONE;
+                mainPanel1.add(rolCombo, gbc);
+
+                // ESPACIADOR para Fila 1 (empuja todo a la izquierda)
+                java.awt.GridBagConstraints gbcSpacer = new java.awt.GridBagConstraints();
+                gbcSpacer.gridx = 4;
+                gbcSpacer.gridy = 1;
+                gbcSpacer.weightx = 1.0; // COMER TODO EL ESPACIO
+                gbcSpacer.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                mainPanel1.add(javax.swing.Box.createHorizontalGlue(), gbcSpacer);
+
+                // Fila 2: Email
+                gbc.gridy = 2;
+                gbc.gridx = 0;
+                mainPanel1.add(emaiLabel, gbc);
+
+                gbc.gridx = 1;
+                gbc.gridwidth = 3;
+                gbc.fill = java.awt.GridBagConstraints.NONE;
+                mainPanel1.add(mailText, gbc);
+                gbc.gridwidth = 1;
+
+                // Fila 3: Contraseña
+                gbc.gridy = 3;
+                gbc.gridx = 0;
+                mainPanel1.add(contratoLabel1, gbc);
+
+                gbc.gridx = 1;
+                gbc.gridwidth = 3;
+                gbc.fill = java.awt.GridBagConstraints.NONE;
+                mainPanel1.add(passText, gbc);
+                gbc.gridwidth = 1;
+
+                // Fila 4: Botón
+                gbc.gridy = 4;
+                gbc.gridx = 0;
+                gbc.gridwidth = 4;
+                gbc.fill = java.awt.GridBagConstraints.NONE;
+                gbc.anchor = java.awt.GridBagConstraints.WEST; // Mantener botón a la izquierda
+                mainPanel1.add(modButton, gbc);
+
+                // ---------------------------------------------------------
+                // REFACTORIZACIÓN DE DISEÑO - PANEL RAÍZ
                 // ---------------------------------------------------------
                 usersPanel.removeAll();
                 usersPanel.setLayout(new java.awt.GridBagLayout());
 
-                java.awt.GridBagConstraints gbc = new java.awt.GridBagConstraints();
-                gbc.insets = new java.awt.Insets(20, 20, 10, 20);
-                gbc.gridx = 0;
-                gbc.gridy = 0;
-                gbc.weightx = 1.0;
-                gbc.anchor = java.awt.GridBagConstraints.LINE_START;
-                gbc.fill = java.awt.GridBagConstraints.NONE;
+                java.awt.GridBagConstraints rootGbc = new java.awt.GridBagConstraints();
+                rootGbc.insets = new java.awt.Insets(20, 20, 20, 20);
+                rootGbc.gridx = 0;
+                rootGbc.gridy = 0;
+
+                // Usar HORIZONTAL para estirar el contenedor, pero controlaremos los campos
+                // internos
+                rootGbc.weightx = 1.0;
+                rootGbc.anchor = java.awt.GridBagConstraints.NORTHWEST; // Anclar arriba-izquierda
+                rootGbc.fill = java.awt.GridBagConstraints.HORIZONTAL;
 
                 // 1) Título
-                usersPanel.add(ususTitle, gbc);
+                usersPanel.add(ususTitle, rootGbc);
 
                 // 2) Panel del Formulario
-                gbc.gridy++;
-                gbc.weighty = 0.0;
-                // Coincidir con AparatosPanel: Rellenar HORIZONTAL para usar el ancho
-                // disponible,
-                // confiando en GroupLayout para organizar los internos.
-                gbc.fill = java.awt.GridBagConstraints.HORIZONTAL;
-
-                usersPanel.add(mainPanel1, gbc);
+                rootGbc.gridy++;
+                rootGbc.weighty = 0.0;
+                usersPanel.add(mainPanel1, rootGbc);
 
                 // Empujar arriba
-                gbc.gridy++;
-                gbc.weighty = 1.0;
-                gbc.fill = java.awt.GridBagConstraints.BOTH;
-                usersPanel.add(javax.swing.Box.createVerticalGlue(), gbc);
+                rootGbc.gridy++;
+                rootGbc.weighty = 1.0;
+                rootGbc.fill = java.awt.GridBagConstraints.BOTH;
+                usersPanel.add(javax.swing.Box.createVerticalGlue(), rootGbc);
 
                 revalidate();
                 repaint();
@@ -156,6 +265,7 @@ public class UsuariosPanel extends javax.swing.JPanel {
          */
 
         // <editor-fold defaultstate="collapsed" desc="Generated
+        // <editor-fold defaultstate="collapsed" desc="Generated
         // Code">//GEN-BEGIN:initComponents
         private void initComponents() {
 
@@ -175,12 +285,10 @@ public class UsuariosPanel extends javax.swing.JPanel {
                 idText = new javax.swing.JLabel();
 
                 setBackground(new java.awt.Color(255, 255, 255));
-                // setPreferredSize(new java.awt.Dimension(1592, 946)); // Preferencia fija
-                // eliminada
+                setPreferredSize(new java.awt.Dimension(1592, 946));
 
                 usersPanel.setBackground(new java.awt.Color(255, 255, 255));
-                // usersPanel.setPreferredSize(new java.awt.Dimension(1592, 946)); //
-                // Preferencia fija eliminada
+                usersPanel.setPreferredSize(new java.awt.Dimension(1592, 946));
 
                 ususTitle.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
                 ususTitle.setText(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("user.manage.title"));
@@ -235,16 +343,6 @@ public class UsuariosPanel extends javax.swing.JPanel {
                                                                                                 javax.swing.GroupLayout.Alignment.LEADING)
                                                                                 .addGroup(mainPanel1Layout
                                                                                                 .createSequentialGroup()
-                                                                                                .addComponent(contratoLabel1)
-                                                                                                .addPreferredGap(
-                                                                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                                                                .addComponent(passText,
-                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                                743,
-                                                                                                                Short.MAX_VALUE)
-                                                                                                .addGap(689, 689, 689))
-                                                                                .addGroup(mainPanel1Layout
-                                                                                                .createSequentialGroup()
                                                                                                 .addComponent(idLabel)
                                                                                                 .addPreferredGap(
                                                                                                                 javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -260,17 +358,22 @@ public class UsuariosPanel extends javax.swing.JPanel {
                                                                                                 .addGroup(mainPanel1Layout
                                                                                                                 .createParallelGroup(
                                                                                                                                 javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                                                .addComponent(contratoLabel1)
                                                                                                                 .addComponent(nameLabel1)
                                                                                                                 .addComponent(emaiLabel))
-                                                                                                .addGap(31, 31, 31)
+                                                                                                .addPreferredGap(
+                                                                                                                javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                                                                                 .addGroup(mainPanel1Layout
                                                                                                                 .createParallelGroup(
-                                                                                                                                javax.swing.GroupLayout.Alignment.LEADING,
+                                                                                                                                javax.swing.GroupLayout.Alignment.TRAILING,
                                                                                                                                 false)
                                                                                                                 .addComponent(mailText,
+                                                                                                                                javax.swing.GroupLayout.Alignment.LEADING,
                                                                                                                                 javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                                                443,
+                                                                                                                                437,
                                                                                                                                 Short.MAX_VALUE)
+                                                                                                                .addComponent(passText,
+                                                                                                                                javax.swing.GroupLayout.Alignment.LEADING)
                                                                                                                 .addComponent(nameText))
                                                                                                 .addPreferredGap(
                                                                                                                 javax.swing.LayoutStyle.ComponentPlacement.RELATED,
@@ -286,18 +389,13 @@ public class UsuariosPanel extends javax.swing.JPanel {
                                                                                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE,
                                                                                                                                                 286,
                                                                                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                                                                                .addGroup(mainPanel1Layout
-                                                                                                                                .createSequentialGroup()
-                                                                                                                                .addComponent(rolLabel)
-                                                                                                                                .addPreferredGap(
-                                                                                                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-                                                                                                                                                300,
-                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                                                                                .addGap(54, 54, 54))))
+                                                                                                                .addComponent(rolLabel))
+                                                                                                .addGap(144, 144,
+                                                                                                                144))))
                                                 .addGroup(mainPanel1Layout.createSequentialGroup()
                                                                 .addGap(702, 702, 702)
                                                                 .addComponent(modButton)
-                                                                .addGap(0, 0, Short.MAX_VALUE)));
+                                                                .addGap(0, 736, Short.MAX_VALUE)));
                 mainPanel1Layout.setVerticalGroup(
                                 mainPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                 .addGroup(mainPanel1Layout.createSequentialGroup()
@@ -316,52 +414,51 @@ public class UsuariosPanel extends javax.swing.JPanel {
                                                                                                 Short.MAX_VALUE))
                                                                 .addPreferredGap(
                                                                                 javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                                .addGroup(
-                                                                                mainPanel1Layout.createParallelGroup(
+                                                                .addGroup(mainPanel1Layout
+                                                                                .createParallelGroup(
                                                                                                 javax.swing.GroupLayout.Alignment.LEADING)
-                                                                                                .addComponent(rolCombo,
-                                                                                                                javax.swing.GroupLayout.Alignment.TRAILING,
-                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                                                32,
-                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                                                .addComponent(rolLabel,
-                                                                                                                javax.swing.GroupLayout.Alignment.TRAILING)
+                                                                                .addGroup(mainPanel1Layout
+                                                                                                .createSequentialGroup()
+                                                                                                .addComponent(nameLabel1)
+                                                                                                .addPreferredGap(
+                                                                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                                                .addComponent(emaiLabel))
+                                                                                .addGroup(mainPanel1Layout
+                                                                                                .createSequentialGroup()
                                                                                                 .addGroup(mainPanel1Layout
                                                                                                                 .createParallelGroup(
-                                                                                                                                javax.swing.GroupLayout.Alignment.BASELINE)
-                                                                                                                .addComponent(nameLabel1)
+                                                                                                                                javax.swing.GroupLayout.Alignment.LEADING)
                                                                                                                 .addComponent(nameText,
                                                                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                                                                37,
-                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                                                                                                32,
+                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                                                .addGroup(mainPanel1Layout
+                                                                                                                                .createParallelGroup(
+                                                                                                                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                                                                .addComponent(rolCombo,
+                                                                                                                                                javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                                                                32,
+                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                                                                .addComponent(rolLabel,
+                                                                                                                                                javax.swing.GroupLayout.Alignment.TRAILING)))
+                                                                                                .addPreferredGap(
+                                                                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                                                .addComponent(mailText,
+                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                                32,
+                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)))
                                                                 .addPreferredGap(
                                                                                 javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                                .addGroup(mainPanel1Layout
-                                                                                .createParallelGroup(
-                                                                                                javax.swing.GroupLayout.Alignment.LEADING,
-                                                                                                false)
-                                                                                .addComponent(emaiLabel,
-                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                Short.MAX_VALUE)
-                                                                                .addComponent(mailText,
-                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                                32,
-                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                                .addGap(18, 18, 18)
-                                                                .addGroup(mainPanel1Layout
-                                                                                .createParallelGroup(
-                                                                                                javax.swing.GroupLayout.Alignment.LEADING,
-                                                                                                false)
-                                                                                .addComponent(contratoLabel1,
-                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                Short.MAX_VALUE)
-                                                                                .addComponent(passText,
-                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                                32,
-                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                                .addGap(110, 110, 110)
+                                                                .addGroup(
+                                                                                mainPanel1Layout.createParallelGroup(
+                                                                                                javax.swing.GroupLayout.Alignment.BASELINE)
+                                                                                                .addComponent(contratoLabel1)
+                                                                                                .addComponent(passText,
+                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                                32,
+                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                .addGap(122, 122, 122)
                                                                 .addComponent(modButton)
                                                                 .addContainerGap(440, Short.MAX_VALUE)));
 
@@ -395,11 +492,37 @@ public class UsuariosPanel extends javax.swing.JPanel {
                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE)
                                                                 .addGap(0, 0, 0)));
 
-                // --- DISEÑO ---
-                this.setLayout(new java.awt.BorderLayout());
-                this.add(usersPanel, java.awt.BorderLayout.CENTER);
+                javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+                this.setLayout(layout);
+                layout.setHorizontalGroup(
+                                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout
+                                                                .createSequentialGroup()
+                                                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                Short.MAX_VALUE)
+                                                                .addComponent(usersPanel,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                1599,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addGap(0, 0, 0)));
+                layout.setVerticalGroup(
+                                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addGroup(layout.createSequentialGroup()
+                                                                .addGap(0, 0, Short.MAX_VALUE)
+                                                                .addComponent(usersPanel,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addGap(0, 0, Short.MAX_VALUE)));
         }// </editor-fold>//GEN-END:initComponents
 
+        /**
+         * Maneja la acción de modificar los datos del usuario.
+         * Valida los campos y, si todo es correcto, actualiza la información en la base
+         * de datos.
+         * 
+         * @param evt Evento de acción.
+         */
         private void modButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_modButtonActionPerformed
                 // Obtener valores
                 String nombre = nameText.getText().trim();

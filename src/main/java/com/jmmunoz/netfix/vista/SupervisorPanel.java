@@ -43,6 +43,11 @@ public class SupervisorPanel extends javax.swing.JPanel {
         Utilities ut = new Utilities();
         com.jmmunoz.netfix.modelo.Usuario currentUser;
 
+        /**
+         * Crea un nuevo panel de supervisión.
+         * 
+         * @param user Usuario actual (debe tener rol Supervisor, Sistemas o Admin).
+         */
         public SupervisorPanel(com.jmmunoz.netfix.modelo.Usuario user) {
                 this.currentUser = user;
                 initComponents();
@@ -58,11 +63,15 @@ public class SupervisorPanel extends javax.swing.JPanel {
                 usersPanel.setMaximumSize(new java.awt.Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
                 applyTelecomStyle();
                 configurarBuscador();
-                configurarBuscador();
                 cargarDatos();
                 setupRoleListeners();
         }
 
+        /**
+         * Configura listeners para los comboboxes de roles.
+         * Muestra u oculta campos de especialidad según si el rol seleccionado es
+         * "Técnico".
+         */
         private void setupRoleListeners() {
                 rolAlta.addItemListener(e -> {
                         if (e.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
@@ -86,6 +95,12 @@ public class SupervisorPanel extends javax.swing.JPanel {
                 });
         }
 
+        /**
+         * Verifica si el usuario actual tiene permisos para asignar un rol específico.
+         * 
+         * @param role Rol a verificar.
+         * @return true si puede asignar el rol, false en caso contrario.
+         */
         private boolean canAssignRole(String role) {
                 if ("Sistemas".equalsIgnoreCase(currentUser.getRol())) {
                         return true;
@@ -106,7 +121,7 @@ public class SupervisorPanel extends javax.swing.JPanel {
          */
         public void cargarDatos() {
                 crs = Utilities.ejecutarConsulta(Utilities.TipoConsulta.ROLES, 0);
-                rolAlta.removeAllItems(); // Clear before adding
+                rolAlta.removeAllItems(); // Limpia antes de añadir
                 try {
                         while (crs.next()) {
                                 String r = crs.getString("descripcion");
@@ -164,19 +179,13 @@ public class SupervisorPanel extends javax.swing.JPanel {
                                                         }
 
                                                         String currentRole = usersTable.getValueAt(fila, 2).toString();
-                                                        // If current role is not in the allowed list (e.g. Supervisor
-                                                        // viewing Sistemas),
-                                                        // simply add it temporarily so it shows up, or handle it?
-                                                        // Requirement says "only can GIVE role", doesn't say can't
-                                                        // view.
-                                                        // But if they edit, they can't save as Sistemas.
-                                                        // Let's ensure selected item is set if available.
+
                                                         rolCombo.setSelectedItem(currentRole);
 
                                                         mailText.setText(usersTable.getValueAt(fila, 3).toString());
                                                         passText.setText(usersTable.getValueAt(fila, 4).toString());
 
-                                                        // Load specialty if technician
+                                                        // Cargar especialidad si es técnico
                                                         if ("Tecnico".equalsIgnoreCase(currentRole)) {
                                                                 String idStr = usersTable.getValueAt(fila, 0)
                                                                                 .toString();
@@ -199,8 +208,6 @@ public class SupervisorPanel extends javax.swing.JPanel {
                                                 }
                                         }
                                 });
-                                // Actualizamos el sorter con el nuevo modelo en caso de recarga
-                                // sorter.setModel((DefaultTableModel) usersTable.getModel());
 
                         } catch (SQLException ex) {
                                 System.out.println(ex.getMessage());
@@ -209,6 +216,11 @@ public class SupervisorPanel extends javax.swing.JPanel {
 
         }
 
+        /**
+         * Configura el listener de redimensionado para la tabla de usuarios.
+         * 
+         * @param scrollPane ScrollPane que contiene la tabla.
+         */
         private void setupScrollListener(javax.swing.JScrollPane scrollPane) {
                 // Evitar duplicar listeners si se llama varias veces
                 for (java.awt.event.ComponentListener cl : scrollPane.getComponentListeners()) {
@@ -396,17 +408,32 @@ public class SupervisorPanel extends javax.swing.JPanel {
                 bajaButton.setFont(btn);
                 altaButton.setFont(btn);
 
-                // 3) Quita los bordes antiguos y pon cards
-                mainPanel.setBorder(BorderFactory.createEmptyBorder());
-                mainPanel.setOpaque(false); // lo vamos a envolver
+                // Estandarizar tamaños para todos los campos de texto
+                Dimension fieldSize = new Dimension(200, 30);
+                nameText.setPreferredSize(fieldSize);
+                mailText.setPreferredSize(fieldSize);
+                passText.setPreferredSize(fieldSize);
+                rolCombo.setPreferredSize(fieldSize);
+                especialidadCombo.setPreferredSize(fieldSize);
 
-                altaPanel.setBorder(BorderFactory.createEmptyBorder()); // fuera etched
+                nameAlta.setPreferredSize(fieldSize);
+                mailAlta.setPreferredSize(fieldSize);
+                passAlta.setPreferredSize(fieldSize);
+                confAlta.setPreferredSize(fieldSize);
+                rolAlta.setPreferredSize(fieldSize);
+                especialidadAlta.setPreferredSize(fieldSize);
+
+                // 3) Quita los bordes antiguos y pon cards
+                mainPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+                mainPanel.setOpaque(false);
+
+                altaPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
                 altaPanel.setOpaque(false);
 
                 // 4) Tabla estilo telecom
                 ThemeManager.getInstance().styleTable(usersTable, jScrollPane1);
 
-                // Remove fixed sizes on table scroll if present
+                // Elimina tamaños fijos en la tabla
                 jScrollPane1.setMinimumSize(new Dimension(200, 200));
                 jScrollPane1.setPreferredSize(null);
                 usersTable.setFillsViewportHeight(true);
@@ -415,13 +442,175 @@ public class SupervisorPanel extends javax.swing.JPanel {
                 setupScrollListener(jScrollPane1);
 
                 ThemeManager.getInstance().cardify(mainPanel);
-                // TelecomUI.cardify(altaPanel); // No cardify altaPanel to avoid double-card
-                // look if implied
 
                 // ---------------------------------------------------------
-                // LAYOUT REFACTOR - ROOT ONLY
-                // (We preserve mainPanel's internal GroupLayout to match AparatosPanel
-                // behavior)
+                // LAYOUT DEL PANEL PRINCIPAL (Formularios izquierda, lista
+                // derecha)
+                // ---------------------------------------------------------
+                mainPanel.removeAll();
+                mainPanel.setLayout(new java.awt.GridBagLayout());
+
+                java.awt.GridBagConstraints mainGbc = new java.awt.GridBagConstraints();
+                mainGbc.insets = new java.awt.Insets(10, 10, 10, 10);
+                mainGbc.anchor = java.awt.GridBagConstraints.NORTHWEST;
+
+                // --- COLUMNA IZQUIERDA: FORMULARIO DE EDICIÓN + FORMULARIO DE ALTA ---
+                javax.swing.JPanel leftFormPanel = new javax.swing.JPanel(new java.awt.GridBagLayout());
+                leftFormPanel.setOpaque(false);
+
+                java.awt.GridBagConstraints fGbc = new java.awt.GridBagConstraints();
+                fGbc.insets = new java.awt.Insets(5, 5, 5, 5);
+                fGbc.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                fGbc.anchor = java.awt.GridBagConstraints.WEST;
+
+                // Fila 0: ID
+                fGbc.gridx = 0;
+                fGbc.gridy = 0;
+                leftFormPanel.add(idLabel, fGbc);
+                fGbc.gridx = 1;
+                leftFormPanel.add(idText, fGbc);
+
+                // Fila 1: Nombre (Izquierda) | Rol (Derecha)
+                fGbc.gridy++;
+                fGbc.gridx = 0;
+                leftFormPanel.add(nameLabel1, fGbc);
+                fGbc.gridx = 1;
+                leftFormPanel.add(nameText, fGbc);
+
+                fGbc.gridx = 2;
+                leftFormPanel.add(rolLabel, fGbc);
+                fGbc.gridx = 3;
+                leftFormPanel.add(rolCombo, fGbc);
+
+                // Fila 2: Email (Izquierda) | Especialidad (Derecha)
+                fGbc.gridy++;
+                fGbc.gridx = 0;
+                leftFormPanel.add(emaiLabel, fGbc);
+                fGbc.gridx = 1;
+                leftFormPanel.add(mailText, fGbc);
+
+                fGbc.gridx = 2;
+                leftFormPanel.add(especialidadLabelMod, fGbc);
+                fGbc.gridx = 3;
+                leftFormPanel.add(especialidadCombo, fGbc);
+
+                // Fila 3: Contraseña (Izquierda)
+                fGbc.gridy++;
+                fGbc.gridx = 0;
+                leftFormPanel.add(contratoLabel1, fGbc);
+                fGbc.gridx = 1;
+                leftFormPanel.add(passText, fGbc);
+
+                // Fila 4: Botones
+                fGbc.gridy++;
+                fGbc.gridx = 0;
+                fGbc.gridwidth = 4; // Abarca las 4 columnas
+                javax.swing.JPanel btnPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+                btnPanel.setOpaque(false);
+                btnPanel.add(modButton);
+                btnPanel.add(bajaButton);
+                leftFormPanel.add(btnPanel, fGbc);
+                fGbc.gridwidth = 1; // resetear
+
+                // Separador
+                fGbc.gridy++;
+                fGbc.gridx = 0;
+                fGbc.gridwidth = 4;
+                leftFormPanel.add(new javax.swing.JSeparator(), fGbc);
+                fGbc.gridwidth = 1;
+
+                // Título de Altas
+                fGbc.gridy++;
+                fGbc.gridx = 0;
+                fGbc.gridwidth = 4;
+                leftFormPanel.add(altasTitle, fGbc);
+                fGbc.gridwidth = 1;
+
+                // --- PANEL DE ALTA ---
+                altaPanel.removeAll();
+                altaPanel.setLayout(new java.awt.GridBagLayout());
+                java.awt.GridBagConstraints aGbc = new java.awt.GridBagConstraints();
+                aGbc.insets = new java.awt.Insets(5, 5, 5, 5);
+                aGbc.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                aGbc.anchor = java.awt.GridBagConstraints.WEST;
+
+                // Fila 0: Nombre (Izquierda) | Rol (Derecha)
+                aGbc.gridy = 0;
+                aGbc.gridx = 0;
+                altaPanel.add(altaLabel, aGbc);
+                aGbc.gridx = 1;
+                altaPanel.add(nameAlta, aGbc);
+
+                aGbc.gridx = 2;
+                altaPanel.add(rLabel, aGbc);
+                aGbc.gridx = 3;
+                altaPanel.add(rolAlta, aGbc);
+
+                // Fila 1: Email (Izquierda) | Especialidad (Derecha)
+                aGbc.gridy++;
+                aGbc.gridx = 0;
+                altaPanel.add(maiLabel, aGbc);
+                aGbc.gridx = 1;
+                altaPanel.add(mailAlta, aGbc);
+
+                aGbc.gridx = 2;
+                altaPanel.add(especialidadLabelAlta, aGbc);
+                aGbc.gridx = 3;
+                altaPanel.add(especialidadAlta, aGbc);
+
+                // Fila 2: Contraseña (Izquierda) | Confirmar (Derecha)
+                aGbc.gridy++;
+                aGbc.gridx = 0;
+                altaPanel.add(passLabel, aGbc);
+                aGbc.gridx = 1;
+                altaPanel.add(passAlta, aGbc);
+
+                aGbc.gridx = 2;
+                altaPanel.add(confiLabel, aGbc);
+                aGbc.gridx = 3;
+                altaPanel.add(confAlta, aGbc);
+
+                // Fila 3: Botón
+                aGbc.gridy++;
+                aGbc.gridx = 0;
+                aGbc.gridwidth = 4;
+                altaPanel.add(altaButton, aGbc);
+
+                // Añadir altaPanel al Formulario Izquierdo
+                fGbc.gridy++;
+                fGbc.gridx = 0;
+                fGbc.gridwidth = 4;
+                leftFormPanel.add(altaPanel, fGbc);
+
+                // Añadir Formulario Izquierdo al Principal
+                mainGbc.gridx = 0;
+                mainGbc.gridy = 0;
+                mainGbc.weightx = 0.0; // Ancho fijo para formularios
+                mainGbc.fill = java.awt.GridBagConstraints.NONE;
+                mainPanel.add(leftFormPanel, mainGbc);
+
+                // --- COLUMNA DERECHA: LISTA ---
+                // Añadir columna espaciadora/hueco
+                mainGbc.gridx = 1;
+                mainGbc.weightx = 0.0;
+                mainGbc.insets = new java.awt.Insets(0, 30, 0, 0); // 30px de separación
+                mainPanel.add(javax.swing.Box.createHorizontalStrut(30), mainGbc);
+
+                // Contenedor de la lista
+                javax.swing.JPanel listPanel = new javax.swing.JPanel(new java.awt.BorderLayout(0, 10));
+                listPanel.setOpaque(false);
+                listPanel.add(userLlabel, java.awt.BorderLayout.NORTH);
+                listPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+
+                mainGbc.gridx = 2;
+                mainGbc.weightx = 1.0; // La lista toma el espacio restante
+                mainGbc.weighty = 1.0;
+                mainGbc.fill = java.awt.GridBagConstraints.BOTH;
+                mainGbc.insets = new java.awt.Insets(10, 0, 10, 10);
+                mainPanel.add(listPanel, mainGbc);
+
+                // ---------------------------------------------------------
+                // PANEL RAÍZ
                 // ---------------------------------------------------------
 
                 usersPanel.removeAll();
@@ -435,7 +624,7 @@ public class SupervisorPanel extends javax.swing.JPanel {
                 gbc.anchor = java.awt.GridBagConstraints.LINE_START;
                 gbc.fill = java.awt.GridBagConstraints.NONE;
 
-                // 1) Title
+                // 1) Título
                 usersPanel.add(ususTitle, gbc);
 
                 // 2) Buscador
@@ -448,17 +637,14 @@ public class SupervisorPanel extends javax.swing.JPanel {
                 gbc.gridy++;
                 usersPanel.add(searchWrapper, gbc);
 
-                // 3) Main Panel (Content)
+                // 3) Panel Principal (Contenido)
                 gbc.gridy++;
                 gbc.weighty = 0.0;
-                gbc.fill = java.awt.GridBagConstraints.HORIZONTAL; // Use available width
-                usersPanel.add(mainPanel, gbc);
-
-                // Push top
-                gbc.gridy++;
+                gbc.fill = java.awt.GridBagConstraints.HORIZONTAL; // Usar ancho disponible
+                // Hacer que mainPanel se expanda correctamente
                 gbc.weighty = 1.0;
                 gbc.fill = java.awt.GridBagConstraints.BOTH;
-                usersPanel.add(javax.swing.Box.createVerticalGlue(), gbc);
+                usersPanel.add(mainPanel, gbc);
 
                 revalidate();
                 repaint();
@@ -573,14 +759,24 @@ public class SupervisorPanel extends javax.swing.JPanel {
                 modButton.setText(
                                 com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("supervisor.btn.modify"));
                 modButton.addActionListener(new java.awt.event.ActionListener() {
+                        /**
+                         * Acción para modificar un usuario existente.
+                         * 
+                         * @param evt Evento de acción.
+                         */
                         public void actionPerformed(java.awt.event.ActionEvent evt) {
                                 modButtonActionPerformed(evt);
                         }
                 });
 
                 bajaButton.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-                bajaButton.setText("Dar de Baja");
+                bajaButton.setText(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("supervisor.btn.down"));
                 bajaButton.addActionListener(new java.awt.event.ActionListener() {
+                        /**
+                         * Acción para dar de baja un usuario.
+                         * 
+                         * @param evt Evento de acción.
+                         */
                         public void actionPerformed(java.awt.event.ActionEvent evt) {
                                 bajaButtonActionPerformed(evt);
                         }
@@ -619,6 +815,11 @@ public class SupervisorPanel extends javax.swing.JPanel {
                 altaButton.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
                 altaButton.setText(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("supervisor.btn.add"));
                 altaButton.addActionListener(new java.awt.event.ActionListener() {
+                        /**
+                         * Acción para dar de alta un nuevo usuario.
+                         * 
+                         * @param evt Evento de acción.
+                         */
                         public void actionPerformed(java.awt.event.ActionEvent evt) {
                                 altaButtonActionPerformed(evt);
                         }
@@ -626,11 +827,6 @@ public class SupervisorPanel extends javax.swing.JPanel {
 
                 // Eliminamos configuraciones de fuente manuales aquí para usar
                 // applyTelecomStyle
-                // especialidadLabelAlta.setFont(new java.awt.Font("Segoe UI", 0, 18));
-                // especialidadAlta.setFont(new java.awt.Font("Segoe UI", 0, 24));
-                // especialidadLabelMod.setFont(new java.awt.Font("Segoe UI", 0, 18));
-                // especialidadCombo.setFont(new java.awt.Font("Segoe UI", 0, 24));
-
                 javax.swing.GroupLayout altaPanelLayout = new javax.swing.GroupLayout(altaPanel);
                 altaPanel.setLayout(altaPanelLayout);
                 altaPanelLayout.setHorizontalGroup(
@@ -1084,14 +1280,14 @@ public class SupervisorPanel extends javax.swing.JPanel {
                 String id = idText.getText().trim();
                 Object rolObj = rolCombo.getSelectedItem();
 
-                // Retrieve original hash from table to compare
+                // Recuperar hash original de la tabla para comparar
                 int selectedRow = usersTable.getSelectedRow();
                 String originalHash = "";
                 if (selectedRow != -1) {
                         originalHash = usersTable.getValueAt(selectedRow, 4).toString();
                 }
 
-                // Use utility to decide whether to use original hash or new hash
+                // Usar utility para decidir si usar hash original o nuevo
                 String passwordToSend = ut.procesarPasswordUpdate(inputPass, originalHash);
 
                 // Validaciones
@@ -1127,7 +1323,8 @@ public class SupervisorPanel extends javax.swing.JPanel {
 
                 if (!ut.checkEmail(email)) {
                         com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(this,
-                                        "El email debe pertenecer al dominio corporativo (@netfix.com o @netfix.es)",
+                                        com.jmmunoz.netfix.config.AppConfig.getInstance()
+                                                        .getMessage("supervisor.error.email.domain"),
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                         .getMessage("supervisor.title.error"),
                                         JOptionPane.ERROR_MESSAGE);
@@ -1182,10 +1379,7 @@ public class SupervisorPanel extends javax.swing.JPanel {
 
                 String password = new String(passAlta.getPassword()).trim();
 
-                // Si confiAlta es JPasswordField, usa esto:
                 String confiPass = new String(confAlta.getPassword()).trim();
-                // Si confiAlta es JTextField, entonces sería:
-                // String confiPass = confiAlta.getText().trim();
 
                 Object rolObj = rolAlta.getSelectedItem();
 
@@ -1224,7 +1418,8 @@ public class SupervisorPanel extends javax.swing.JPanel {
 
                 if (!ut.checkEmail(email)) {
                         com.jmmunoz.netfix.vista.dialogos.ModernDialog.showMessageDialog(this,
-                                        "El email debe pertenecer al dominio corporativo (@netfix.com o @netfix.es)",
+                                        com.jmmunoz.netfix.config.AppConfig.getInstance()
+                                                        .getMessage("supervisor.error.email.domain"),
                                         com.jmmunoz.netfix.config.AppConfig.getInstance()
                                                         .getMessage("supervisor.title.error"),
                                         JOptionPane.ERROR_MESSAGE);
@@ -1352,7 +1547,7 @@ public class SupervisorPanel extends javax.swing.JPanel {
         }
 
         // Variables declaration - do not modify//GEN-BEGIN:variables
-        private javax.swing.JButton bajaButton; // Added manually
+        private javax.swing.JButton bajaButton;
         private javax.swing.JButton altaButton;
         private javax.swing.JLabel altaLabel;
         private javax.swing.JPanel altaPanel;

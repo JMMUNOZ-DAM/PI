@@ -147,10 +147,15 @@
                                   </Group>
                                   <EmptySpace min="-2" pref="122" max="-2" attributes="0"/>
                               </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="lasDlabel" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Component id="feLastLabel" min="-2" pref="243" max="-2" attributes="0"/>
+                              <Group type="102" attributes="0">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <Component id="lasDlabel" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                          <Component id="feLastLabel" min="-2" pref="243" max="-2" attributes="0"/>
+                                      </Group>
+                                      <Component id="obserPanel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  </Group>
                                   <EmptySpace max="32767" attributes="0"/>
                               </Group>
                           </Group>
@@ -160,10 +165,7 @@
                           </Group>
                       </Group>
                       <Group type="102" attributes="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="obserPanel" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="obervaText" min="-2" pref="851" max="-2" attributes="0"/>
-                          </Group>
+                          <Component id="obervaText" min="-2" pref="851" max="-2" attributes="0"/>
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
                   </Group>
@@ -196,7 +198,7 @@
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="estadoLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="contratoLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="statusLabel" alignment="3" min="-2" pref="32" max="-2" attributes="0"/>
+                                  <Component id="statusLabel" alignment="0" min="-2" pref="32" max="-2" attributes="0"/>
                               </Group>
                               <Component id="numConLabel" max="32767" attributes="0"/>
                           </Group>

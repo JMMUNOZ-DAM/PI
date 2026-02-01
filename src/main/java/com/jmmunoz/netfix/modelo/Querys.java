@@ -21,6 +21,14 @@ package com.jmmunoz.netfix.modelo;
  */
 public class Querys {
 
+    /**
+     * Consulta para obtener todas las incidencias activas (abiertas, en proceso,
+     * sin
+     * comunicar).
+     * <p>
+     * Columnas: Incidencia, Contrato, Descripción, Fecha, Agente, Estado.
+     * </p>
+     */
     public static String incidencias = """
             select t1.id_incidencia as Incidencia, t1.id_contrato as Contrato, t1.descripcion as Descripción, t1.fecha_reporte as Fecha, t2.nombre as Agente, t1.estado as Estado
             from netfix.incidencias t1
@@ -28,9 +36,16 @@ public class Querys {
             where estado in ('abierta', 'en_proceso', 'sin_comunicar')
             order by t1.estado desc""";
 
+    /**
+     * Cuenta el número total de incidencias agrupadas por día.
+     */
     public static String inciXdia = "SELECT DATE(fecha_reporte) AS dia, COUNT(*) AS total "
             + "FROM incidencias GROUP BY DATE(fecha_reporte)";
 
+    /**
+     * Cuenta las incidencias por día para un mes y año específicos.
+     * Parámetros: Mes (int), Año (int).
+     */
     public static String inciXmesAnio = """
             SELECT DAY(fecha_reporte) AS dia, COUNT(*) AS total
             FROM netfix.incidencias
@@ -38,12 +53,20 @@ public class Querys {
             GROUP BY DAY(fecha_reporte)
             ORDER BY dia ASC""";
 
+    /**
+     * Obtiene los comentarios asociados a una incidencia.
+     * Parámetros: ID Incidencia.
+     */
     public static String comentarios = """
             SELECT agente as Agente, comentario as Comentario, fecha as Fecha
             FROM NETFIX.COMENTARIOS
             WHERE id_incidencia = ?;
             """;
 
+    /**
+     * Obtiene un resumen del estado de las incidencias (pendientes, resueltas, sin
+     * comunicar).
+     */
     public static String contadorInci = """
             SELECT
                 COUNT(CASE WHEN estado IN ('abierta', 'en_proceso') THEN 1 END) AS pendientes,
@@ -51,12 +74,19 @@ public class Querys {
                 COUNT(CASE WHEN estado = 'sin_comunicar' THEN 1 END) AS sin_comunicar
             FROM netfix.incidencias;""";
 
+    /**
+     * Obtiene todas las incidencias asociadas a un contrato específico.
+     * Parámetros: ID Contrato.
+     */
     public static String inciContra = """
             select *
             from netfix.incidencias as t1
             inner join netfix.contratos as t2 on t1.id_contrato = t2.id_contrato
             where t1.id_contrato = ?""";
 
+    /**
+     * Cuenta las incidencias resueltas agrupadas por técnico.
+     */
     public static String incidenciasResueltasPorTecnico = """
             SELECT t1.id_usuario ID, t2.nombre NOMBRE, COUNT(*) total
             FROM netfix.incidencias t1
@@ -64,17 +94,26 @@ public class Querys {
             WHERE t1.estado = 'resuelta'
             GROUP BY t1.id_usuario, t2.nombre""";
 
+    /**
+     * Obtiene la lista completa de usuarios del sistema.
+     */
     public static String usuarios = """
             select id_usuario as ID, nombre as Nombre, rol as Rol, email as Email, password as Contraseña
             from netfix.usuarios
             """;
 
+    /**
+     * Obtiene usuarios excluyendo a los administradores de sistemas.
+     */
     public static String usuariosStrict = """
             select id_usuario as ID, nombre as Nombre, rol as Rol, email as Email, password as Contraseña
             from netfix.usuarios
             where rol != 'sistemas'
             """;
 
+    /**
+     * Obtiene la lista de roles disponibles.
+     */
     public static String roles = """
             select descripcion
             from netfix.roles
@@ -93,17 +132,26 @@ public class Querys {
                 WHERE id_usuario = ?;
             """;
 
+    /**
+     * Obtiene los datos de un usuario por su email.
+     * Parámetros: Email.
+     */
     public static String usuario = """
             select *
             from netfix.usuarios
             where email = ?
             """;
 
+    /**
+     * Inserta un nuevo usuario en el sistema.
+     * Parámetros: nombre, rol, email, password.
+     */
     public static String altaUser = """
-                INSERT INTO netfix.usuarios (nombre, rol, email, password)
-                VALUES (?, ?, ?, ?);
+            INSERT INTO netfix.usuarios (nombre, rol, email, password)
+            VALUES (?, ?, ?, ?);
             """;
 
+    /** Elimina un usuario por su ID. */
     public static String deleteUser = "DELETE FROM netfix.usuarios WHERE id_usuario = ?";
 
     /**
@@ -119,7 +167,6 @@ public class Querys {
                 t1.numero_serie,
                 t1.mac,
                 t1.id_contrato,
-
                 COALESCE(t2.fecha_actualizacion, ' ') AS fecha_actualizacion,
                 COALESCE(t2.estado_general, 'Desconocido') AS estado_general,
                 COALESCE(t2.velocidad_internet, 'aun no comprobada') AS velocidad_internet,
@@ -138,11 +185,18 @@ public class Querys {
             WHERE (t1.mac = ? OR t1.numero_serie = ? OR t1.id_aparato = ? OR n.numero = ?)
             GROUP BY t1.id_aparato""";
 
+    /**
+     * Cuenta el total de aparatos agrupados por tipo.
+     */
     public static String contadorAparatos = """
             SELECT tipo_aparato, COUNT(*) total
             FROM netfix.aparatos
             GROUP BY tipo_aparato""";
 
+    /**
+     * Obtiene la contraseña de un usuario para validación de login.
+     * Parámetros: Email.
+     */
     public static String login = """
             SELECT password
             FROM netfix.usuarios
@@ -171,6 +225,10 @@ public class Querys {
                 observaciones = VALUES(observaciones)
             """;
 
+    /**
+     * Obtiene aparatos FTTH asociados a un contrato.
+     * Parámetros: ID Contrato.
+     */
     public static String aparatosFTTH = """
             select numero_Serie, mac, modelo
             from netfix.aparatos a
@@ -178,6 +236,10 @@ public class Querys {
             where c.id_contrato = ? and a.tipo_aparato = 'FTTH'
              """;
 
+    /**
+     * Obtiene aparatos 5G (y sus números asociados) para un contrato.
+     * Parámetros: ID Contrato.
+     */
     public static String aparatos5G = """
             SELECT
                 CONCAT('SIM: ', a.numero_serie, '   |   Nº: ', GROUP_CONCAT(n.numero ORDER BY n.numero SEPARATOR ', ')) AS datos_5g
@@ -189,6 +251,10 @@ public class Querys {
             GROUP BY a.id_aparato, a.numero_serie;
              """;
 
+    /**
+     * Obtiene el nombre del titular de un contrato.
+     * Parámetros: ID Contrato.
+     */
     public static String titular = """
             select b.nombre as titular
             from netfix.contratos c
@@ -196,27 +262,48 @@ public class Querys {
             where c.id_contrato = ?;
             """;
 
+    /**
+     * Asigna una incidencia a un usuario (comunicar incidencia).
+     * Parámetros: ID Usuario, ID Incidencia.
+     */
     public static String comunicar = """
             update netfix.incidencias set estado = 'abierta', id_usuario = ?
             where id_incidencia = ?
             """;
 
+    /**
+     * Inserta un nuevo comentario en una incidencia.
+     * Parámetros: ID Incidencia, Agente, Comentario.
+     */
     public static String insertComentario = """
             insert into netfix.comentarios
             (id_incidencia, agente, comentario, fecha)
             values (?, ?, ?, now())
             """;
 
+    /**
+     * Marca una incidencia como solucionada.
+     * Parámetros: ID Usuario, Solución, ID Incidencia.
+     */
     public static String solucionar = """
             update netfix.incidencias set estado = 'solucionada', id_usuario = ?, solucion = ?
             where id_incidencia = ?;
             """;
 
+    /**
+     * Deriva una incidencia a otro usuario/departamento.
+     * Parámetros: ID Usuario, Solución (motivo), ID Incidencia.
+     */
     public static String derivar = """
             update netfix.incidencias set estado = 'derivada', id_usuario = ?, solucion = ?
             where id_incidencia = ?;
             """;
 
+    /**
+     * Obtiene los detalles completos de una incidencia, incluyendo datos del
+     * cliente y técnico.
+     * Parámetros: ID Incidencia.
+     */
     public static String detalleIncidenciaFull = """
             SELECT
                 i.id_incidencia, i.id_contrato, i.descripcion, i.fecha_reporte, i.estado, i.solucion,
@@ -229,29 +316,43 @@ public class Querys {
             WHERE i.id_incidencia = ?
             """;
 
+    /**
+     * Crea una nueva incidencia con todos sus campos.
+     * Parámetros: ID Contrato, Descripción, Fecha, Estado, ID Usuario, Solución.
+     */
     public static String insertIncidenciaFull = """
             INSERT INTO netfix.incidencias (id_contrato, descripcion, fecha_reporte, estado, id_usuario, solucion)
             VALUES (?, ?, ?, ?, ?, ?);
             """;
 
+    /**
+     * Obtiene todos los contratos junto con sus aparatos asociados (si los tienen).
+     */
     public static String allContratosAparatos = """
             SELECT c.id_contrato as Contrato, c.dni_cliente as DNI, a.id_aparato as "ID Aparato", a.numero_serie as "Nº Serie", a.modelo as Modelo, a.tipo_aparato as Tipo
             FROM netfix.contratos c
             LEFT JOIN netfix.aparatos a ON c.id_contrato = a.id_contrato;
             """;
 
+    /**
+     * Obtiene los aparatos que no están asignados a ningún contrato (libres).
+     */
     public static String freeAparatos = """
             SELECT id_aparato as "ID Aparato", numero_serie as "Nº Serie", modelo as Modelo, tipo_aparato as Tipo
             FROM netfix.aparatos
             WHERE id_contrato IS NULL;
             """;
 
+    /** Asigna un contrato a un aparato. Parámetros: ID Contrato, ID Aparato. */
     public static String updateAparatoContrato = "UPDATE netfix.aparatos SET id_contrato = ? WHERE id_aparato = ?";
 
+    /** Libera un aparato de su contrato. Parámetros: ID Aparato. */
     public static String liberarAparato = "UPDATE netfix.aparatos SET id_contrato = NULL WHERE id_aparato = ?";
 
+    /** Sentencia DDL para corregir el esquema (si es necesario). */
     public static String fixSchema = "ALTER TABLE netfix.aparatos MODIFY id_contrato INT NULL; ALTER TABLE netfix.comentarios MODIFY fecha DATETIME DEFAULT CURRENT_TIMESTAMP;";
 
+    /** Obtiene los números telefónicos asociados a un aparato. */
     public static String numerosPorAparato = "SELECT numero FROM netfix.numeros WHERE id_aparato = ?";
 
     public static String insertNumero = "INSERT INTO netfix.numeros (id_aparato, numero, id_contrato) VALUES (?, ?, ?)";
@@ -370,11 +471,11 @@ public class Querys {
 
     public static String getLogs = "SELECT estado, panel, descripcion, fecha_hora FROM netfix.logs WHERE (? IS NULL OR estado = ?) ORDER BY fecha_hora DESC";
 
-    // Helper queries for Cascade Delete (Baja Usuario)
+    // Consultas auxiliares para Cascade Delete (Baja Usuario)
     public static String getTecnicoId = "SELECT id_tecnico FROM netfix.tecnicos WHERE id_usuario = ?";
     public static String deleteAgenda = "DELETE FROM netfix.agenda WHERE id_tecnico = ?";
 
-    // Technician Specialty Management
+    // Gestión de Especialidad de Técnicos
     public static String insertTecnico = "INSERT INTO netfix.tecnicos (id_usuario, especialidad) VALUES (?, ?)";
     public static String updateTecnicoSpec = "UPDATE netfix.tecnicos SET especialidad = ? WHERE id_usuario = ?";
     public static String getTecnicoSpec = "SELECT especialidad FROM netfix.tecnicos WHERE id_usuario = ?";

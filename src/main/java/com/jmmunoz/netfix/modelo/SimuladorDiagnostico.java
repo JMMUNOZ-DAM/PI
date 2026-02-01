@@ -205,7 +205,7 @@ public class SimuladorDiagnostico {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 // Fondo blanco con opacidad (245/255)
-                g2.setColor(TelecomTheme.WHITE); // was white with alpha, simplified or add alpha helper
+                g2.setColor(TelecomTheme.WHITE);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 30, 30);
                 // Borde sutil
                 g2.setColor(TelecomTheme.BORDER_DARK);
@@ -218,7 +218,9 @@ public class SimuladorDiagnostico {
         panel.setBorder(BorderFactory.createEmptyBorder(25, 40, 25, 40));
 
         // Etiqueta de Título
-        JLabel titleLabel = new JLabel("Diagnosticando...", SwingConstants.CENTER);
+        JLabel titleLabel = new JLabel(
+                com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("diag.loading.title"),
+                SwingConstants.CENTER);
         titleLabel.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 18));
         titleLabel.setForeground(TelecomTheme.TEXT_DARK);
         panel.add(titleLabel, java.awt.BorderLayout.NORTH);
@@ -234,7 +236,9 @@ public class SimuladorDiagnostico {
         panel.add(progressBar, java.awt.BorderLayout.CENTER);
 
         // Etiqueta de estado cambiante
-        JLabel statusLabel = new JLabel("Iniciando conexión...", SwingConstants.CENTER);
+        JLabel statusLabel = new JLabel(
+                com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("diag.loading.status"),
+                SwingConstants.CENTER);
         statusLabel.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 13));
         statusLabel.setForeground(TelecomTheme.TEXT_MUTED);
         panel.add(statusLabel, java.awt.BorderLayout.SOUTH);
@@ -249,11 +253,11 @@ public class SimuladorDiagnostico {
             protected Diagnostico doInBackground() throws Exception {
                 // Simular pasos visuales
                 String[] pasos = {
-                        "Verificando integridad física...",
-                        "Midiendo potencia óptica...",
-                        "Testeando latencia de red...",
-                        "Comprobando pérdida de paquetes...",
-                        "Finalizando análisis..."
+                        com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("diag.step.1"),
+                        com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("diag.step.2"),
+                        com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("diag.step.3"),
+                        com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("diag.step.4"),
+                        com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("diag.step.5")
                 };
 
                 for (String paso : pasos) {
@@ -284,22 +288,30 @@ public class SimuladorDiagnostico {
                         model.clear();
                     }
 
-                    model.addElement("--- RESULTADOS DEL DIAGNÓSTICO ---");
+                    model.addElement(
+                            com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("diag.result.header"));
                     model.addElement(" ");
-                    model.addElement("Estado General: " + d.getEstadoGeneral().toUpperCase());
-                    model.addElement("Velocidad: " + String.format("%.2f", d.getVelocidadInternet()) + " Mbps");
-                    model.addElement("Niveles ópticos: " + d.getNivelesOpticos());
-                    model.addElement("Cobertura: " + d.getCobertura());
-                    model.addElement("Ping: " + String.format("%.2f", d.getPing()) + " ms");
+                    model.addElement(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("diag.result.general")
+                            + d.getEstadoGeneral().toUpperCase());
+                    model.addElement(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("diag.result.speed")
+                            + String.format("%.2f", d.getVelocidadInternet()) + " Mbps");
+                    model.addElement(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("diag.result.optical")
+                            + d.getNivelesOpticos());
+                    model.addElement(
+                            com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("diag.result.coverage")
+                                    + d.getCobertura());
+                    model.addElement(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("diag.result.ping")
+                            + String.format("%.2f", d.getPing()) + " ms");
                     model.addElement(" ");
-                    model.addElement("Observaciones: " + d.getObservaciones());
+                    model.addElement(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("diag.result.obs")
+                            + d.getObservaciones());
                     listaDiagnostico.setModel(model);
 
                     // Mensaje final
                     com.jmmunoz.netfix.vista.tema.CustomNotification.show(
                             parent,
-                            "Diagnóstico Finalizado",
-                            "El diagnóstico ha finalizado correctamente.",
+                            com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("diag.msg.success.title"),
+                            com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("diag.msg.success.content"),
                             com.jmmunoz.netfix.vista.tema.CustomNotification.Type.SUCCESS);
 
                     // Ejecutar callback si existe
@@ -311,8 +323,9 @@ public class SimuladorDiagnostico {
                     ex.printStackTrace();
                     com.jmmunoz.netfix.vista.tema.CustomNotification.show(
                             parent,
-                            "Error Crítico",
-                            "Error crítico al generar diagnóstico: " + ex.getMessage(),
+                            com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("diag.msg.error.title"),
+                            com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("diag.msg.error.content")
+                                    + ex.getMessage(),
                             com.jmmunoz.netfix.vista.tema.CustomNotification.Type.ERROR);
                 }
             }

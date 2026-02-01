@@ -56,7 +56,7 @@ public class Utilities {
         try {
             DatabaseManager db = DatabaseManager.getInstance();
 
-            // 1️⃣ Obtener hash desde BD
+            // Obtener hash desde BD
             String hashBD = db.executePreparedString(
                     Querys.login,
                     mail);
@@ -65,8 +65,7 @@ public class Utilities {
             if (hashBD == null) {
                 return false;
             }
-
-            // 2️⃣ Comparar hash
+            // Comparar hash
             return PasswordUtils.checkPassword(
                     passwordIntroducida,
                     hashBD);
@@ -222,14 +221,16 @@ public class Utilities {
                 // UPDATEs)
                 default -> {
                     new Utilities().logAction("ERROR", "utilities.ejecutarConsulta",
-                            "Tipo consulta no válido (esperaba ResultSet): " + tipo);
+                            com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("log.util.error.query.type")
+                                    + tipo);
                     return null;
                 }
             }
 
         } catch (SQLException ex) {
             new Utilities().logAction("ERROR", "utilities.ejecutarConsulta",
-                    "Error ejecutando consulta: " + ex.getMessage());
+                    com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("log.util.error.query.exec")
+                            + ex.getMessage());
         }
         return null;
     }
@@ -275,7 +276,7 @@ public class Utilities {
                             db.executeUpdate(Querys.insertTecnico, idUsuario, especialidad);
                         }
                     } else {
-                        // If role changed from tecnico to something else, remove from tecnicos
+                        // Si el rol cambia de tecnico a algo mas, eliminar de tecnicos
                         db.executeUpdate(Querys.deleteTecnico, idUsuario);
                     }
                     yield result;
@@ -285,8 +286,8 @@ public class Utilities {
                     int result = db.executeUpdate(Querys.altaUser, params[0], params[1], params[2], params[3]);
 
                     if (params.length > 4 && "tecnico".equalsIgnoreCase(params[1].toString())) {
-                        // Get new user ID
-                        java.sql.ResultSet rs = db.executeQuery(Querys.usuario, params[2]); // query by email
+                        // Obtener nuevo ID de usuario
+                        java.sql.ResultSet rs = db.executeQuery(Querys.usuario, params[2]);
                         if (rs != null && rs.next()) {
                             int newId = rs.getInt("id_usuario");
                             db.executeUpdate(Querys.insertTecnico, newId, params[4]);
@@ -297,13 +298,12 @@ public class Utilities {
                     yield result;
                 }
                 case DELETEUSER -> {
-                    // Check if user is technician and has agenda
-                    // Query for technician ID
-                    // params[0] is id_usuario
+                    // Si el usuario es tecnico y tiene agenda, eliminar agenda
+                    // params[0] es id_usuario
                     java.sql.ResultSet rs = db.executeQuery(Querys.getTecnicoId, params);
                     if (rs != null && rs.next()) {
                         int idTecnico = rs.getInt("id_tecnico");
-                        // Delete Agenda items for this technician
+                        // Eliminar Agenda de este tecnico
                         db.executeUpdate(Querys.deleteAgenda, idTecnico);
                     }
                     if (rs != null)
@@ -365,12 +365,23 @@ public class Utilities {
      */
     public class PasswordUtils {
 
-        // Crear hash al registrar usuario
+        /**
+         * Genera un hash seguro para la contraseña usando BCrypt.
+         * 
+         * @param plainPassword Contraseña en texto plano.
+         * @return Hash de la contraseña.
+         */
         public static String hashPassword(String plainPassword) {
             return BCrypt.hashpw(plainPassword, BCrypt.gensalt(10));
         }
 
-        // Comparar password con hash
+        /**
+         * Verifica si una contraseña en texto plano coincide con el hash almacenado.
+         * 
+         * @param plainPassword  Contraseña en texto plano.
+         * @param hashedPassword Hash almacenado.
+         * @return true si coinciden.
+         */
         public static boolean checkPassword(String plainPassword, String hashedPassword) {
             return BCrypt.checkpw(plainPassword, hashedPassword);
         }
@@ -459,7 +470,7 @@ public class Utilities {
                 int modelRow = table.convertRowIndexToModel(row);
                 TableModel model = table.getModel();
 
-                // 🔐 Comprobación de columnas
+                // Comprobación de columnas
                 if (model.getColumnCount() > 5) {
 
                     Object estadoValor = model.getValueAt(modelRow, 5);
@@ -534,7 +545,9 @@ public class Utilities {
                 dataset.addValue(total, "Incidencias", dia);
             }
         } catch (SQLException ex) {
-            logAction("ERROR", "utilities.cargarGrafico", "Error cargando gráfico: " + ex.getMessage());
+            logAction("ERROR", "utilities.cargarGrafico",
+                    com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("log.util.error.chart")
+                            + ex.getMessage());
         }
 
         JFreeChart chart = ChartFactory.createBarChart(
@@ -857,6 +870,13 @@ public class Utilities {
         return huecos;
     }
 
+    /**
+     * Compara si dos fechas corresponden al mismo día del año.
+     * 
+     * @param d1 Fecha 1.
+     * @param d2 Fecha 2.
+     * @return true si es el mismo día.
+     */
     private boolean isSameDay(java.util.Date d1, java.util.Date d2) {
         java.util.Calendar c1 = java.util.Calendar.getInstance();
         c1.setTime(d1);

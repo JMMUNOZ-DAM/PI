@@ -5,7 +5,6 @@ import com.jmmunoz.netfix.vista.tema.TelecomTheme;
 import java.awt.BorderLayout;
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Window;
@@ -31,6 +30,13 @@ public class ModernDialog extends JDialog {
     private final JPanel contentPanel;
     private final JPanel buttonPanel;
 
+    /**
+     * Crea un nuevo diálogo moderno.
+     * 
+     * @param owner         Ventana propietaria del diálogo.
+     * @param title         Título del diálogo.
+     * @param bodyComponent Componente principal a mostrar en el cuerpo del diálogo.
+     */
     public ModernDialog(Window owner, String title, JComponent bodyComponent) {
         super(owner, title, ModalityType.APPLICATION_MODAL);
 
@@ -93,6 +99,12 @@ public class ModernDialog extends JDialog {
     /**
      * Añade un botón de acción principal (Aceptar/Guardar).
      */
+    /**
+     * Añade un botón de acción principal (Aceptar/Guardar).
+     * 
+     * @param text   Texto del botón.
+     * @param action Acción a ejecutar al hacer clic.
+     */
     public void addActionButton(String text, Runnable action) {
         JButton btn = new JButton(text);
         stylePrimaryButton(btn);
@@ -105,6 +117,11 @@ public class ModernDialog extends JDialog {
 
     /**
      * Añade botón Aceptar que marca confirmed = true y cierra.
+     */
+    /**
+     * Añade botón Aceptar que marca confirmed = true y cierra.
+     * 
+     * @param text Texto del botón.
      */
     public void addAcceptButton(String text) {
         JButton btn = new JButton(text);
@@ -119,6 +136,11 @@ public class ModernDialog extends JDialog {
 
     /**
      * Añade botón Cancelar que cierra.
+     */
+    /**
+     * Añade botón Cancelar que cierra.
+     * 
+     * @param text Texto del botón.
      */
     public void addCancelButton(String text) {
         JButton btn = new JButton(text);
@@ -145,10 +167,18 @@ public class ModernDialog extends JDialog {
                 new EmptyBorder(7, 19, 7, 19)));
     }
 
+    /**
+     * Verifica si el usuario confirmó la acción (clic en Aceptar).
+     * 
+     * @return true si se confirmó, false si se canceló o cerró.
+     */
     public boolean isConfirmed() {
         return confirmed;
     }
 
+    /**
+     * Muestra el diálogo y bloquea hasta que se cierre.
+     */
     public void showDialog() {
         pack();
         setLocationRelativeTo(getOwner());
@@ -157,6 +187,14 @@ public class ModernDialog extends JDialog {
 
     // --- MÉTODOS ESTÁTICOS DE AYUDA PARA REEMPLAZAR JOPTIONPANE ---
 
+    /**
+     * Muestra un diálogo de mensaje informativo.
+     * 
+     * @param parentComponent Componente padre.
+     * @param message         Mensaje a mostrar.
+     * @param title           Título del diálogo.
+     * @param messageType     Tipo de mensaje (constantes de JOptionPane).
+     */
     public static void showMessageDialog(Component parentComponent, Object message, String title, int messageType) {
         Window owner = (parentComponent instanceof Window) ? (Window) parentComponent
                 : javax.swing.SwingUtilities.getWindowAncestor(parentComponent);
@@ -176,10 +214,25 @@ public class ModernDialog extends JDialog {
     }
 
     // Sobrecarga: showMessageDialog solo con mensaje (usa título/tipo por defecto)
+    /**
+     * Muestra un diálogo de mensaje simple (sin título ni icono específicos).
+     * 
+     * @param parentComponent Componente padre.
+     * @param message         Mensaje a mostrar.
+     */
     public static void showMessageDialog(Component parentComponent, Object message) {
         showMessageDialog(parentComponent, message, "Info", javax.swing.JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /**
+     * Muestra un diálogo de confirmación (Aceptar/Cancelar).
+     * 
+     * @param parentComponent Componente padre.
+     * @param message         Mensaje o componente a mostrar.
+     * @param title           Título del diálogo.
+     * @param optionType      Tipo de opciones (ej. JOptionPane.OK_CANCEL_OPTION).
+     * @return Opción seleccionada (JOptionPane.OK_OPTION o CANCEL_OPTION).
+     */
     public static int showConfirmDialog(Component parentComponent, Object message, String title, int optionType) {
         Window owner = (parentComponent instanceof Window) ? (Window) parentComponent
                 : javax.swing.SwingUtilities.getWindowAncestor(parentComponent);
@@ -206,10 +259,26 @@ public class ModernDialog extends JDialog {
     }
 
     // Sobrecarga: showConfirmDialog solo con mensaje
+    /**
+     * Muestra un diálogo de confirmación simple.
+     * 
+     * @param parentComponent Componente padre.
+     * @param message         Mensaje a mostrar.
+     * @return Opción seleccionada.
+     */
     public static int showConfirmDialog(Component parentComponent, Object message) {
         return showConfirmDialog(parentComponent, message, "Confirm", javax.swing.JOptionPane.OK_CANCEL_OPTION);
     }
 
+    /**
+     * Muestra un diálogo para solicitar una entrada texto al usuario.
+     * 
+     * @param parentComponent Componente padre.
+     * @param message         Mensaje o etiqueta.
+     * @param title           Título del diálogo.
+     * @param messageType     Tipo de mensaje.
+     * @return Texto ingresado o null si canceló.
+     */
     public static String showInputDialog(Component parentComponent, Object message, String title, int messageType) {
         Window owner = (parentComponent instanceof Window) ? (Window) parentComponent
                 : javax.swing.SwingUtilities.getWindowAncestor(parentComponent);
@@ -243,11 +312,30 @@ public class ModernDialog extends JDialog {
     }
 
     // Sobrecarga: showInputDialog solo con mensaje
+    /**
+     * Muestra un diálogo de entrada simple.
+     * 
+     * @param parentComponent Componente padre.
+     * @param message         Mensaje a mostrar.
+     * @return Texto ingresado o null.
+     */
     public static String showInputDialog(Component parentComponent, Object message) {
         return showInputDialog(parentComponent, message, "Input", javax.swing.JOptionPane.PLAIN_MESSAGE);
     }
 
     // Sobrecarga: showInputDialog para selección genérica (Desplegable)
+    /**
+     * Muestra un diálogo con un desplegable para selección.
+     * 
+     * @param parentComponent       Componente padre.
+     * @param message               Mensaje a mostrar.
+     * @param title                 Título del diálogo.
+     * @param messageType           Tipo de mensaje.
+     * @param icon                  Icono a mostrar.
+     * @param selectionValues       Array de objetos seleccionables.
+     * @param initialSelectionValue Valor seleccionado por defecto.
+     * @return Objeto seleccionado o null si canceló.
+     */
     public static Object showInputDialog(Component parentComponent, Object message, String title, int messageType,
             Icon icon, Object[] selectionValues, Object initialSelectionValue) {
 

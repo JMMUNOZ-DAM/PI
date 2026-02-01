@@ -51,14 +51,17 @@ public class IncidPanel extends javax.swing.JPanel {
         /**
          * Creates new form incidenciasPanel
          */
+        /**
+         * Crea un nuevo panel de incidencias.
+         * 
+         * @param user Usuario actual que ha iniciado sesión.
+         */
         public IncidPanel(com.jmmunoz.netfix.modelo.Usuario user) {
                 this.currentUser = user;
                 initComponents();
                 initCustomComponents();
                 configurarBuscador();
                 cargarDatos();
-                // log de depuración eliminado si existe, añadiendo log de éxito explícito en
-                // cargarDatos si es necesario o aquí
                 setupSelectionListener();
         }
 
@@ -131,6 +134,11 @@ public class IncidPanel extends javax.swing.JPanel {
                 searchField.addActionListener(e -> searchButton.doClick());
         }
 
+        /**
+         * Configura el listener para redimensionar columnas dinámicamente.
+         * 
+         * @param scrollPane ScrollPane que contiene la tabla.
+         */
         private void setupScrollListener(javax.swing.JScrollPane scrollPane) {
                 // Evitar duplicar listeners si se llama varias veces
                 for (java.awt.event.ComponentListener cl : scrollPane.getComponentListeners()) {
@@ -176,7 +184,7 @@ public class IncidPanel extends javax.swing.JPanel {
                                                         -1, column);
                         width = Math.max(header.getPreferredSize().width + 20, width);
 
-                        // Contenido (Muestrear 50 filas)
+                        // Contenido (Mostrar 50 filas)
                         int limit = Math.min(table.getRowCount(), 50);
                         for (int row = 0; row < limit; row++) {
                                 java.awt.Component renderer = table.prepareRenderer(table.getCellRenderer(row, column),
@@ -204,11 +212,6 @@ public class IncidPanel extends javax.swing.JPanel {
                         columnModel.getColumn(column).setPreferredWidth(finalWidth);
                 }
         }
-
-        /**
-         * Ajusta el ancho de las columnas de la tabla de incidencias.
-         * Prioriza la descripción y campos de texto largos.
-         */
 
         /**
          * This method is called from within the constructor to initialize the form.
@@ -701,6 +704,11 @@ public class IncidPanel extends javax.swing.JPanel {
                                                                 .addGap(0, 0, Short.MAX_VALUE)));
         }// </editor-fold>//GEN-END:initComponents
 
+        /**
+         * Ejecuta la búsqueda en la tabla de incidencias según el texto ingresado.
+         * 
+         * @param evt Evento de acción.
+         */
         private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_searchButtonActionPerformed
                 String text = searchField.getText();
                 if (text.trim().isEmpty()) {
@@ -712,6 +720,12 @@ public class IncidPanel extends javax.swing.JPanel {
                 }
         }// GEN-LAST:event_searchButtonActionPerformed
 
+        /**
+         * Maneja la acción de actualizar una incidencia (comunicar o añadir
+         * comentario).
+         * 
+         * @param evt Evento de acción.
+         */
         private void actuButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_actuButtonActionPerformed
                 try {
                         int idIncidencia = getSelectedIncidenciaId();
@@ -771,6 +785,12 @@ public class IncidPanel extends javax.swing.JPanel {
                 }
         }// GEN-LAST:event_actuButtonActionPerformed
 
+        /**
+         * Maneja la acción de marcar una incidencia como solucionada.
+         * Solicita una descripción de la solución al usuario.
+         * 
+         * @param evt Evento de acción.
+         */
         private void soluButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_soluButtonActionPerformed
                 try {
                         int idIncidencia = getSelectedIncidenciaId();
@@ -1036,8 +1056,6 @@ public class IncidPanel extends javax.swing.JPanel {
                                                 CustomNotification.Type.WARNING);
                         }
                 });
-
-                // Apply Theme
                 ThemeManager.getInstance().applyIncidPanelTheme(this);
         }
         // Local styling methods removed - moved to ThemeManager
@@ -1251,7 +1269,7 @@ public class IncidPanel extends javax.swing.JPanel {
                                 return Integer.parseInt(text.trim());
                         }
                 } catch (NumberFormatException e) {
-                        // Ignore
+                        // Ignora
                 }
                 return -1;
         }
@@ -1319,12 +1337,12 @@ public class IncidPanel extends javax.swing.JPanel {
         private void restoreSelection(int idIncidencia) {
                 try {
                         for (int i = 0; i < inciTabla.getRowCount(); i++) {
-                                Object val = inciTabla.getValueAt(i, 0); // Assuming ID is col 0
+                                Object val = inciTabla.getValueAt(i, 0); // Asumiendo ID es col 0
                                 if (val != null) {
                                         int id = Integer.parseInt(val.toString());
                                         if (id == idIncidencia) {
                                                 inciTabla.setRowSelectionInterval(i, i);
-                                                // Ensure viewport scrolls to selection
+                                                // Asegura que el viewport se desplace a la selección
                                                 java.awt.Rectangle rect = inciTabla.getCellRect(i, 0, true);
                                                 inciTabla.scrollRectToVisible(rect);
                                                 return;
@@ -1332,7 +1350,7 @@ public class IncidPanel extends javax.swing.JPanel {
                                 }
                         }
                 } catch (Exception e) {
-                        ut.logAction("WARNING", "IncidPanel", "Error restoring selection: " + e.getMessage());
+                        ut.logAction("WARNING", "IncidPanel", "Error restaurando selección: " + e.getMessage());
                 }
         }
 }

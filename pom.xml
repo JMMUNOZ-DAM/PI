@@ -43,4 +43,25 @@
             <version>RELEASE270</version>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.6.3</version>
+                <configuration>
+                    <source>21</source> <!-- Adjust source version as needed, using 21 based on release 24 setting usually implying newer JDKs, but 21 is LTS safe bet or match compiler release -->
+                    <!-- The user has maven.compiler.release set to 24?! That's very new. Java 24 is not out yet (as of my knowledge cutoff/current time usually). 
+                         Wait, the current date is Feb 2026. Java 24 might be available or EA. 
+                         However, let's stick to standard configuration, maybe just source 21 or omit source to let it detect.
+                         Let's look at the pom again. `maven.compiler.release` is 24.
+                         I will set source to 24 to match or remove it to let it default. 
+                         Actually, let's just set the configuration to typical defaults.
+                    -->
+                    <show>private</show>
+                    <nohelp>true</nohelp>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

@@ -18,7 +18,7 @@ public final class TelecomTheme {
     }
 
     // Marca / Acento (cyan telecom)
-    public static final Color ACCENT = new Color(0, 195, 255); // #00C3FF
+    public static final Color ACCENT = new Color(43, 107, 180, 236); // #2b6bb4ec
     public static final Color ACCENT_DARK = new Color(10, 80, 160); // #0A50A0
 
     // Neutros claros
@@ -27,13 +27,13 @@ public final class TelecomTheme {
     public static final Color BORDER = new Color(220, 226, 235); // #DCE2EB
 
     // Texto
-    public static final Color TEXT = new Color(16, 24, 40); // #101828
+    public static final Color TEXT = new Color(17, 30, 59, 255); // #1a305eff
     public static final Color TEXT_MUTED = new Color(102, 112, 133);// #667085
 
     // Barra Lateral
-    public static final Color NAV_BG = new Color(10, 18, 35); // #0A1223
-    public static final Color NAV_BG_ACTIVE = new Color(14, 26, 48);// #0E1A30
-    public static final Color NAV_BG_HOVER = new Color(18, 34, 62); // #12223E
+    public static final Color NAV_BG = new Color(17, 22, 43); // #111e3bff
+    public static final Color NAV_BG_ACTIVE = new Color(10, 80, 160); // #0A50A0
+    public static final Color NAV_BG_HOVER = new Color(10, 80, 160); // #0A50A0
     public static final Color TEXT_ON_DARK = new Color(230, 235, 245); // #E6EBF5
 
     // Estados (útiles para incidencias)
@@ -42,7 +42,7 @@ public final class TelecomTheme {
     public static final Color ERROR = new Color(220, 70, 70); // #DC4646
 
     // Colores Gráficas y Visualización
-    public static final Color CHART_PRIMARY = new Color(20, 100, 192); // #1464C0
+    public static final Color CHART_PRIMARY = new Color(43, 107, 180, 236); // #2b6bb4ec
     public static final Color GRID_LINE = new Color(240, 240, 240); // #F0F0F0
 
     // Bordes y Fondos Adicionales
@@ -58,6 +58,6 @@ public final class TelecomTheme {
 
     public static final Color TRANSPARENT = new Color(0, 0, 0, 0); // Transparente
     public static final Color BG_ERROR = new Color(255, 236, 236); // #FFECEC
-    public static final Color TEXT_ERROR = new Color(153, 0, 0); // #990000
+    public static final Color TEXT_ERROR = new Color(153, 0, 0, 185); // #990000b9
     public static final Color TEXT_DARK = new Color(50, 50, 50); // #323232
 }

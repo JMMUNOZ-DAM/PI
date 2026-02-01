@@ -136,12 +136,19 @@ public class login extends javax.swing.JFrame {
                 setLocationRelativeTo(null);
         }// </editor-fold>//GEN-END:initComponents
 
+        /**
+         * Maneja la acción de iniciar sesión.
+         * Valida credenciales contra la base de datos e inicia la aplicación principal
+         * si es correcto.
+         * 
+         * @param evt Evento de acción.
+         */
         private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_loginButtonActionPerformed
 
                 String email = mailUser.getText().trim();
                 String pass = new String(password.getPassword()).trim();
 
-                // 1️⃣ Campos vacíos
+                // 1. Campos vacíos
                 if (email.isEmpty() || pass.isEmpty()) {
                         CustomNotification.show(
                                         this,

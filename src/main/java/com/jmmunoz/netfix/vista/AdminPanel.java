@@ -27,10 +27,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
 /**
- *
- * @author Juanma Muñoz
- */
-/**
  * Panel de Administración del Sistema (Dashboard Principal).
  * <p>
  * Centraliza la gestión de contratos y dispositivos. Permite a los
@@ -75,11 +71,14 @@ public class AdminPanel extends javax.swing.JPanel {
     /**
      * Creates new form incidenciasPanel
      */
+    /**
+     * Crea un nuevo formulario AdminPanel.
+     * Inicializa componentes, aplica temas, verifica esquema de BD y carga datos.
+     */
     public AdminPanel() {
         initComponents();
         setupCustomUI();
         com.jmmunoz.netfix.vista.tema.ThemeManager.getInstance().applyAdminPanelTheme(this);
-        // Asegurar que la BD soporta id_contrato NULL
         Utilities ut = new Utilities();
         ut.ejecutarUpdate(Utilities.TipoConsulta.FIX_SCHEMA);
         ut.logAction("OK", "AdminPanel", "Esquema de base de datos verificado/corregido.");
@@ -87,6 +86,10 @@ public class AdminPanel extends javax.swing.JPanel {
         cargarContratos();
     }
 
+    /**
+     * Configura la interfaz de usuario personalizada.
+     * Inicializa tablas, modelos, paneles de gestión y layouts.
+     */
     private void setupCustomUI() {
         // Inicializar componentes
         contratosTable = new JTable();
@@ -185,10 +188,10 @@ public class AdminPanel extends javax.swing.JPanel {
         JPanel searchWrapper = new JPanel();
         searchWrapper.setOpaque(false);
 
-        // Corrección: Hacer barra de búsqueda más ancha
+        // Hacer barra de búsqueda más ancha
         seaField.setPreferredSize(new java.awt.Dimension(300, 35));
         seaField.setFont(new java.awt.Font("Segoe UI", 0, 16));
-        // Corrección: Añadir soporte tecla Enter
+        // Añadir soporte tecla Enter
         seaField.addActionListener(e -> filterTable());
 
         searchWrapper.add(seaField);
@@ -220,6 +223,10 @@ public class AdminPanel extends javax.swing.JPanel {
         adminPanel.add(managementPanel, gbc);
     }
 
+    /**
+     * Configura el layout del panel de gestión lateral.
+     * Organiza etiquetas y botones de acción.
+     */
     private void setupManagementLayout() {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 10, 5, 10);
@@ -260,8 +267,6 @@ public class AdminPanel extends javax.swing.JPanel {
         }
     }
 
-    // applyTelecomStyle eliminado - lógica movida a ThemeManager
-
     /**
      * Carga la lista completa de contratos desde la base de datos.
      * Utiliza la consulta {@code ALL_CONTRATOS_APARATOS} para obtener detalles
@@ -297,6 +302,10 @@ public class AdminPanel extends javax.swing.JPanel {
 
     /**
      * Ajusta el ancho de las columnas de la tabla al contenido y a la cabecera.
+     */
+    /**
+     * Configura el listener para redimensionar columnas al cambiar el tamaño del
+     * scroll pane.
      */
     private void setupScrollListener() {
         scrollPane.addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -388,7 +397,9 @@ public class AdminPanel extends javax.swing.JPanel {
         selectedContratoId = (int) tableModel.getValueAt(row, 0);
         Object apId = tableModel.getValueAt(row, 2);
 
-        selectedContractLabel.setText("Contrato ID: " + selectedContratoId);
+        selectedContractLabel
+                .setText(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("admin.label.contract.id")
+                        + selectedContratoId);
 
         if (apId != null) {
             selectedAparatoId = (int) apId;
@@ -396,7 +407,8 @@ public class AdminPanel extends javax.swing.JPanel {
             String modelo = (String) tableModel.getValueAt(row, 4);
             selectedTipoAparato = (String) tableModel.getValueAt(row, 5);
 
-            deviceLabel.setText("Dispositivo: " + modelo + " (" + serie + ") [" + selectedTipoAparato + "]");
+            deviceLabel.setText(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("admin.label.device")
+                    + modelo + " (" + serie + ") [" + selectedTipoAparato + "]");
             releaseButton.setEnabled(true);
 
             if ("5G".equalsIgnoreCase(selectedTipoAparato)) {
@@ -683,7 +695,10 @@ public class AdminPanel extends javax.swing.JPanel {
         }
     }
 
-    // Clase auxiliar para ComboBox
+    /**
+     * Clase auxiliar para representar items de dispositivo en ComboBoxes o
+     * diálogos.
+     */
     private static class DeviceItem {
         int id;
         String serie, modelo, tipo;
@@ -709,6 +724,11 @@ public class AdminPanel extends javax.swing.JPanel {
         private javax.swing.table.DefaultTableModel logModel;
         private javax.swing.JComboBox<String> filterCombo;
 
+        /**
+         * Crea un nuevo diálogo de visor de logs.
+         * 
+         * @param parent Frame padre para modalidad.
+         */
         public LogViewerDialog(java.awt.Frame parent) {
             super(parent, true);
             setupUI();
@@ -716,6 +736,9 @@ public class AdminPanel extends javax.swing.JPanel {
             setLocationRelativeTo(parent);
         }
 
+        /**
+         * Configura la interfaz gráfica del diálogo.
+         */
         private void setupUI() {
             setSize(900, 600);
             setLayout(new java.awt.BorderLayout(10, 10));
@@ -762,6 +785,9 @@ public class AdminPanel extends javax.swing.JPanel {
             add(new javax.swing.JScrollPane(logTable), java.awt.BorderLayout.CENTER);
         }
 
+        /**
+         * Carga los logs desde la base de datos aplicando filtros si es necesario.
+         */
         private void loadLogs() {
             String filter = (String) filterCombo.getSelectedItem();
             if (com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("admin.log.filter.all").equals(filter))
@@ -801,13 +827,7 @@ public class AdminPanel extends javax.swing.JPanel {
         searchButtSis = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
-        // setPreferredSize(new java.awt.Dimension(1592, 946)); // Removed fixed
-        // preference
-
         adminPanel.setBackground(new java.awt.Color(255, 255, 255));
-        // adminPanel.setPreferredSize(new java.awt.Dimension(1592, 946)); // Removed
-        // fixed preference
-
         sisTitle.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
         sisTitle.setText(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("admin.title.system"));
 

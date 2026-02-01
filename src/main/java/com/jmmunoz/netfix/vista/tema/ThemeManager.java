@@ -109,11 +109,16 @@ public class ThemeManager {
         UIManager.put("TableHeader.font", new Font("Consolas", Font.BOLD, 13));
 
         // 9) Mensajes de Dialogo en Español
-        UIManager.put("OptionPane.yesButtonText", "Sí");
-        UIManager.put("OptionPane.noButtonText", "No");
-        UIManager.put("OptionPane.cancelButtonText", "Cancelar");
-        UIManager.put("OptionPane.okButtonText", "Aceptar");
-        UIManager.put("OptionPane.title.text", "Mensaje");
+        UIManager.put("OptionPane.yesButtonText",
+                com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("option.yes"));
+        UIManager.put("OptionPane.noButtonText",
+                com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("option.no"));
+        UIManager.put("OptionPane.cancelButtonText",
+                com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("option.cancel"));
+        UIManager.put("OptionPane.okButtonText",
+                com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("option.ok"));
+        UIManager.put("OptionPane.title.text",
+                com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("option.title"));
 
         FlatLaf.updateUI();
     }
@@ -124,7 +129,7 @@ public class ThemeManager {
      * @param view Instancia de la ventana de login.
      */
     public void applyLoginTheme(login view) {
-        view.setTitle("NETFIX | Acceso");
+        view.setTitle(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("login.window.title"));
         view.setMinimumSize(new Dimension(560, 420));
         view.setLocationRelativeTo(null);
 
@@ -167,7 +172,7 @@ public class ThemeManager {
                         + "border: 6,12,6,12; font: bold 12 'Segoe UI';");
 
         /* ========================= SUBTÍTULO ========================= */
-        JLabel subtitle = new JLabel("Diagnóstico y gestión de tickets · Telecomunicaciones");
+        JLabel subtitle = new JLabel(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("login.subtitle"));
         subtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
         subtitle.putClientProperty(FlatClientProperties.STYLE, "font: plain 14 'Segoe UI'; foreground: #667085;");
 
@@ -189,8 +194,9 @@ public class ThemeManager {
         view.getPassword().setMaximumSize(new Dimension(Integer.MAX_VALUE, 42));
 
         view.getMailUser().putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT,
-                "usuario@netfix.com / usuario@netfix.es");
-        view.getPassword().putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Introduce tu contraseña");
+                com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("login.placeholder.user"));
+        view.getPassword().putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT,
+                com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("login.placeholder.pass"));
 
         view.getMailUser().addActionListener(e -> view.getLoginButton().doClick());
         view.getPassword().addActionListener(e -> view.getLoginButton().doClick());
@@ -208,7 +214,7 @@ public class ThemeManager {
         card.add(createFullWidthPanel(view.getLoginButton()));
 
         /* ========================= PIE DE PÁGINA ========================= */
-        JLabel footer = new JLabel("Soporte: NOC / Sistemas · NETFIX");
+        JLabel footer = new JLabel(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("login.footer"));
         footer.setAlignmentX(Component.CENTER_ALIGNMENT);
         footer.putClientProperty(FlatClientProperties.STYLE, "font: 12 'Segoe UI'; foreground: #98A2B3;");
 
@@ -351,7 +357,7 @@ public class ThemeManager {
         return normalBorder;
     }
 
-    // También podemos tener un método en ThemeManager para establecer estilo de
+    // También tenemos un método en ThemeManager para establecer estilo de
     // botón activo directamente
     public void setActiveNavButton(JButton button) {
         button.setBackground(TelecomTheme.NAV_BG_ACTIVE);
@@ -497,7 +503,7 @@ public class ThemeManager {
 
         // Envoltorio para icono con fondo suave
         JPanel iconWrapper = new JPanel(new BorderLayout());
-        iconWrapper.setOpaque(false); // O pintar un fondo suave si se desea
+        iconWrapper.setOpaque(false);
         iconWrapper.add(iconLabel, BorderLayout.CENTER);
 
         // Ensamblaje
@@ -591,6 +597,11 @@ public class ThemeManager {
         }
     }
 
+    /**
+     * Aplica estilo de tarjeta (borde redondeado, fondo blanco) a un componente.
+     * 
+     * @param c Componente a estilizar.
+     */
     public void cardify(javax.swing.JComponent c) {
         c.setOpaque(true);
         c.setBackground(TelecomTheme.SURFACE);
@@ -632,6 +643,8 @@ public class ThemeManager {
             view.getSearchButton().setFont(btnFont);
         if (view.getDiagnoButton() != null)
             view.getDiagnoButton().setFont(btnFont);
+        if (view.getClearButton() != null)
+            view.getClearButton().setFont(btnFont);
 
         // ===== PANEL PRINCIPAL =====
         if (view.getMainPanel() != null) {
@@ -734,9 +747,7 @@ public class ThemeManager {
         view.add(view.getApaTitle(), gbc);
 
         // 2) Buscador (envuelto en panel flow para centrarlo junto)
-        // Necesitamos comprobar si podemos añadir searchField y searchButton
-        // directamente, asumiendo
-        // que la lógica maneja nulos
+
         if (view.getSearchField() != null && view.getSearchButton() != null) {
             JPanel searchWrapper = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 10, 0));
             searchWrapper.setOpaque(false);
@@ -755,13 +766,22 @@ public class ThemeManager {
             view.add(view.getMainPanel(), gbc);
         }
 
-        // 4) Botón Diagnóstico
+        // 4) Botones de Acción (Diagnóstico + Limpiar)
         gbc.gridy++;
         gbc.weighty = 0.0;
         gbc.fill = GridBagConstraints.NONE;
+
+        JPanel actionButtonsPanel = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 15, 0));
+        actionButtonsPanel.setOpaque(false);
+
         if (view.getDiagnoButton() != null) {
-            view.add(view.getDiagnoButton(), gbc);
+            actionButtonsPanel.add(view.getDiagnoButton());
         }
+        if (view.getClearButton() != null) {
+            actionButtonsPanel.add(view.getClearButton());
+        }
+
+        view.add(actionButtonsPanel, gbc);
 
         // Espaciador final
         gbc.gridy++;
@@ -801,7 +821,7 @@ public class ThemeManager {
                 table.getColumnModel().getColumn(5).setPreferredWidth(100);
 
             } catch (Exception e) {
-                // Failsafe
+
             }
         }
     }
@@ -823,6 +843,11 @@ public class ThemeManager {
         // createKPICard()
     }
 
+    /**
+     * Aplica el tema al diálogo de detalles de incidencia.
+     * 
+     * @param dialog El JDialog a estilizar.
+     */
     public void applyIncidenciaDetalleTheme(javax.swing.JDialog dialog) {
         dialog.getContentPane().setBackground(TelecomTheme.APP_BG);
     }

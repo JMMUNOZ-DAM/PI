@@ -31,7 +31,7 @@ import com.jmmunoz.netfix.vista.tema.TelecomTheme;
 import com.jmmunoz.netfix.vista.tema.ThemeManager;
 
 /**
- * Panel de Estadísticas (Dashboard) - Rediseño Total
+ * Panel de Estadísticas (Dashboard)
  * 
  * @author Juanma Muñoz
  */
@@ -58,9 +58,14 @@ public class EstadisPanel extends javax.swing.JPanel {
                 setBackground(TelecomTheme.APP_BG);
 
                 buildDashboardLayout();
+                // Carga inicial de datos
                 cargarDatos();
         }
 
+        /**
+         * Construye y organiza el layout del dashboard.
+         * Incluye la cabecera con KPIs, la tabla de datos y el gráfico.
+         */
         private void buildDashboardLayout() {
                 removeAll();
 
@@ -69,7 +74,6 @@ public class EstadisPanel extends javax.swing.JPanel {
                 headerPanel.setOpaque(false);
                 headerPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 
-                // Título Principal
                 JLabel title = new JLabel(com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("stats.title"));
                 title.setFont(new Font("Segoe UI", Font.BOLD, 28));
                 title.setForeground(TelecomTheme.ACCENT_DARK); // Azul oscuro
@@ -83,17 +87,14 @@ public class EstadisPanel extends javax.swing.JPanel {
                 lblResueltasVal = new JLabel("0");
                 lblSincoVal = new JLabel("0");
 
-                // Tarjeta Pendientes (Amarillo/Naranja)
                 kpiPanel.add(ThemeManager.getInstance().createKPICard(
                                 com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("stats.kpi.pending"),
                                 lblPendientesVal, TelecomTheme.WARN, "🕒"));
 
-                // Tarjeta Resueltas (Verde)
                 kpiPanel.add(ThemeManager.getInstance().createKPICard(
                                 com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage("stats.kpi.resolved"),
                                 lblResueltasVal, TelecomTheme.OK, "✅"));
 
-                // Tarjeta Sin Comunicar (Rojo)
                 kpiPanel.add(ThemeManager.getInstance().createKPICard(
                                 com.jmmunoz.netfix.config.AppConfig.getInstance().getMessage(
                                                 "stats.kpi.uncommunicated"),
@@ -144,7 +145,6 @@ public class EstadisPanel extends javax.swing.JPanel {
                                         } else {
                                                 idInci = Integer.parseInt(val.toString());
                                         }
-                                        // Debug removed
 
                                         Window parentWindow = SwingUtilities.getWindowAncestor(EstadisPanel.this);
                                         IncidenciaDetalleDialog dialog;
@@ -170,7 +170,6 @@ public class EstadisPanel extends javax.swing.JPanel {
                 JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
                 toolbar.setOpaque(false);
 
-                // Combos
                 // Combos
                 String[] meses = new String[12];
                 for (int i = 0; i < 12; i++) {
@@ -213,6 +212,12 @@ public class EstadisPanel extends javax.swing.JPanel {
                 add(splitPane, BorderLayout.CENTER);
         }
 
+        /**
+         * Configura el listener para redimensionar columnas al cambiar el tamaño del
+         * scroll pane.
+         * 
+         * @param scrollPane El JScrollPane que contiene la tabla.
+         */
         private void setupScrollListener(JScrollPane scrollPane) {
                 scrollPane.addComponentListener(new java.awt.event.ComponentAdapter() {
                         @Override
@@ -246,7 +251,7 @@ public class EstadisPanel extends javax.swing.JPanel {
                                                         -1, column);
                         width = Math.max(header.getPreferredSize().width + 20, width);
 
-                        // Contenido (Muestrear 50 filas)
+                        // Contenido (Mostrar 50 filas)
                         int limit = Math.min(table.getRowCount(), 50);
                         for (int row = 0; row < limit; row++) {
                                 java.awt.Component renderer = table.prepareRenderer(table.getCellRenderer(row, column),
@@ -278,11 +283,17 @@ public class EstadisPanel extends javax.swing.JPanel {
         /**
          * Carga/Refresca todos los datos.
          */
+        /**
+         * Carga y refresca todos los datos del panel.
+         * Actualiza la tabla de incidencias, el gráfico estadístico y los contadores
+         * KPI.
+         * Se ejecuta en el hilo de despacho de eventos de Swing.
+         */
         public void cargarDatos() {
                 SwingUtilities.invokeLater(() -> {
                         Utilities ut = new Utilities();
                         try {
-                                // 1. Cargar Tabla (Incidencias globales o filtradas?)
+                                // 1. Cargar Tabla (Incidencias globales o filtradas)
                                 ResultSet rs = Utilities.ejecutarConsulta(Utilities.TipoConsulta.INCIDENCIAS, 0);
                                 ut.cargarTabla(inciTabla, rs);
 
