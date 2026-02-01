@@ -164,8 +164,8 @@ Definición de constantes de diseño (Colores hexadecimales, tipografías base).
 
 ## Instalación y Uso
 
-1.  **Base de Datos:** Importar el script SQL incluido (`netfix_db.sql`) en su servidor MySQL.
-2.  **Configuración:** Verificar las credenciales de base de datos en `DatabaseManager` o archivo de propiedades (si aplica).
+1.  **Base de Datos:** Importar el script SQL incluido (`netfix.sql`) en el servidor MySQL.
+2.  **Configuración:** Verificar las credenciales de base de datos en `DatabaseManager`.
 3.  **Ejecución:** Iniciar la aplicación desde `login.java`.
 4.  **Roles de Prueba:**
     *   **Admin:** Acceso total (Sistemas).
