@@ -12,7 +12,7 @@ Su objetivo principal es optimizar el flujo de trabajo entre los diferentes role
 *   **Inventario y Provisión:** Control de dispositivos, asignación a contratos y gestión de números asociados (5G).
 *   **Diagnóstico Remoto:** Simulador de pruebas de red (velocidad, latencia, niveles ópticos) para depuración técnica sin hardware real.
 *   **Administración Interactiva:** Paneles avanzados para la gestión de usuarios y supervisión de equipos de trabajo.
-*   **Interfaz Moderna:** Sistema de diseño personalizado (temas claro/oscuro) y diálogos estilizados que reemplazan los componentes nativos estándar.
+*   **Interfaz Moderna:** Sistema de diseño personalizado y diálogos estilizados que reemplazan los componentes nativos estándar.
 
 ---
 
